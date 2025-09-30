@@ -35,7 +35,7 @@ const Cart = () => {
   const selectedItems = getSelectedItems();
   const totalPrice = getTotalPrice();
   const totalSelectedItems = getTotalSelectedItems();
-
+  console.log("getSelectedItems", getSelectedItems)
   const handleQuantityChange = (productId, newQuantity) => {
     if (newQuantity < 1) {
       removeItem(productId);
@@ -43,24 +43,6 @@ const Cart = () => {
       updateQuantity(productId, newQuantity);
     }
   };
-
-  const handleOrderSubmit = (e) => {
-    e.preventDefault();
-    console.log("Order submitted:", {
-      items: selectedItems,
-      totalPrice,
-      customerInfo: orderForm,
-    });
-
-    clearSelected();
-    setShowCheckout(false);
-
-    // Hiện thông báo thành công
-    setSuccessMessage(
-      "🎉 Đặt hàng thành công! Cảm ơn bạn đã mua sắm tại Grounds2Dish."
-    );
-  };
-
   // Tự động ẩn toast sau 3 giây
   useEffect(() => {
     if (successMessage) {
@@ -109,7 +91,7 @@ const Cart = () => {
           setOrderForm={setOrderForm}
           selectedItems={selectedItems}
           totalPrice={totalPrice}
-          onSubmit={handleOrderSubmit}
+          clearSelected={clearSelected}
         />
 
         {/* DaisyUI Toast */}

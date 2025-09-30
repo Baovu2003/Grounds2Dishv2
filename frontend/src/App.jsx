@@ -7,6 +7,11 @@ import BlogDetailPage from "./pages/BlogDetail";
 import Shop from "./pages/Shop";
 import Cart from "./pages/Cart";
 import About from "./pages/About";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import LayoutAdmin from "./components/admin/LayoutAdmin";
+import AdminProduct from "./pages/admin/AdminProduct";
+import AdminCategory from "./pages/admin/AdminCategory";
+import AdminOrder from "./pages/admin/AdminOrder";
 
 const App = () => {
   const { theme } = useThemeStore();
@@ -21,11 +26,11 @@ const App = () => {
             </Layout>
           }
         />
-         <Route
+        <Route
           path="/shop"
           element={
-          <Layout>
-            <Shop/>
+            <Layout>
+              <Shop />
             </Layout>}
         />
         <Route
@@ -36,11 +41,11 @@ const App = () => {
             </Layout>
           }
         />
-         <Route
+        <Route
           path="/blog/:id"
           element={
-          <Layout>
-            <BlogDetailPage/>
+            <Layout>
+              <BlogDetailPage />
             </Layout>}
         />
         <Route
@@ -57,6 +62,40 @@ const App = () => {
             <Layout>
               <About />
             </Layout>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <LayoutAdmin>
+              <AdminDashboard />
+            </LayoutAdmin>
+          }
+        />
+
+        <Route
+          path="/admin/category"
+          element={
+            <LayoutAdmin>
+              <AdminCategory />
+            </LayoutAdmin>
+          }
+        />
+
+        <Route
+          path="/admin/product"
+          element={
+            <LayoutAdmin>
+              <AdminProduct />
+            </LayoutAdmin>
+          }
+        />
+        <Route
+          path="/admin/orders"
+          element={
+            <LayoutAdmin>
+              <AdminOrder />
+            </LayoutAdmin>
           }
         />
       </Routes>

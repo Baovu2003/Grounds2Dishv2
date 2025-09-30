@@ -3,83 +3,11 @@ import { Link } from "react-router";
 import useCartStore from "../store/useCartStore";
 import { Search, Filter, Grid, List, Heart, ShoppingCart, Star, ChevronLeft, ChevronRight } from "lucide-react";
 
-const sampleCategories = [
-  { CategoryId: 1, CategoryName: "Bát & Ly Tái Chế" },
-  { CategoryId: 2, CategoryName: "Đĩa & Thìa Eco" },
-  { CategoryId: 6, CategoryName: "Phụ Kiện Nhà Bếp" },
-  { CategoryId: 7, CategoryName: "Sản Phẩm Văn Phòng" },
-  { CategoryId: 8, CategoryName: "Đồ Chơi & Quà Tặng" },
-];
-
-const sampleProducts = [
-  {
-    id: 1,
-    name: "Bát Tái Chế Từ Bã Cà Phê",
-    categoryId: 1,
-    price: 150000,
-    thumbnail: "https://source.unsplash.com/400x300/?bowl,coffee,recycled",
-    label: "Sản phẩm bền vững",
-    description:
-      "Bát ăn được làm từ bã cà phê tái chế, thân thiện với môi trường",
-  },
-  {
-    id: 2,
-    name: "Đĩa Eco Coffee",
-    categoryId: 2,
-    price: 180000,
-    thumbnail: "https://source.unsplash.com/400x300/?plate,coffee,eco",
-    label: "Sản phẩm bền vững",
-    description: "Đĩa ăn từ bã cà phê, chống nước và bền đẹp",
-  },
-  {
-    id: 3,
-    name: "Ly Cà Phê Tái Chế",
-    categoryId: 1,
-    price: 90000,
-    thumbnail: "https://source.unsplash.com/400x300/?coffee-cup,recycled,eco",
-    label: "Sản phẩm bền vững",
-    description: "Ly uống nước từ bã cà phê, giữ nhiệt tốt",
-  },
-  {
-    id: 4,
-    name: "Chậu Cây Coffee Grounds",
-    categoryId: 4,
-    price: 120000,
-    thumbnail: "https://source.unsplash.com/400x300/?plant-pot,coffee,recycled",
-    label: "Chậu cây thông minh",
-    description: "Chậu cây từ bã cà phê, giữ ẩm tự nhiên",
-  },
-  {
-    id: 5,
-    name: "Bộ Thìa Muỗng Eco",
-    categoryId: 3,
-    price: 200000,
-    thumbnail: "https://source.unsplash.com/400x300/?spoon,coffee,eco",
-    label: "Bộ dụng cụ bền vững",
-    description: "Bộ thìa muỗng từ bã cà phê, không độc hại",
-  },
-  {
-    id: 6,
-    name: "Đèn Trang Trí Coffee",
-    categoryId: 5,
-    price: 250000,
-    thumbnail: "https://source.unsplash.com/400x300/?lamp,coffee,decorative",
-    label: "Đồ trang trí độc đáo",
-    description: "Đèn trang trí từ bã cà phê, ánh sáng ấm áp",
-  },
-  {
-    id: 7,
-    name: "Khay Đựng Đồ Văn Phòng",
-    categoryId: 7,
-    price: 300000,
-    thumbnail: "https://source.unsplash.com/400x300/?tray,office,coffee",
-    label: "Sản phẩm văn phòng",
-    description: "Khay đựng đồ từ bã cà phê, thiết kế hiện đại",
-  },
-];
-
 export default function Shop() {
   const { addItem } = useCartStore();
+  const [categories, setCategories] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [priceRange, setPriceRange] = useState([50000, 400000]);
   const [inputMin, setInputMin] = useState(priceRange[0]);
@@ -88,19 +16,43 @@ export default function Shop() {
   const [sortBy, setSortBy] = useState('default'); // default, price-low, price-high, name
 
   const [search, setSearch] = useState("");
-  const [filteredProducts, setFilteredProducts] = useState(sampleProducts);
+  const [filteredProducts, setFilteredProducts] = useState(products);
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(6);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [catRes, prodRes] = await Promise.all([
+          fetch("http://localhost:5000/api/product-categories").then((res) => res.json()),
+          fetch("http://localhost:5000/api/products").then((res) => res.json()),
+        ]);
+        console.log("categories", catRes);
+        console.log("products", prodRes);
+        setCategories(catRes);
+        setProducts(prodRes);
+        setFilteredProducts(prodRes);
+      } catch (err) {
+        console.error("Lỗi khi load dữ liệu:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+  console.log("categories", categories)
+  console.log("products", products)
   const handleAddToCart = (product) => {
     addItem({
-      id: product.id,
-      name: product.name,
+      _id: product._id,
+      name: product.title,
       price: product.price,
       thumbnail: product.thumbnail,
       description: product.description
     });
-    
+
     // Show success feedback
     const button = document.querySelector(`[data-product-id="${product.id}"]`);
     if (button) {
@@ -115,11 +67,15 @@ export default function Shop() {
   };
 
   useEffect(() => {
-    let filtered = sampleProducts;
+    let filtered = products;
+    console.log("filtered", filtered)
+    console.log("products", products)
 
     if (selectedCategory) {
-      filtered = filtered.filter((p) => p.categoryId === selectedCategory);
+      filtered = filtered.filter((p) => p.product_category_id._id === selectedCategory);
     }
+
+    console.log("selectedCategory", selectedCategory)
 
     filtered = filtered.filter(
       (p) => p.price >= priceRange[0] && p.price <= priceRange[1]
@@ -178,7 +134,7 @@ export default function Shop() {
           <div className="absolute top-0 left-0 w-96 h-96 bg-white/5 rounded-full -translate-x-48 -translate-y-48"></div>
           <div className="absolute bottom-0 right-0 w-80 h-80 bg-white/5 rounded-full translate-x-40 translate-y-40"></div>
         </div>
-        
+
         <div className="relative z-10 container-custom py-16 lg:py-24">
           <div className="text-center text-white space-y-6">
             <div className="inline-flex items-center gap-2 mb-4" style={{ color: '#a8a0a8' }}>
@@ -186,19 +142,19 @@ export default function Shop() {
               <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: '#a8a0a8', animationDelay: '0.2s' }}></div>
               <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: '#989098', animationDelay: '0.4s' }}></div>
             </div>
-            
+
             <div className="text-sm uppercase tracking-[0.3em] mb-4 font-semibold" style={{ color: '#a8a0a8' }}>
               SUSTAINABLE COLLECTION
             </div>
-            
+
             <h1 className="text-4xl lg:text-6xl font-display font-bold text-white mb-6 drop-shadow-2xl">
               Grounds2Dish
             </h1>
-            
+
             <p className="text-xl max-w-3xl mx-auto leading-relaxed" style={{ color: '#b8b0b8' }}>
               Biến bã cà phê thành giá trị mới! Khám phá các sản phẩm bền vững từ bã cà phê tái chế
             </p>
-            
+
             {/* Breadcrumbs */}
             <div className="flex justify-center mt-8">
               <nav className="flex items-center space-x-2" style={{ color: '#a8a0a8' }}>
@@ -224,32 +180,30 @@ export default function Shop() {
                     <Filter className="w-5 h-5" style={{ color: '#20161F' }} />
                     <h3 className="text-xl font-display font-bold text-neutral-800">Danh Mục Sản Phẩm</h3>
                   </div>
-                  
+
                   <div className="space-y-3">
                     <button
                       onClick={() => setSelectedCategory(null)}
-                      className={`w-full text-left px-6 py-4 rounded-2xl font-semibold transition-all duration-300 ${
-                        !selectedCategory 
-                          ? "text-white shadow-lg" 
-                          : "bg-gray-50 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                      }`}
+                      className={`w-full text-left px-6 py-4 rounded-2xl font-semibold transition-all duration-300 ${!selectedCategory
+                        ? "text-white shadow-lg"
+                        : "bg-gray-50 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                        }`}
                       style={!selectedCategory ? { backgroundColor: '#20161F' } : {}}
                     >
                       Tất cả sản phẩm
                     </button>
 
-                    {sampleCategories.map((c) => (
+                    {categories?.map((c) => (
                       <button
-                        key={c.CategoryId}
-                        onClick={() => setSelectedCategory(c.CategoryId)}
-                        className={`w-full text-left px-6 py-4 rounded-2xl font-semibold transition-all duration-300 ${
-                          selectedCategory === c.CategoryId 
-                            ? "text-white shadow-lg" 
-                            : "bg-gray-50 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                        }`}
-                        style={selectedCategory === c.CategoryId ? { backgroundColor: '#20161F' } : {}}
+                        key={c._id}
+                        onClick={() => setSelectedCategory(c._id)}
+                        className={`w-full text-left px-6 py-4 rounded-2xl font-semibold transition-all duration-300 ${selectedCategory === c._id
+                          ? "text-white shadow-lg"
+                          : "bg-gray-50 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                          }`}
+                        style={selectedCategory === c._id ? { backgroundColor: '#20161F' } : {}}
                       >
-                        {c.CategoryName}
+                        {c.title}
                       </button>
                     ))}
                   </div>
@@ -400,7 +354,7 @@ export default function Shop() {
                     <Search className="w-5 h-5" style={{ color: '#20161F' }} />
                     <h3 className="text-xl font-display font-bold text-neutral-800">Tìm Kiếm</h3>
                   </div>
-                  
+
                   <div className="relative">
                     <input
                       type="text"
@@ -435,7 +389,7 @@ export default function Shop() {
                       value={sortBy}
                       onChange={(e) => setSortBy(e.target.value)}
                       className="px-3 py-2 border border-neutral-300 rounded-lg text-sm transition-all duration-300 bg-white"
-                      style={{ 
+                      style={{
                         '--tw-ring-color': 'rgba(51, 41, 51, 0.2)',
                         '--tw-border-opacity': '1'
                       }}
@@ -460,11 +414,10 @@ export default function Shop() {
                   <div className="flex items-center gap-1 bg-neutral-100 rounded-lg p-1">
                     <button
                       onClick={() => setViewMode('grid')}
-                      className={`p-2 rounded-md transition-all duration-300 ${
-                        viewMode === 'grid' 
-                          ? 'bg-white shadow-sm' 
-                          : 'text-neutral-600'
-                      }`}
+                      className={`p-2 rounded-md transition-all duration-300 ${viewMode === 'grid'
+                        ? 'bg-white shadow-sm'
+                        : 'text-neutral-600'
+                        }`}
                       style={viewMode === 'grid' ? { color: '#20161F' } : {}}
                       onMouseEnter={(e) => {
                         if (viewMode !== 'grid') {
@@ -482,11 +435,10 @@ export default function Shop() {
                     </button>
                     <button
                       onClick={() => setViewMode('list')}
-                      className={`p-2 rounded-md transition-all duration-300 ${
-                        viewMode === 'list' 
-                          ? 'bg-white shadow-sm' 
-                          : 'text-neutral-600'
-                      }`}
+                      className={`p-2 rounded-md transition-all duration-300 ${viewMode === 'list'
+                        ? 'bg-white shadow-sm'
+                        : 'text-neutral-600'
+                        }`}
                       style={viewMode === 'list' ? { color: '#20161F' } : {}}
                       onMouseEnter={(e) => {
                         if (viewMode !== 'list') {
@@ -523,7 +475,7 @@ export default function Shop() {
                   <p className="text-xl text-gray-600 max-w-lg mx-auto leading-relaxed mb-8">
                     Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm để khám phá các sản phẩm từ bã cà phê
                   </p>
-                  <button 
+                  <button
                     onClick={() => {
                       setSearch('');
                       setSelectedCategory(null);
@@ -539,23 +491,20 @@ export default function Shop() {
                 </div>
               ) : (
                 <>
-                  <div className={`${
-                    viewMode === 'grid' 
-                      ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6' 
-                      : 'space-y-6'
-                  }`}>
+                  <div className={`${viewMode === 'grid'
+                    ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'
+                    : 'space-y-6'
+                    }`}>
                     {currentProducts.map((product, index) => (
                       <div
                         key={product.id}
-                        className={`group bg-white rounded-2xl shadow-sm hover:shadow-xl hover-lift animate-fade-in overflow-hidden border border-gray-100 ${
-                          viewMode === 'list' ? 'flex flex-row h-72' : 'flex flex-col h-full'
-                        }`}
+                        className={`group bg-white rounded-2xl shadow-sm hover:shadow-xl hover-lift animate-fade-in overflow-hidden border border-gray-100 ${viewMode === 'list' ? 'flex flex-row h-72' : 'flex flex-col h-full'
+                          }`}
                         style={{ animationDelay: `${index * 0.1}s` }}
                       >
                         {/* Image Section */}
-                        <div className={`relative overflow-hidden ${
-                          viewMode === 'list' ? 'w-72 h-full' : 'h-56'
-                        }`}>
+                        <div className={`relative overflow-hidden ${viewMode === 'list' ? 'w-72 h-full' : 'h-56'
+                          }`}>
                           {/* Product Image */}
                           <div className="w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
                             <img
@@ -565,7 +514,7 @@ export default function Shop() {
                               loading="lazy"
                             />
                           </div>
-                          
+
 
                           {/* Wishlist Button */}
                           <div className="absolute top-3 right-3">
@@ -576,15 +525,14 @@ export default function Shop() {
                         </div>
 
                         {/* Content Section */}
-                        <div className={`flex flex-col justify-between ${
-                          viewMode === 'list' ? 'flex-1 p-6' : 'p-5 flex-1'
-                        }`}>
+                        <div className={`flex flex-col justify-between ${viewMode === 'list' ? 'flex-1 p-6' : 'p-5 flex-1'
+                          }`}>
                           {/* Product Info */}
                           <div className="space-y-3">
                             <h2 className="text-lg font-bold text-gray-900 leading-tight line-clamp-2 group-hover:text-gray-700 transition-colors duration-300">
-                              {product.name}
+                              {product.title}
                             </h2>
-                            <p 
+                            <p
                               className="text-gray-600 text-sm leading-relaxed line-clamp-2 cursor-help"
                               title={product.description}
                             >
@@ -602,12 +550,12 @@ export default function Shop() {
                             </div>
 
                             {/* Add to Cart Button - Only visible on hover */}
-                            <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <div className=" transition-opacity duration-300">
                               <button
                                 onClick={() => handleAddToCart(product)}
                                 data-product-id={product.id}
                                 className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-semibold text-sm transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 active:scale-95 text-white"
-                                style={{ 
+                                style={{
                                   background: 'linear-gradient(135deg, #20161F 0%, #2d1f2d 100%)',
                                   boxShadow: '0 4px 14px 0 rgba(32, 22, 31, 0.2)'
                                 }}
@@ -647,11 +595,10 @@ export default function Shop() {
                           <button
                             key={number}
                             onClick={() => paginate(number)}
-                            className={`px-4 py-3 rounded-xl font-medium transition-all duration-300 ${
-                              currentPage === number
-                                ? "text-white shadow-medium"
-                                : "border border-neutral-300 text-neutral-600 hover:bg-purple-50 hover:text-purple-600 hover:border-purple-300"
-                            }`}
+                            className={`px-4 py-3 rounded-xl font-medium transition-all duration-300 ${currentPage === number
+                              ? "text-white shadow-medium"
+                              : "border border-neutral-300 text-neutral-600 hover:bg-purple-50 hover:text-purple-600 hover:border-purple-300"
+                              }`}
                             style={currentPage === number ? { backgroundColor: '#20161F' } : {}}
                           >
                             {number}

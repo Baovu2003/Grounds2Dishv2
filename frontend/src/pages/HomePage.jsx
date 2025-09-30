@@ -1,64 +1,34 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router";
 import useCartStore from "../store/useCartStore";
 
 const HomePage = ({ productSeller = [] }) => {
   const { addItem } = useCartStore();
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Sample data for best-selling products
-  const sampleProducts = [
-    {
-      ProductId: 1,
-      ProductName: "Bộ Bát Đĩa Sinh Học Premium",
-      Price: 450000,
-      ProductImages: [
-        { ImageUrl: "/images/anh1.jpg" }
-      ],
-      Description: "Bộ bát đĩa được làm từ bã cà phê và nhựa sinh học, an toàn cho sức khỏe và thân thiện môi trường",
-      Rating: 4.9,
-      Sold: 1250,
-      Badge: "BESTSELLER"
-    },
-    {
-      ProductId: 2,
-      ProductName: "Thìa Muỗng Eco-Friendly Set",
-      Price: 180000,
-      ProductImages: [
-        { ImageUrl: "/images/anh2.jpg" }
-      ],
-      Description: "Bộ thìa muỗng sinh học từ bã cà phê, chống nhiệt và bền đẹp",
-      Rating: 4.8,
-      Sold: 890,
-      Badge: "HOT"
-    },
-    {
-      ProductId: 3,
-      ProductName: "Ly Cà Phê Tái Chế Signature",
-      Price: 320000,
-      ProductImages: [
-        { ImageUrl: "/images/logo1.jpg" }
-      ],
-      Description: "Ly cà phê cao cấp từ bã cà phê tái chế, giữ nhiệt tốt và thiết kế sang trọng",
-      Rating: 4.9,
-      Sold: 2100,
-      Badge: "NEW"
-    },
-    {
-      ProductId: 4,
-      ProductName: "Hộp Đựng Thức Ăn Phân Hủy Sinh Học ECO Set of 3 an bữa trưa",
-      Price: 280000,
-      ProductImages: [
-        { ImageUrl: "/images/anh3.jpg" }
-      ],
-      Description: "Hộp đựng thức ăn phân hủy sinh học, an toàn và tiện lợi cho cuộc sống hiện đại",
-      Rating: 4.7,
-      Sold: 1560,
-      Badge: "ECO"
+  // Gọi API lấy danh sách sản phẩm
+  const fetchProducts = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/products");
+      const data = await res.json();
+      setProducts(data);
+    } catch (err) {
+      console.error("Error fetching products:", err);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
 
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  console.log("Products", products)
+
+  if (loading) return <p className="p-5">Đang tải sản phẩm...</p>;
   // Use sample data if no products provided
-  const displayProducts = productSeller.length > 0 ? productSeller : sampleProducts;
+  const displayProducts = productSeller.length > 0 ? productSeller : products;
 
   const handleAddToCart = (product) => {
     addItem({
@@ -365,90 +335,93 @@ const HomePage = ({ productSeller = [] }) => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {displayProducts.map((product, index) => (
+            {displayProducts?.map((product, index) => (
               <div
-                key={product.ProductId}
+                key={product._id}
                 className="group card h-full flex flex-col hover:shadow-large transition-all duration-500 transform hover:-translate-y-2 animate-fade-in"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <div className="relative overflow-hidden rounded-xl mb-4">
                   <img
-                    src={
-                      product.ProductImages?.length > 0
-                        ? product.ProductImages[0].ImageUrl
-                        : "/images/anh1"
-                    }
-                    alt={product.ProductName}
+                    src={product.thumbnail || "/images/placeholder.jpg"}
+                    alt={product.title}
                     className="h-64 w-full object-cover transition-transform duration-500 group-hover:scale-110"
                     loading="lazy"
                   />
+
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
                   {/* Badge */}
                   <div className="absolute top-4 right-4">
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold text-white shadow-medium ${product.Badge === 'BESTSELLER' ? 'bg-gradient-to-r from-accent-warm to-accent-warning' :
-                      product.Badge === 'HOT' ? 'bg-gradient-to-r from-accent-error to-red-500' :
-                        product.Badge === 'NEW' ? 'bg-gradient-to-r from-accent-success to-green-500' :
-                          'bg-gradient-to-r from-primary-500 to-primary-600'
-                      }`}>
-                      {product.Badge}
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-semibold text-white shadow-medium ${product.status === "active"
+                        ? "bg-gradient-to-r from-green-500 to-green-600"
+                        : "bg-gradient-to-r from-gray-400 to-gray-600"
+                        }`}
+                    >
+                      {product.status === "active" ? "Đang bán" : "Ngừng bán"}
                     </span>
-                  </div>
-
-                  {/* Quick Actions */}
-                  <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <button className="p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-medium hover:bg-white transition-colors duration-300">
-                      <svg className="w-4 h-4 text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                      </svg>
-                    </button>
                   </div>
                 </div>
 
                 <div className="flex flex-col flex-grow justify-between">
                   <div>
                     <Link
-                      to={`/ProductDetail/Index/${product.ProductId}`}
+                      to={`/ProductDetail/Index/${product._id}`}
                       className="block max-w-full font-semibold text-lg text-neutral-800 
-             hover:text-primary-600 transition-colors duration-300 mb-2 
-             group-hover:underline 
-             overflow-hidden text-ellipsis 
-             [display:-webkit-box] [-webkit-line-clamp:1] [-webkit-box-orient:vertical] 
-             break-words"
+                hover:text-primary-600 transition-colors duration-300 mb-2 
+                group-hover:underline 
+                overflow-hidden text-ellipsis 
+                [display:-webkit-box] [-webkit-line-clamp:1] [-webkit-box-orient:vertical] 
+                break-words"
                     >
-                      {product.ProductName}
+                      {product.title}
                     </Link>
 
-
                     <p className="text-sm text-neutral-600 line-clamp-2 leading-relaxed">
-                      {product.Description}
+                      {product.description}
                     </p>
                   </div>
 
-
                   {/* Price */}
                   <div className="flex items-center justify-center">
-                    <div className="text-2xl font-bold" style={{ color: '#20161F' }}>
-                      {product.Price.toLocaleString()}₫
+                    <div className="text-2xl font-bold" style={{ color: "#20161F" }}>
+                      {typeof product.price === "number"
+                        ? product.price.toLocaleString("vi-VN") + "₫"
+                        : "Liên hệ"}
                     </div>
                   </div>
 
-                  {/* Add to Cart Button */}
-                  <button
-                    onClick={() => handleAddToCart(product)}
-                    className="btn-primary w-full group/btn mt-5"
-                  >
-                    <span className="flex items-center justify-center gap-2">
-                      <svg className="w-4 h-4 transition-transform duration-300 group-hover/btn:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01" />
-                      </svg>
-                      Thêm vào giỏ
-                    </span>
-                  </button>
+
+                  {product.status === "active" && (
+                    <button
+                      onClick={() => handleAddToCart(product)}
+                      className="btn-primary w-full mt-5"
+                    >
+                      <span className="flex items-center justify-center gap-2">
+                        <svg
+                          className="w-4 h-4 transition-transform duration-300 hover:scale-110"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01"
+                          />
+                        </svg>
+                        Thêm vào giỏ
+                      </span>
+                    </button>
+                  )}
+
                 </div>
               </div>
             ))}
           </div>
+
 
           {/* View All Button */}
           <div className="text-center mt-12">

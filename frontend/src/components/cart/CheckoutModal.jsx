@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 
-const CheckoutModal = ({ 
-  isOpen, 
-  onClose, 
-  orderForm, 
-  setOrderForm, 
-  selectedItems, 
-  totalPrice, 
-  onSubmit 
+const CheckoutModal = ({
+  isOpen,
+  onClose,
+  orderForm,
+  setOrderForm,
+  selectedItems,
+  totalPrice,
+  clearSelected
 }) => {
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
@@ -99,7 +99,7 @@ const CheckoutModal = ({
       const province = provinces.find(p => p.code === selectedProvince);
       const district = districts.find(d => d.code === selectedDistrict);
       const ward = wards.find(w => w.code === selectedWard);
-      
+
       if (province && district && ward) {
         const fullAddress = `${orderForm.address}, ${ward.name}, ${district.name}, ${province.name}`;
         setOrderForm({ ...orderForm, city: fullAddress });
@@ -107,6 +107,57 @@ const CheckoutModal = ({
     }
   }, [selectedProvince, selectedDistrict, selectedWard, provinces, districts, wards]);
 
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log("provinces", provinces)
+    console.log("selectedProvince", selectedProvince)
+    console.log(provinces.find((p) => p.code === selectedProvince)?.name)
+    console.log("selectedProvince:", selectedProvince, typeof selectedProvince);
+    console.log("selectedDistrict:", selectedDistrict, typeof selectedDistrict);
+    console.log("selectedWard:", selectedWard, typeof selectedWard);
+
+    console.log("provinces:", provinces);
+    console.log("districts:", districts);
+    console.log("wards:", wards);
+
+    try {
+      const body = {
+        fullname: orderForm.fullName,
+        email: orderForm.email,
+        phone: orderForm.phone,
+        address: orderForm.address,
+        province: provinces.find((p) => String(p.code) === String(selectedProvince))?.name || "",
+        district: districts.find((d) => String(d.code) === String(selectedDistrict))?.name || "",
+        ward: wards.find((w) => String(w.code) === String(selectedWard))?.name || "",
+
+        note: orderForm.notes,
+        products: selectedItems.map((item) => ({
+          product_id: item._id,
+          quantity: item.quantity,
+          price: item.price,
+        })),
+      };
+      console.log("selectedItems", selectedItems)
+      console.log("body", body)
+
+      const res = await fetch("http://localhost:5000/api/orders/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      if (!res.ok) throw new Error("Tạo đơn hàng thất bại!");
+
+      clearSelected();
+
+      alert("Đặt hàng thành công 🎉");
+      onClose();
+    } catch (error) {
+      console.error("Error creating order:", error);
+      alert("Có lỗi xảy ra khi đặt hàng!");
+    }
+  };
   if (!isOpen) return null;
 
   return (
@@ -125,7 +176,7 @@ const CheckoutModal = ({
             </button>
           </div>
 
-          <form onSubmit={onSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="label">
@@ -382,7 +433,7 @@ const CheckoutModal = ({
               <button
                 type="submit"
                 className="btn text-white flex-1 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 py-3"
-                style={{ 
+                style={{
                   background: 'linear-gradient(135deg, #20161F 0%, #2d1f2d 100%)',
                   boxShadow: '0 6px 20px 0 rgba(32, 22, 31, 0.3)'
                 }}

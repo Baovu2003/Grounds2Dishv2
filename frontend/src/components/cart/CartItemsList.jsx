@@ -1,18 +1,19 @@
 import React from "react";
 import CartItem from "./CartItem";
 
-const CartItemsList = ({ 
-  items, 
-  selectedItems, 
-  onSelectAll, 
-  onUnselectAll, 
-  onClearSelected, 
-  onQuantityChange, 
-  onRemove, 
-  onToggleSelect 
+const CartItemsList = ({
+  items,
+  selectedItems,
+  onSelectAll,
+  onUnselectAll,
+  onClearSelected,
+  onQuantityChange,
+  onRemove,
+  onToggleSelect
 }) => {
   const isAllSelected = selectedItems.length === items.length && items.length > 0;
 
+  console.log("selectedItems", selectedItems)
   return (
     <div className="lg:col-span-2">
       {/* Select All */}
@@ -30,7 +31,7 @@ const CartItemsList = ({
                   onUnselectAll();
                 }
               }}
-              style={isAllSelected ? { 
+              style={isAllSelected ? {
                 accentColor: '#20161F',
                 borderColor: '#20161F'
               } : {}}
