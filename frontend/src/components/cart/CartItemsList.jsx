@@ -16,12 +16,12 @@ const CartItemsList = ({
   return (
     <div className="lg:col-span-2">
       {/* Select All */}
-      <div className="bg-green-50 border-2 border-green-100 rounded-lg p-4 mb-6">
+      <div className="bg-neutral-50 border-2 border-neutral-100 rounded-lg p-4 mb-6">
         <div className="flex items-center justify-between">
           <label className="flex items-center gap-3 cursor-pointer">
             <input
               type="checkbox"
-              className="checkbox checkbox-primary"
+              className="checkbox"
               checked={isAllSelected}
               onChange={(e) => {
                 if (e.target.checked) {
@@ -30,15 +30,19 @@ const CartItemsList = ({
                   onUnselectAll();
                 }
               }}
+              style={isAllSelected ? { 
+                accentColor: '#20161F',
+                borderColor: '#20161F'
+              } : {}}
             />
-            <span className="text-green-900 font-semibold">
+            <span className="text-neutral-900 font-semibold">
               Chọn tất cả ({items.length} sản phẩm)
             </span>
           </label>
           {selectedItems.length > 0 && (
             <button
               onClick={onClearSelected}
-              className="btn btn-sm btn-ghost text-red-600 hover:bg-red-50"
+              className="btn btn-sm btn-ghost text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors duration-300"
             >
               Xóa đã chọn
             </button>

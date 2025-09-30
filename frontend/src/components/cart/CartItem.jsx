@@ -17,18 +17,23 @@ const CartItem = ({
   return (
     <div
       className={`card bg-white border-2 transition-all duration-300 ${item.selected
-        ? "border-green-500 shadow-lg"
-        : "border-green-100 hover:border-green-300"
+        ? "shadow-lg"
+        : "border-neutral-100 hover:border-neutral-300"
         }`}
+      style={item.selected ? { borderColor: '#20161F' } : {}}
     >
       <div className="card-body p-6">
         <div className="flex items-center gap-4">
           <div className="w-8 flex justify-center">
             <input
               type="checkbox"
-              className="checkbox checkbox-primary"
+              className="checkbox"
               checked={item.selected}
               onChange={() => onToggleSelect(item.id)}
+              style={item.selected ? { 
+                accentColor: '#20161F',
+                borderColor: '#20161F'
+              } : {}}
             />
           </div>
 
@@ -43,9 +48,9 @@ const CartItem = ({
 
           {/* Info */}
           <div className="flex-1">
-            <h3 className="text-lg font-semibold mb-1">{item.name}</h3>
-            <p className="text-sm mb-2">{item.description}</p>
-            <div className="text-green-600 font-bold text-lg">
+            <h3 className="text-lg font-semibold mb-1 text-neutral-900">{item.name}</h3>
+            <p className="text-sm mb-2 text-neutral-600">{item.description}</p>
+            <div className="font-bold text-lg" style={{ color: '#20161F' }}>
               {formatPrice(item.price)}
             </div>
           </div>
@@ -54,21 +59,23 @@ const CartItem = ({
           <div className="flex items-center gap-2 w-32 justify-center">
             <button
               onClick={() => onQuantityChange(item.id, item.quantity - 1)}
-              className="btn btn-sm btn-circle btn-outline"
+              className="btn btn-sm btn-circle btn-outline border-neutral-300 hover:border-neutral-400"
+              style={{ color: '#20161F' }}
             >
               <Minus className="w-4 h-4" />
             </button>
-            <span className="w-8 text-center font-semibold">{item.quantity}</span>
+            <span className="w-8 text-center font-semibold text-neutral-900">{item.quantity}</span>
             <button
               onClick={() => onQuantityChange(item.id, item.quantity + 1)}
-              className="btn btn-sm btn-circle btn-outline"
+              className="btn btn-sm btn-circle btn-outline border-neutral-300 hover:border-neutral-400"
+              style={{ color: '#20161F' }}
             >
               <Plus className="w-4 h-4" />
             </button>
           </div>
 
           {/* Total */}
-          <div className="w-32 text-right font-bold text-green-600 text-lg">
+          <div className="w-32 text-right font-bold text-lg" style={{ color: '#20161F' }}>
             {formatPrice(item.price * item.quantity)}
           </div>
 
@@ -76,7 +83,7 @@ const CartItem = ({
           <div className="w-12 flex justify-center">
             <button
               onClick={() => onRemove(item.id)}
-              className="btn btn-sm btn-ghost text-red-600 hover:bg-red-50"
+              className="btn btn-sm btn-ghost text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors duration-300"
             >
               <Trash2 className="w-4 h-4" />
             </button>
