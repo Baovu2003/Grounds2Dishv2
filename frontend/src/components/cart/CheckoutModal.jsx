@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 const CheckoutModal = ({ 
   isOpen, 
@@ -9,12 +9,103 @@ const CheckoutModal = ({
   totalPrice, 
   onSubmit 
 }) => {
+  const [provinces, setProvinces] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [wards, setWards] = useState([]);
+  const [selectedProvince, setSelectedProvince] = useState("");
+  const [selectedDistrict, setSelectedDistrict] = useState("");
+  const [selectedWard, setSelectedWard] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const formatPrice = (price) => {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
       currency: "VND",
     }).format(price);
   };
+
+  // Fetch provinces
+  useEffect(() => {
+    const fetchProvinces = async () => {
+      try {
+        const response = await fetch('https://provinces.open-api.vn/api/');
+        const data = await response.json();
+        setProvinces(data);
+      } catch (error) {
+        console.error('Error fetching provinces:', error);
+      }
+    };
+
+    if (isOpen) {
+      fetchProvinces();
+    }
+  }, [isOpen]);
+
+  // Fetch districts when province changes
+  useEffect(() => {
+    const fetchDistricts = async () => {
+      if (selectedProvince) {
+        setLoading(true);
+        try {
+          const response = await fetch(`https://provinces.open-api.vn/api/p/${selectedProvince}?depth=2`);
+          const data = await response.json();
+          setDistricts(data.districts || []);
+          setWards([]);
+          setSelectedDistrict("");
+          setSelectedWard("");
+        } catch (error) {
+          console.error('Error fetching districts:', error);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setDistricts([]);
+        setWards([]);
+        setSelectedDistrict("");
+        setSelectedWard("");
+      }
+    };
+
+    fetchDistricts();
+  }, [selectedProvince]);
+
+  // Fetch wards when district changes
+  useEffect(() => {
+    const fetchWards = async () => {
+      if (selectedDistrict) {
+        setLoading(true);
+        try {
+          const response = await fetch(`https://provinces.open-api.vn/api/d/${selectedDistrict}?depth=2`);
+          const data = await response.json();
+          setWards(data.wards || []);
+          setSelectedWard("");
+        } catch (error) {
+          console.error('Error fetching wards:', error);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setWards([]);
+        setSelectedWard("");
+      }
+    };
+
+    fetchWards();
+  }, [selectedDistrict]);
+
+  // Update order form when address components change
+  useEffect(() => {
+    if (selectedProvince && selectedDistrict && selectedWard) {
+      const province = provinces.find(p => p.code === selectedProvince);
+      const district = districts.find(d => d.code === selectedDistrict);
+      const ward = wards.find(w => w.code === selectedWard);
+      
+      if (province && district && ward) {
+        const fullAddress = `${orderForm.address}, ${ward.name}, ${district.name}, ${province.name}`;
+        setOrderForm({ ...orderForm, city: fullAddress });
+      }
+    }
+  }, [selectedProvince, selectedDistrict, selectedWard, provinces, districts, wards]);
 
   if (!isOpen) return null;
 
@@ -116,7 +207,7 @@ const CheckoutModal = ({
 
             <div>
               <label className="label">
-                <span className="label-text text-neutral-700">Địa chỉ *</span>
+                <span className="label-text text-neutral-700">Địa chỉ chi tiết *</span>
               </label>
               <input
                 type="text"
@@ -126,7 +217,7 @@ const CheckoutModal = ({
                   setOrderForm({ ...orderForm, address: e.target.value })
                 }
                 className="input input-bordered w-full border-neutral-200 focus:border-neutral-400 bg-white"
-                placeholder="Nhập địa chỉ giao hàng"
+                placeholder="Số nhà, tên đường, tòa nhà..."
                 onFocus={(e) => {
                   e.target.style.borderColor = '#20161F';
                   e.target.style.boxShadow = '0 0 0 3px rgba(32, 22, 31, 0.15)';
@@ -140,30 +231,99 @@ const CheckoutModal = ({
               />
             </div>
 
-            <div>
-              <label className="label">
-                <span className="label-text text-neutral-700">Thành phố *</span>
-              </label>
-              <input
-                type="text"
-                required
-                value={orderForm.city}
-                onChange={(e) =>
-                  setOrderForm({ ...orderForm, city: e.target.value })
-                }
-                className="input input-bordered w-full border-neutral-200 focus:border-neutral-400 bg-white"
-                placeholder="Nhập thành phố"
-                onFocus={(e) => {
-                  e.target.style.borderColor = '#20161F';
-                  e.target.style.boxShadow = '0 0 0 3px rgba(32, 22, 31, 0.15)';
-                  e.target.style.backgroundColor = '#fefefe';
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = '#e5e7eb';
-                  e.target.style.boxShadow = 'none';
-                  e.target.style.backgroundColor = 'white';
-                }}
-              />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="label">
+                  <span className="label-text text-neutral-700">Tỉnh/Thành phố *</span>
+                </label>
+                <select
+                  required
+                  value={selectedProvince}
+                  onChange={(e) => setSelectedProvince(e.target.value)}
+                  className="select select-bordered w-full border-neutral-200 focus:border-neutral-400 bg-white"
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#20161F';
+                    e.target.style.boxShadow = '0 0 0 3px rgba(32, 22, 31, 0.15)';
+                    e.target.style.backgroundColor = '#fefefe';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#e5e7eb';
+                    e.target.style.boxShadow = 'none';
+                    e.target.style.backgroundColor = 'white';
+                  }}
+                >
+                  <option value="">Chọn tỉnh/thành phố</option>
+                  {provinces.map((province) => (
+                    <option key={province.code} value={province.code}>
+                      {province.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="label">
+                  <span className="label-text text-neutral-700">Quận/Huyện *</span>
+                </label>
+                <select
+                  required
+                  value={selectedDistrict}
+                  onChange={(e) => setSelectedDistrict(e.target.value)}
+                  disabled={!selectedProvince || loading}
+                  className="select select-bordered w-full border-neutral-200 focus:border-neutral-400 bg-white disabled:bg-neutral-100 disabled:text-neutral-500"
+                  onFocus={(e) => {
+                    if (!e.target.disabled) {
+                      e.target.style.borderColor = '#20161F';
+                      e.target.style.boxShadow = '0 0 0 3px rgba(32, 22, 31, 0.15)';
+                      e.target.style.backgroundColor = '#fefefe';
+                    }
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#e5e7eb';
+                    e.target.style.boxShadow = 'none';
+                    e.target.style.backgroundColor = e.target.disabled ? '#f5f5f5' : 'white';
+                  }}
+                >
+                  <option value="">Chọn quận/huyện</option>
+                  {districts.map((district) => (
+                    <option key={district.code} value={district.code}>
+                      {district.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="label">
+                  <span className="label-text text-neutral-700">Phường/Xã *</span>
+                </label>
+                <select
+                  required
+                  value={selectedWard}
+                  onChange={(e) => setSelectedWard(e.target.value)}
+                  disabled={!selectedDistrict || loading}
+                  className="select select-bordered w-full border-neutral-200 focus:border-neutral-400 bg-white disabled:bg-neutral-100 disabled:text-neutral-500"
+                  onFocus={(e) => {
+                    if (!e.target.disabled) {
+                      e.target.style.borderColor = '#20161F';
+                      e.target.style.boxShadow = '0 0 0 3px rgba(32, 22, 31, 0.15)';
+                      e.target.style.backgroundColor = '#fefefe';
+                    }
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#e5e7eb';
+                    e.target.style.boxShadow = 'none';
+                    e.target.style.backgroundColor = e.target.disabled ? '#f5f5f5' : 'white';
+                  }}
+                >
+                  <option value="">Chọn phường/xã</option>
+                  {wards.map((ward) => (
+                    <option key={ward.code} value={ward.code}>
+                      {ward.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             <div>
