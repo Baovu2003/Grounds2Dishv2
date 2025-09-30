@@ -213,7 +213,31 @@ export default function Shop() {
 
       {/* Main Content */}
       <section className="section-padding">
+        
         <div className="container-custom">
+           {/* Breadcrumb */}
+        <nav className="mb-12">
+          <ol className="flex items-center space-x-3 text-lg">
+            <li>
+              <Link
+                to="/"
+                className="text-neutral-600 hover:text-neutral-900 transition-colors font-medium relative group"
+                onMouseEnter={(e) => e.target.style.color = '#20161F'}
+                onMouseLeave={(e) => e.target.style.color = '#6b7280'}
+              >
+                Home
+                <span className="absolute left-0 -bottom-1 w-0 h-0.5 transition-all group-hover:w-full"
+                      style={{ backgroundColor: '#20161F' }}></span>
+              </Link>
+            </li>
+            <li>
+              <span className="text-neutral-400">/</span>
+            </li>
+            <li className="text-neutral-900 font-semibold">
+              Shop
+            </li>
+          </ol>
+        </nav>
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Sidebar Filters */}
             <aside className="w-full lg:w-80 space-y-8 sticky top-32 h-fit">
