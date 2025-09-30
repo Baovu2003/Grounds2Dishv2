@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
-
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 const PAGE_SIZE = 5; // số đơn mỗi trang
 
 const AdminOrder = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // filter & pagination state
+    // Filter & pagination state
     const [searchTerm, setSearchTerm] = useState("");
+    const [statusFilter, setStatusFilter] = useState(""); // "" = tất cả trạng thái
     const [currentPage, setCurrentPage] = useState(1);
 
     // Lấy danh sách order
@@ -42,12 +44,14 @@ const AdminOrder = () => {
         fetchOrders();
     }, []);
 
-    // Filter orders theo tên hoặc sdt
-    const filteredOrders = orders.filter(
-        (order) =>
+    // Filter orders theo tên, sdt và trạng thái
+    const filteredOrders = orders.filter((order) => {
+        const matchesSearch =
             order.fullname.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            order.phone.includes(searchTerm)
-    );
+            order.phone.includes(searchTerm);
+        const matchesStatus = statusFilter ? order.status === statusFilter : true;
+        return matchesSearch && matchesStatus;
+    });
 
     // Pagination
     const totalPages = Math.ceil(filteredOrders.length / PAGE_SIZE);
@@ -55,9 +59,10 @@ const AdminOrder = () => {
         (currentPage - 1) * PAGE_SIZE,
         currentPage * PAGE_SIZE
     );
+
     // Hàm tạo danh sách số trang (với dấu ...)
     const getPageNumbers = (totalPages, currentPage) => {
-        const delta = 2; // số trang hiển thị trước/sau current
+        const delta = 2;
         const range = [];
         const rangeWithDots = [];
 
@@ -67,7 +72,7 @@ const AdminOrder = () => {
             }
         }
 
-        let prev
+        let prev;
         for (let i of range) {
             if (prev) {
                 if (i - prev === 2) {
@@ -82,15 +87,42 @@ const AdminOrder = () => {
 
         return rangeWithDots;
     };
+    // Hàm xuất file Excel
+    const exportToExcel = () => {
+        if (orders.length === 0) return;
 
+        // Map dữ liệu thành dạng mảng object dễ đọc
+        const data = orders.map((order) => ({
+            "Khách hàng": order.fullname,
+            "Email": order.email,
+            "SĐT": order.phone,
+            "Địa chỉ": `${order.address}, ${order.ward}, ${order.district}, ${order.province}`,
+            "Trạng thái": order.status,
+            "Ngày tạo": new Date(order.createdAt).toLocaleString(),
+            "Sản phẩm": order.products
+                .map((p) => `${p.product_id?.title} x${p.quantity} = ${p.price * p.quantity}đ`)
+                .join("; "),
+        }));
 
+        // Tạo worksheet
+        const worksheet = XLSX.utils.json_to_sheet(data);
+
+        // Tạo workbook
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Orders");
+
+        // Xuất file
+        const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+        const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+        saveAs(blob, `Orders_${new Date().toISOString().slice(0, 10)}.xlsx`);
+    };
     if (loading) return <p className="p-5">Loading...</p>;
 
     return (
         <div className="p-5">
             <h1 className="text-xl font-bold mb-4">Quản lý đơn hàng</h1>
 
-            {/* Search */}
+            {/* Search & Status Filter */}
             <div className="mb-4 flex gap-2">
                 <input
                     type="text"
@@ -98,10 +130,29 @@ const AdminOrder = () => {
                     value={searchTerm}
                     onChange={(e) => {
                         setSearchTerm(e.target.value);
-                        setCurrentPage(1); // reset về trang 1 khi search
+                        setCurrentPage(1);
                     }}
                     className="border rounded px-3 py-2 w-64"
                 />
+                <select
+                    value={statusFilter}
+                    onChange={(e) => {
+                        setStatusFilter(e.target.value);
+                        setCurrentPage(1);
+                    }}
+                    className="border rounded px-3 py-2 w-48"
+                >
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="pending">Pending</option>
+                    <option value="confirmed">Confirmed</option>
+                    <option value="canceled">Canceled</option>
+                </select>
+                <button
+                    onClick={exportToExcel}
+                    className="px-4 py-2 bg-blue-500 text-white rounded"
+                >
+                    Xuất Excel
+                </button>
             </div>
 
             {/* Table */}
@@ -185,7 +236,6 @@ const AdminOrder = () => {
             </table>
 
             {/* Pagination Controls */}
-            {/* Pagination Controls */}
             <div className="mt-4 flex justify-center items-center gap-2">
                 <button
                     disabled={currentPage === 1}
@@ -220,7 +270,6 @@ const AdminOrder = () => {
                     Sau
                 </button>
             </div>
-
         </div>
     );
 };

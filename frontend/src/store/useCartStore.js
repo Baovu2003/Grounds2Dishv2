@@ -48,7 +48,7 @@ const useCartStore = create((set, get) => ({
 
   removeItem: (productId) => {
     const items = get().items || [];
-    const newItems = items.filter((item) => item.id !== productId);
+    const newItems = items.filter((item) => item._id !== productId);
     set({ items: newItems });
     saveCartToStorage(newItems);
   },

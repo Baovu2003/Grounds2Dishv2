@@ -36,6 +36,7 @@ const Cart = () => {
   const totalPrice = getTotalPrice();
   const totalSelectedItems = getTotalSelectedItems();
   console.log("getSelectedItems", getSelectedItems)
+  console.log("totalPrice", totalPrice)
   const handleQuantityChange = (productId, newQuantity) => {
     if (newQuantity < 1) {
       removeItem(productId);
@@ -53,50 +54,57 @@ const Cart = () => {
     }
   }, [successMessage]);
 
-  if (items.length === 0) {
-    return <EmptyCart />;
-  }
+
+
+  console.log("successMessage", successMessage)
 
   return (
     <div className="min-h-screen bg-white">
       <div className="container mx-auto px-4 py-8">
-        <CartHeader
-          itemsCount={items.length}
-          selectedCount={getTotalSelectedItems()}
-        />
+        {items.length === 0 ? (
+          <EmptyCart />
+        ) : (
+          <>
+            <CartHeader
+              itemsCount={items.length}
+              selectedCount={getTotalSelectedItems()}
+            />
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <CartItemsList
-            items={items}
-            selectedItems={selectedItems}
-            onSelectAll={selectAll}
-            onUnselectAll={unselectAll}
-            onClearSelected={clearSelected}
-            onQuantityChange={handleQuantityChange}
-            onRemove={removeItem}
-            onToggleSelect={toggleSelect}
-          />
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <CartItemsList
+                items={items}
+                selectedItems={selectedItems}
+                onSelectAll={selectAll}
+                onUnselectAll={unselectAll}
+                onClearSelected={clearSelected}
+                onQuantityChange={handleQuantityChange}
+                onRemove={removeItem}
+                onToggleSelect={toggleSelect}
+              />
 
-          <OrderSummary
-            totalPrice={totalPrice}
-            totalSelectedItems={totalSelectedItems}
-            onCheckout={() => setShowCheckout(true)}
-          />
-        </div>
+              <OrderSummary
+                totalPrice={totalPrice}
+                totalSelectedItems={totalSelectedItems}
+                onCheckout={() => setShowCheckout(true)}
+              />
+            </div>
 
-        <CheckoutModal
-          isOpen={showCheckout}
-          onClose={() => setShowCheckout(false)}
-          orderForm={orderForm}
-          setOrderForm={setOrderForm}
-          selectedItems={selectedItems}
-          totalPrice={totalPrice}
-          clearSelected={clearSelected}
-        />
+            <CheckoutModal
+              isOpen={showCheckout}
+              onClose={() => setShowCheckout(false)}
+              orderForm={orderForm}
+              setOrderForm={setOrderForm}
+              selectedItems={selectedItems}
+              totalPrice={totalPrice}
+              clearSelected={clearSelected}
+              setSuccessMessage={setSuccessMessage}
+            />
+          </>
+        )}
 
-        {/* DaisyUI Toast */}
+        {/* ✅ Toast luôn render, kể cả khi cart trống */}
         {successMessage && (
-          <div className="toast toast-top toast-end z-50">
+          <div className="toast toast-top toast-end z-[9999]">
             <div className="alert alert-success flex items-center">
               <span>{successMessage}</span>
               <button
@@ -111,6 +119,7 @@ const Cart = () => {
       </div>
     </div>
   );
+
 };
 
 export default Cart;

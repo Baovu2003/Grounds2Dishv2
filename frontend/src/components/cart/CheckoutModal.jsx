@@ -7,7 +7,8 @@ const CheckoutModal = ({
   setOrderForm,
   selectedItems,
   totalPrice,
-  clearSelected
+  clearSelected,
+  setSuccessMessage,
 }) => {
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
@@ -16,7 +17,6 @@ const CheckoutModal = ({
   const [selectedDistrict, setSelectedDistrict] = useState("");
   const [selectedWard, setSelectedWard] = useState("");
   const [loading, setLoading] = useState(false);
-
   const formatPrice = (price) => {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
@@ -110,17 +110,6 @@ const CheckoutModal = ({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("provinces", provinces)
-    console.log("selectedProvince", selectedProvince)
-    console.log(provinces.find((p) => p.code === selectedProvince)?.name)
-    console.log("selectedProvince:", selectedProvince, typeof selectedProvince);
-    console.log("selectedDistrict:", selectedDistrict, typeof selectedDistrict);
-    console.log("selectedWard:", selectedWard, typeof selectedWard);
-
-    console.log("provinces:", provinces);
-    console.log("districts:", districts);
-    console.log("wards:", wards);
-
     try {
       const body = {
         fullname: orderForm.fullName,
@@ -130,7 +119,6 @@ const CheckoutModal = ({
         province: provinces.find((p) => String(p.code) === String(selectedProvince))?.name || "",
         district: districts.find((d) => String(d.code) === String(selectedDistrict))?.name || "",
         ward: wards.find((w) => String(w.code) === String(selectedWard))?.name || "",
-
         note: orderForm.notes,
         products: selectedItems.map((item) => ({
           product_id: item._id,
@@ -138,8 +126,6 @@ const CheckoutModal = ({
           price: item.price,
         })),
       };
-      console.log("selectedItems", selectedItems)
-      console.log("body", body)
 
       const res = await fetch("http://localhost:5000/api/orders/create", {
         method: "POST",
@@ -148,21 +134,22 @@ const CheckoutModal = ({
       });
 
       if (!res.ok) throw new Error("Tạo đơn hàng thất bại!");
-
+      // Gọi toast từ Cart
+      setSuccessMessage("Đặt hàng thành công 🎉");
       clearSelected();
+      onClose()
 
-      alert("Đặt hàng thành công 🎉");
-      onClose();
     } catch (error) {
       console.error("Error creating order:", error);
-      alert("Có lỗi xảy ra khi đặt hàng!");
+      setSuccessMessage("Có lỗi xảy ra khi đặt hàng ❌");
     }
   };
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-neutral-100">
+    <div className="fixed inset-0 bg-black/30 flex items-start justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl max-w-xl w-full max-h-[80vh] overflow-y-auto shadow-2xl border border-neutral-100">
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-neutral-900">
@@ -175,6 +162,7 @@ const CheckoutModal = ({
               ✕
             </button>
           </div>
+
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -242,7 +230,7 @@ const CheckoutModal = ({
                   setOrderForm({ ...orderForm, email: e.target.value })
                 }
                 className="input input-bordered w-full border-neutral-200 focus:border-neutral-400 bg-white"
-                placeholder="Nhập email (không bắt buộc)"
+                placeholder="Nhập email (bắt buộc)"
                 onFocus={(e) => {
                   e.target.style.borderColor = '#20161F';
                   e.target.style.boxShadow = '0 0 0 3px rgba(32, 22, 31, 0.15)';
@@ -444,7 +432,7 @@ const CheckoutModal = ({
           </form>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 

@@ -30,7 +30,7 @@ const CartItem = ({
               className="checkbox"
               checked={item.selected}
               onChange={() => onToggleSelect(item.id)}
-              style={item.selected ? { 
+              style={item.selected ? {
                 accentColor: '#20161F',
                 borderColor: '#20161F'
               } : {}}
@@ -82,7 +82,7 @@ const CartItem = ({
           {/* Remove */}
           <div className="w-12 flex justify-center">
             <button
-              onClick={() => onRemove(item.id)}
+              onClick={() => onRemove(item._id)}
               className="btn btn-sm btn-ghost text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors duration-300"
             >
               <Trash2 className="w-4 h-4" />
