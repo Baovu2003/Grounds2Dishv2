@@ -4,17 +4,17 @@ const PORT = 5000;
 
 // Middleware để parse JSON
 app.use(express.json());
+app.use("/uploads", express.static("uploads"));
+require("dotenv").config();
 
-// Route cơ bản
-app.get("/", (req, res) => {
-  res.send("Hello from Backend!");
-});
+const database = require("./db/database");
+database.connect();
 
-// API mẫu
-app.get("/api/data", (req, res) => {
-  res.json({ message: "This is data from backend API" });
-});
+const productRoutes = require("./routes/product.routes");
+const orderRoutes = require("./routes/order.routes");
 
+app.use("/api/products", productRoutes);
+app.use("/api/orders", orderRoutes);
 // Khởi động server
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
