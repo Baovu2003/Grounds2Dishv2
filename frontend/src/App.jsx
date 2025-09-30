@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router";
 import Layout from "./components/Layout";
 import { useThemeStore } from "./store/useThemeStore";
 import HomePage from "./pages/HomePage";
+import ProductDetail from "./pages/ProductDetail";
 import Blog from "./pages/Blog";
 import BlogDetailPage from "./pages/BlogDetail";
 import Shop from "./pages/Shop";
@@ -56,6 +57,14 @@ const App = () => {
           element={
             <Layout>
               <About />
+            </Layout>
+          }
+        />
+        <Route
+          path="/ProductDetail/Index/:id"
+          element={
+            <Layout>
+              <ProductDetail />
             </Layout>
           }
         />

@@ -28,7 +28,7 @@ const useCartStore = create((set, get) => ({
   isOpen: false,
 
   // Actions
-  addItem: (product) => {
+  addItem: (product, quantity = 1) => {
     const items = get().items || [];
     const existingItem = items.find(item => item.id === product.id);
     
@@ -36,11 +36,11 @@ const useCartStore = create((set, get) => ({
     if (existingItem) {
       newItems = items.map(item =>
         item.id === product.id
-          ? { ...item, quantity: item.quantity + 1 }
+          ? { ...item, quantity: item.quantity + Math.max(1, Number(quantity) || 1) }
           : item
       );
     } else {
-      newItems = [...items, { ...product, quantity: 1, selected: false }];
+      newItems = [...items, { ...product, quantity: Math.max(1, Number(quantity) || 1), selected: false }];
     }
     
     set({ items: newItems });

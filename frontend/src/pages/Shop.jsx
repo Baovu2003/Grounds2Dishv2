@@ -200,13 +200,13 @@ export default function Shop() {
             </p>
             
             {/* Breadcrumbs */}
-            <div className="flex justify-center mt-8">
+            {/* <div className="flex justify-center mt-8">
               <nav className="flex items-center space-x-2" style={{ color: '#a8a0a8' }}>
                 <Link to="/" className="hover:text-white transition-colors duration-300">Home</Link>
                 <ChevronRight className="w-4 h-4" />
                 <span className="text-white font-semibold">Shop</span>
               </nav>
-            </div>
+            </div> */}
           </div>
         </div>
       </section>
@@ -556,7 +556,7 @@ export default function Shop() {
                         <div className={`relative overflow-hidden ${
                           viewMode === 'list' ? 'w-72 h-full' : 'h-56'
                         }`}>
-                          {/* Product Image */}
+                          {/* Product Image (not clickable) */}
                           <div className="w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
                             <img
                               src={product.thumbnail || "/placeholder.svg"}
@@ -576,8 +576,13 @@ export default function Shop() {
                         }`}>
                           {/* Product Info */}
                           <div className="space-y-3">
-                            <h2 className="text-lg font-bold text-gray-900 leading-tight line-clamp-2 group-hover:text-gray-700 transition-colors duration-300">
-                              {product.name}
+                            <h2 className="text-lg font-bold leading-tight line-clamp-2">
+                              <Link
+                                to={`/ProductDetail/Index/${product.id}`}
+                                className="text-gray-900 group-hover:text-gray-700 transition-colors duration-300 hover:underline"
+                              >
+                                {product.name}
+                              </Link>
                             </h2>
                             <p 
                               className="text-gray-600 text-sm leading-relaxed line-clamp-2 cursor-help"

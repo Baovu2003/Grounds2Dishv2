@@ -142,9 +142,9 @@ const HomePage = ({ productSeller = [] }) => {
                   <p className="text-sm text-white/90 leading-relaxed mb-4">
                     Được làm từ bã cà phê & nhựa sinh học – an toàn, bền đẹp và thân thiện môi trường.
                   </p>
-                  <button className="bg-primary-500 hover:bg-primary-600 text-white px-6 py-2 rounded-xl font-semibold transition-all duration-300 hover:scale-105">
+                  <Link to="/shop" className="bg-primary-500 hover:bg-primary-600 text-white px-6 py-2 rounded-xl font-semibold transition-all duration-300 hover:scale-105 inline-block">
                     Khám phá
-                  </button>
+                  </Link>
                 </div>
                 <div className="absolute top-6 left-6">
                   <span className="bg-white/90 backdrop-blur-sm text-primary-700 px-3 py-1 rounded-full text-xs font-bold">
@@ -172,9 +172,9 @@ const HomePage = ({ productSeller = [] }) => {
                   <p className="text-sm text-white/90 leading-relaxed mb-4">
                     Giải pháp thay thế nhựa dùng một lần – tiện lợi và bảo vệ hành tinh.
                   </p>
-                  <button className="bg-accent-success hover:bg-green-600 text-white px-6 py-2 rounded-xl font-semibold transition-all duration-300 hover:scale-105">
+                  <Link to="/shop" className="bg-accent-success hover:bg-green-600 text-white px-6 py-2 rounded-xl font-semibold transition-all duration-300 hover:scale-105 inline-block">
                     Khám phá
-                  </button>
+                  </Link>
                 </div>
                 <div className="absolute top-6 left-6">
                   <span className="bg-white/90 backdrop-blur-sm text-accent-success px-3 py-1 rounded-full text-xs font-bold">
@@ -202,9 +202,9 @@ const HomePage = ({ productSeller = [] }) => {
                   <p className="text-sm text-white/90 leading-relaxed mb-4">
                     Món quà ý nghĩa từ bã cà phê – lan tỏa lối sống bền vững đến mọi người.
                   </p>
-                  <button className="bg-accent-warm hover:bg-orange-600 text-white px-6 py-2 rounded-xl font-semibold transition-all duration-300 hover:scale-105">
+                  <Link to="/shop" className="bg-accent-warm hover:bg-orange-600 text-white px-6 py-2 rounded-xl font-semibold transition-all duration-300 hover:scale-105 inline-block">
                     Khám phá
-                  </button>
+                  </Link>
                 </div>
                 <div className="absolute top-6 left-6">
                   <span className="bg-white/90 backdrop-blur-sm text-accent-warm px-3 py-1 rounded-full text-xs font-bold">
@@ -235,9 +235,9 @@ const HomePage = ({ productSeller = [] }) => {
                   <p className="text-sm text-white/90 leading-relaxed mb-4">
                     Được làm từ bã cà phê & nhựa sinh học – an toàn, bền đẹp và thân thiện môi trường.
                   </p>
-                  <button className="bg-primary-500 hover:bg-primary-600 text-white px-6 py-2 rounded-xl font-semibold transition-all duration-300 hover:scale-105">
+                  <Link to="/shop" className="bg-primary-500 hover:bg-primary-600 text-white px-6 py-2 rounded-xl font-semibold transition-all duration-300 hover:scale-105 inline-block">
                     Khám phá
-                  </button>
+                  </Link>
                 </div>
                 <div className="absolute top-6 left-6">
                   <span className="bg-white/90 backdrop-blur-sm text-primary-700 px-3 py-1 rounded-full text-xs font-bold">
@@ -265,9 +265,9 @@ const HomePage = ({ productSeller = [] }) => {
                   <p className="text-sm text-white/90 leading-relaxed mb-4">
                     Giải pháp thay thế nhựa dùng một lần – tiện lợi và bảo vệ hành tinh.
                   </p>
-                  <button className="bg-accent-success hover:bg-green-600 text-white px-6 py-2 rounded-xl font-semibold transition-all duration-300 hover:scale-105">
+                  <Link to="/shop" className="bg-accent-success hover:bg-green-600 text-white px-6 py-2 rounded-xl font-semibold transition-all duration-300 hover:scale-105 inline-block">
                     Khám phá
-                  </button>
+                  </Link>
                 </div>
                 <div className="absolute top-6 left-6">
                   <span className="bg-white/90 backdrop-blur-sm text-accent-success px-3 py-1 rounded-full text-xs font-bold">
@@ -295,9 +295,9 @@ const HomePage = ({ productSeller = [] }) => {
                   <p className="text-sm text-white/90 leading-relaxed mb-4">
                     Món quà ý nghĩa từ bã cà phê – lan tỏa lối sống bền vững đến mọi người.
                   </p>
-                  <button className="bg-accent-warm hover:bg-orange-600 text-white px-6 py-2 rounded-xl font-semibold transition-all duration-300 hover:scale-105">
+                  <Link to="/shop" className="bg-accent-warm hover:bg-orange-600 text-white px-6 py-2 rounded-xl font-semibold transition-all duration-300 hover:scale-105 inline-block">
                     Khám phá
-                  </button>
+                  </Link>
                 </div>
                 <div className="absolute top-6 left-6">
                   <span className="bg-white/90 backdrop-blur-sm text-accent-warm px-3 py-1 rounded-full text-xs font-bold">
@@ -372,16 +372,18 @@ const HomePage = ({ productSeller = [] }) => {
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <div className="relative overflow-hidden rounded-xl mb-4">
-                  <img
-                    src={
-                      product.ProductImages?.length > 0
-                        ? product.ProductImages[0].ImageUrl
-                        : "/images/anh1"
-                    }
-                    alt={product.ProductName}
-                    className="h-64 w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    loading="lazy"
-                  />
+                  <Link to={`/ProductDetail/Index/${product.ProductId}`} className="block">
+                    <img
+                      src={
+                        product.ProductImages?.length > 0
+                          ? product.ProductImages[0].ImageUrl
+                          : "/images/anh1"
+                      }
+                      alt={product.ProductName}
+                      className="h-64 w-full object-cover transition-transform duration-500 group-hover:scale-110 cursor-pointer"
+                      loading="lazy"
+                    />
+                  </Link>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
                   {/* Badge */}
