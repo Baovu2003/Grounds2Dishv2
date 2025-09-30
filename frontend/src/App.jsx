@@ -6,6 +6,7 @@ import Blog from "./pages/Blog";
 import BlogDetailPage from "./pages/BlogDetail";
 import Shop from "./pages/Shop";
 import Cart from "./pages/Cart";
+import About from "./pages/About";
 
 const App = () => {
   const { theme } = useThemeStore();
@@ -47,6 +48,14 @@ const App = () => {
           element={
             <Layout>
               <Cart />
+            </Layout>
+          }
+        />
+        <Route
+          path="/about"
+          element={
+            <Layout>
+              <About />
             </Layout>
           }
         />
