@@ -23,9 +23,11 @@ database.connect();
 const productRoutes = require("./routes/product.routes");
 const orderRoutes = require("./routes/order.routes");
 const productCategoryRoutes = require("./routes/product-category.routes");
+const dashboardRoutes = require("./routes/dashboard.routes");
 app.use("/api/products", productRoutes);
 app.use("/api/product-categories", productCategoryRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 // Khởi động server
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
