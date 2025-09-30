@@ -4,12 +4,21 @@ const { sendMail } = require("../helpers/sendMail");
 // [POST] /api/orders/create
 module.exports.createOrder = async (req, res) => {
   try {
-    // Tạo order mới
+    // Tạo order mới từ body
     const newOrder = new Order({
-      ...req.body,
+      fullname: req.body.fullname,
+      email: req.body.email,
+      phone: req.body.phone,
+      address: req.body.address, // số nhà, tên đường
+      province: req.body.province,
+      district: req.body.district,
+      ward: req.body.ward,
+      note: req.body.note,
+      products: req.body.products,
       status: "pending",
     });
 
+    console.log("newOrder", newOrder);
     await newOrder.save();
     console.log("New order:", newOrder);
 
@@ -18,13 +27,20 @@ module.exports.createOrder = async (req, res) => {
       "products.product_id"
     );
 
+    // Nếu có email thì gửi mail xác nhận
     if (populatedOrder.email) {
       const recipientEmail = populatedOrder.email;
+
       const orderToSend = {
-        ...populatedOrder._doc,
+        id: populatedOrder._id, // hoặc orderId
+        status: populatedOrder.status,
+        fullname: populatedOrder.fullname,
         email: recipientEmail,
         phone: populatedOrder.phone,
         address: populatedOrder.address,
+        province: populatedOrder.province,
+        district: populatedOrder.district,
+        ward: populatedOrder.ward,
         note: populatedOrder.note,
         products: populatedOrder.products.map((p) => ({
           name: p.product_id?.title || "Sản phẩm",
@@ -71,8 +87,7 @@ module.exports.updateOrderStatus = async (req, res) => {
     if (!order) return res.status(404).json({ error: "Order not found" });
 
     // Gửi mail thông báo trạng thái thay đổi
-    const recipientEmail = order.userInfo?.email || order.email;
-    if (recipientEmail) {
+    if (order.email) {
       let subject = "";
       if (status === "confirmed")
         subject = "Đơn hàng của bạn đã được xác nhận ✅";
@@ -80,10 +95,15 @@ module.exports.updateOrderStatus = async (req, res) => {
 
       if (subject) {
         const orderToSend = {
-          ...order._doc,
-          email: recipientEmail,
+          id: order._id,
+          status: order.status,
+          fullname: order.fullname,
+          email: order.email,
           phone: order.phone,
           address: order.address,
+          province: order.province,
+          district: order.district,
+          ward: order.ward,
           note: order.note,
           products: order.products.map((p) => ({
             name: p.product_id?.title || "Sản phẩm",
@@ -91,8 +111,9 @@ module.exports.updateOrderStatus = async (req, res) => {
             price: p.price,
           })),
         };
+        console.log("orderToSend", orderToSend);
 
-        sendMail(recipientEmail, subject, orderToSend);
+        sendMail(order.email, subject, orderToSend);
       }
     }
 

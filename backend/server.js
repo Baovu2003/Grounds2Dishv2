@@ -1,19 +1,30 @@
 const express = require("express");
+const cors = require("cors");
+
 const app = express();
 const PORT = 5000;
-
 // Middleware để parse JSON
 app.use(express.json());
-app.use("/uploads", express.static("uploads"));
 require("dotenv").config();
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PATCH", "DELETE"],
+    credentials: true,
+  })
+);
+const path = require("path");
+app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
 
 const database = require("./db/database");
 database.connect();
 
 const productRoutes = require("./routes/product.routes");
 const orderRoutes = require("./routes/order.routes");
-
+const productCategoryRoutes = require("./routes/product-category.routes");
 app.use("/api/products", productRoutes);
+app.use("/api/product-categories", productCategoryRoutes);
 app.use("/api/orders", orderRoutes);
 // Khởi động server
 app.listen(PORT, () => {

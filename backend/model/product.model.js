@@ -4,8 +4,9 @@ mongoose.plugin(slug);
 const productSchema = new mongoose.Schema({
   title: String,
   product_category_id: {
-    type: String,
-    default: "",
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "ProductCategory",
+    required: true,
   },
   description: String,
   price: Number,

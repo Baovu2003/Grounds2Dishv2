@@ -70,7 +70,7 @@ module.exports.sendMail = (email, subject, order) => {
           displayStatus[order.status] || order.status
         }</span></p>
         <p><strong class="green-text">Mã đơn hàng:</strong> <span class="black-text">${
-          order._id
+          order.id
         }</span></p>
         <p><strong class="green-text">Số điện thoại:</strong> <span class="black-text">${
           order.phone
