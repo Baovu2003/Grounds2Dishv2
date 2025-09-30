@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router";
 import useCartStore from "../store/useCartStore";
-import { Search, Filter, Grid, List, Heart, ShoppingCart, Star, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, Filter, Grid, List, ShoppingCart, Star, ChevronLeft, ChevronRight } from "lucide-react";
 
 const sampleCategories = [
   { CategoryId: 1, CategoryName: "Bát & Ly Tái Chế" },
@@ -567,12 +567,7 @@ export default function Shop() {
                           </div>
                           
 
-                          {/* Wishlist Button */}
-                          <div className="absolute top-3 right-3">
-                            <button className="p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:bg-white hover:scale-110 transition-all duration-300 group/wishlist">
-                              <Heart className="w-4 h-4 text-gray-500 group-hover/wishlist:text-red-500 transition-colors duration-300" />
-                            </button>
-                          </div>
+                          {/* Wishlist Button removed */}
                         </div>
 
                         {/* Content Section */}

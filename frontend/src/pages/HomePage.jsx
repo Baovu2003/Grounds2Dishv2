@@ -395,14 +395,7 @@ const HomePage = ({ productSeller = [] }) => {
                     </span>
                   </div>
 
-                  {/* Quick Actions */}
-                  <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <button className="p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-medium hover:bg-white transition-colors duration-300">
-                      <svg className="w-4 h-4 text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                      </svg>
-                    </button>
-                  </div>
+                  {/* Quick Actions removed: wishlist heart button */}
                 </div>
 
                 <div className="flex flex-col flex-grow justify-between">

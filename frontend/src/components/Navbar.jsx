@@ -1,6 +1,5 @@
 import { Link } from "react-router";
 import {
-  Heart,
   LogOutIcon,
   ShipWheelIcon,
   ShoppingCart,
@@ -84,22 +83,6 @@ const Navbar = () => {
 
           {/* ACTION BUTTONS */}
           <div className="flex items-center gap-4">
-            <Link to={"/wishlist"}>
-              <button className="relative p-5 rounded-2xl text-neutral-600 transition-all duration-300 group"
-                      onMouseEnter={(e) => {
-                        e.target.style.color = '#20161F';
-                        e.target.style.backgroundColor = 'rgba(32, 22, 31, 0.1)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.target.style.color = '#6b7280';
-                        e.target.style.backgroundColor = 'transparent';
-                      }}>
-                <Heart className="h-8 w-8" />
-                <div className="absolute inset-0 rounded-2xl scale-0 group-hover:scale-100 transition-transform duration-300"
-                      style={{ backgroundColor: 'rgba(32, 22, 31, 0.1)' }}></div>
-              </button>
-            </Link>
-
             {/* <ThemeSelector /> */}
 
             <Link to="/cart" className="relative group">
