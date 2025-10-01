@@ -9,12 +9,13 @@ const {
   restoreCategory,
   getAllCategoriesAdmin,
 } = require("../controller/product-category.controller");
+const { authenticate, requireAdmin } = require("../middlewares/auth");
 
 router.get("/", getAllCategories);
-router.get("/admin", getAllCategoriesAdmin);
-router.post("/create", createCategory);
-router.patch("/edit/:id", editCategory);
-router.patch("/delete/:id", deleteCategory);
-router.patch("/restore/:id", restoreCategory);
+router.get("/admin", authenticate, requireAdmin, getAllCategoriesAdmin);
+router.post("/create", authenticate, requireAdmin, createCategory);
+router.patch("/edit/:id", authenticate, requireAdmin, editCategory);
+router.patch("/delete/:id", authenticate, requireAdmin, deleteCategory);
+router.patch("/restore/:id", authenticate, requireAdmin, restoreCategory);
 
 module.exports = router;

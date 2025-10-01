@@ -32,6 +32,25 @@ module.exports.getAllProductsByAdmin = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+// [GET] /api/products/:id
+module.exports.getProductById = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id).populate({
+      path: "product_category_id",
+      select: "title deleted",
+      match: { deleted: false }, // chỉ populate nếu category chưa bị xóa
+    });
+
+    if (!product || product.deleted) {
+      return res.status(404).json({ error: "Không tìm thấy sản phẩm" });
+    }
+
+    res.json(product);
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ error: err.message });
+  }
+};
 
 // [POST] /api/products/create
 module.exports.createProduct = async (req, res) => {

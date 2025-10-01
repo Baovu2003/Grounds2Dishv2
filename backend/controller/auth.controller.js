@@ -198,6 +198,7 @@ async function resetPassword(req, res, next) {
   try {
     const { email, otp, newPassword } = ResetPasswordSchema.parse(req.body);
 
+    console.log(" email, otp, newPassword", email, otp, newPassword);
     // Tìm user với OTP hợp lệ
     const user = await User.findOne({
       email,
