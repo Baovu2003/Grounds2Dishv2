@@ -10,7 +10,11 @@ const productSchema = new mongoose.Schema({
   },
   description: String,
   price: Number,
-  thumbnail: String,
+  // đổi thành mảng nhiều ảnh
+  thumbnail: {
+    type: [String], // mỗi phần tử là một URL hoặc path ảnh
+    default: [], // mặc định là mảng rỗng
+  },
   status: String,
   deleted: {
     type: Boolean,
