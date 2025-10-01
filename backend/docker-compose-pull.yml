@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  app:
+    image: giatrong/2dish-be
+    container_name: 2dish-be
+    restart: unless-stopped
+    depends_on:
+      - mongodb
+    env_file:
+      - .env  
+    ports:
+      - "5000:5000" 
+    networks:
+      - 2dish-net
+
+  mongodb:
+    image: mongo:7
+    container_name: 2dish-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - 2dish-net
+
+volumes:
+  mongo-data:
+    driver: local
+
+networks: 
+  2dish-net:
+    driver: bridge
