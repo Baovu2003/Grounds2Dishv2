@@ -9,3 +9,6 @@ backend/.env
 
 # Hoặc nếu có nhiều nơi thì có thể ignore tất cả node_modules
 **/node_modules
+# Ignore file .env (tất cả cấp thư mục)
+.env
+**/.env
