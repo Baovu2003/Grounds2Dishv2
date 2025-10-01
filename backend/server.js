@@ -24,10 +24,12 @@ const productRoutes = require("./routes/product.routes");
 const orderRoutes = require("./routes/order.routes");
 const productCategoryRoutes = require("./routes/product-category.routes");
 const dashboardRoutes = require("./routes/dashboard.routes");
+const { authenticate, requireAdmin } = require("./middlewares/auth");
+
 app.use("/api/products", productRoutes);
 app.use("/api/product-categories", productCategoryRoutes);
 app.use("/api/orders", orderRoutes);
-app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/dashboard", authenticate, requireAdmin, dashboardRoutes);
 // Khởi động server
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
