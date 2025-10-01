@@ -6,6 +6,7 @@ import {
   User,
   Menu,
   X,
+  FileText,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -84,6 +85,23 @@ const Navbar = () => {
           {/* ACTION BUTTONS */}
           <div className="flex items-center gap-4">
             {/* <ThemeSelector /> */}
+
+            {/* Bill Icon */}
+            <Link to="/bill" className="relative group">
+              <button className="relative p-5 rounded-2xl text-neutral-600 transition-all duration-300"
+                      onMouseEnter={(e) => {
+                        e.target.style.color = '#20161F';
+                        e.target.style.backgroundColor = 'rgba(32, 22, 31, 0.1)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.color = '#6b7280';
+                        e.target.style.backgroundColor = 'transparent';
+                      }}>
+                <FileText className="h-8 w-8" />
+                <div className="absolute inset-0 rounded-2xl scale-0 group-hover:scale-100 transition-transform duration-300"
+                      style={{ backgroundColor: 'rgba(32, 22, 31, 0.1)' }}></div>
+              </button>
+            </Link>
 
             <Link to="/cart" className="relative group">
               <button className="relative p-5 rounded-2xl text-neutral-600 transition-all duration-300"

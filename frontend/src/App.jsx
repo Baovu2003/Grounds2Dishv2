@@ -8,6 +8,7 @@ import BlogDetailPage from "./pages/BlogDetail";
 import Shop from "./pages/Shop";
 import Cart from "./pages/Cart";
 import About from "./pages/About";
+import Bill from "./pages/Bill";
 
 const App = () => {
   const { theme } = useThemeStore();
@@ -65,6 +66,14 @@ const App = () => {
           element={
             <Layout>
               <ProductDetail />
+            </Layout>
+          }
+        />
+        <Route
+          path="/bill/:orderId?"
+          element={
+            <Layout>
+              <Bill />
             </Layout>
           }
         />
