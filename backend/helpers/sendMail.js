@@ -127,3 +127,80 @@ module.exports.sendMail = (email, subject, order) => {
     }
   });
 };
+
+// Function gửi OTP cho quên mật khẩu
+module.exports.sendOTP = (email, otp) => {
+  const mailUser = process.env.MAIL_USER;
+  const mailPassword = process.env.MAIL_PASSWORD;
+
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: mailUser,
+      pass: mailPassword,
+    },
+  });
+
+  const html = `
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      body { font-family: Arial, sans-serif; background: #f6f9fc; margin: 0; padding: 0; }
+      .container { max-width: 600px; margin: 30px auto; background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+      .header { background: linear-gradient(90deg, #16a34a, #4ade80); color: white; text-align: center; padding: 20px; }
+      .header h1 { margin: 0; font-size: 24px; }
+      .content { padding: 20px; color: #000; }
+      .content h2, .content h3 { color: #16a34a; margin-bottom: 10px; }
+      .otp-box { background: #f0fdf4; border: 2px solid #16a34a; border-radius: 8px; padding: 20px; text-align: center; margin: 20px 0; }
+      .otp-code { font-size: 32px; font-weight: bold; color: #16a34a; letter-spacing: 5px; }
+      .footer { text-align: center; font-size: 12px; color: #888; padding: 15px; }
+      .warning { background: #fef3c7; border: 1px solid #f59e0b; border-radius: 6px; padding: 15px; margin: 15px 0; color: #92400e; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>Grounds2Dish Shop</h1>
+      </div>
+      <div class="content">
+        <h2>Mã OTP đặt lại mật khẩu</h2>
+        <p>Xin chào,</p>
+        <p>Bạn đã yêu cầu đặt lại mật khẩu cho tài khoản của mình tại <strong>Grounds2Dish Shop</strong> 🌱.</p>
+        
+        <div class="otp-box">
+          <h3>Mã OTP của bạn:</h3>
+          <div class="otp-code">${otp}</div>
+        </div>
+        
+        <div class="warning">
+          <strong>Lưu ý:</strong> Mã OTP này có hiệu lực trong 10 phút. Vui lòng không chia sẻ mã này với bất kỳ ai.
+        </div>
+        
+        <p>Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này.</p>
+        <p>Trân trọng,<br>Đội ngũ Grounds2Dish Shop</p>
+      </div>
+      <div class="footer">
+        © 2025 Grounds2Dish Shop. All rights reserved.
+      </div>
+    </div>
+  </body>
+  </html>
+  `;
+
+  const mailOptions = {
+    from: `"Grounds2Dish Shop" <${mailUser}>`,
+    to: email,
+    subject: "Mã OTP đặt lại mật khẩu - Grounds2Dish Shop",
+    html: html,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.log("Error occurred:", error);
+    } else {
+      console.log("OTP Email sent:", info.response);
+    }
+  });
+};
