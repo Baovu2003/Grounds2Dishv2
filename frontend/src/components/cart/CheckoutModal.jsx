@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { apiClient } from "../../constants/apiUrl";
 
 const CheckoutModal = ({
   isOpen,
@@ -105,7 +106,7 @@ const CheckoutModal = ({
         setOrderForm({ ...orderForm, city: fullAddress });
       }
     }
-  }, [selectedProvince, selectedDistrict, selectedWard, provinces, districts, wards]);
+  }, [selectedProvince, selectedDistrict, selectedWard, provinces, districts, wards, orderForm, setOrderForm]);
 
 
   const handleSubmit = async (e) => {
@@ -127,17 +128,15 @@ const CheckoutModal = ({
         })),
       };
 
-      const res = await fetch("http://localhost:5000/api/orders/create", {
+      await apiClient("/orders/create", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
 
-      if (!res.ok) throw new Error("Tạo đơn hàng thất bại!");
       // Gọi toast từ Cart
       setSuccessMessage("Đặt hàng thành công 🎉");
       clearSelected();
-      onClose()
+      onClose();
 
     } catch (error) {
       console.error("Error creating order:", error);

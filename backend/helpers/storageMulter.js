@@ -1,4 +1,6 @@
 const multer = require("multer");
+const fs = require("fs");
+const path = require("path");
 
 // Xuất hàm cấu hình multer
 module.exports = () => {
@@ -6,8 +8,15 @@ module.exports = () => {
     const storage = multer.diskStorage({
         // Hàm xác định thư mục lưu trữ
         destination: function (req, file, cb) {
-            // Gọi callback với đường dẫn thư mục mà file sẽ được lưu
-            cb(null, './public/uploads/');  // Thiết lập thư mục đích
+            // Dùng đường dẫn tuyệt đối để tránh sai base dir khi chạy bằng Docker/PM2
+            const uploadDir = path.join(__dirname, "../public/uploads");
+            // Đảm bảo thư mục tồn tại (tạo nếu chưa có)
+            try {
+                fs.mkdirSync(uploadDir, { recursive: true });
+            } catch (err) {
+                return cb(err);
+            }
+            cb(null, uploadDir);
         },
         // Hàm xác định tên file khi lưu
         filename: function (req, file, cb) {

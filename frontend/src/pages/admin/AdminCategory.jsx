@@ -16,7 +16,7 @@ const AdminCategory = () => {
     const fetchCategories = async () => {
         try {
             setLoading(true);
-            const data = await apiAdminClient("/product-categories/admin");
+            const data = await apiAdminClient("/product-categories");
             setCategories(data);
         } catch (error) {
             console.error("Lỗi khi fetch danh mục:", error);

@@ -2,17 +2,16 @@ const express = require("express");
 const cors = require("cors");
 
 const app = express();
-const PORT = 5000;
 // Middleware để parse JSON
 app.use(express.json());
 require("dotenv").config();
 app.use(cors());
-
+const PORT = process.env.PORT || 3002;
 const path = require("path");
 app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
 
-const database = require("./db/database");
-database.connect();
+const { connectDB } = require("./db/database");
+connectDB();
 
 const productRoutes = require("./routes/product.routes");
 const orderRoutes = require("./routes/order.routes");

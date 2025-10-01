@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { Pencil, Trash2, Eye, EyeOff, Plus, X } from "lucide-react";
-
-const PRODUCT_API = "http://localhost:5000/api/products";
-const CATEGORY_API = "http://localhost:5000/api/product-categories";
+import { apiAdminClient } from "../../constants/apiUrl";
 
 const AdminProduct = () => {
     const [products, setProducts] = useState([]);
@@ -15,8 +13,7 @@ const AdminProduct = () => {
     const fetchProducts = async () => {
         try {
             setLoading(true);
-            const res = await fetch(`${PRODUCT_API}/admin`);
-            const data = await res.json();
+            const data = await apiAdminClient("/products");
             setProducts(data);
         } catch (error) {
             console.error("Lỗi khi fetch sản phẩm:", error);
@@ -28,8 +25,8 @@ const AdminProduct = () => {
     // Fetch categories
     const fetchCategories = async () => {
         try {
-            const res = await fetch(CATEGORY_API);
-            const data = await res.json();
+            setLoading(true);
+            const data = await apiAdminClient("/product-categories");
             setCategories(data);
         } catch (error) {
             console.error("Lỗi khi fetch danh mục:", error);
@@ -45,7 +42,7 @@ const AdminProduct = () => {
     const handleDelete = async (id) => {
         if (!window.confirm("Bạn có chắc muốn xóa sản phẩm này?")) return;
         try {
-            await fetch(`${PRODUCT_API}/${id}/delete`, {
+            await apiAdminClient(`/products/${id}/delete`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ deleted: true }),
@@ -58,7 +55,7 @@ const AdminProduct = () => {
     const handleRestore = async (id) => {
         if (!window.confirm("Bạn có chắc muốn khôi phục sản phẩm này?")) return;
         try {
-            await fetch(`${PRODUCT_API}/${id}/restore`, {
+            await apiAdminClient(`/products/${id}/restore`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ deleted: false }),
@@ -72,7 +69,7 @@ const AdminProduct = () => {
     // Toggle status
     const handleToggleStatus = async (id, status) => {
         try {
-            await fetch(`${PRODUCT_API}/${id}/toggle-status`, {
+            await apiAdminClient(`/products/${id}/toggle-status`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -108,7 +105,7 @@ const AdminProduct = () => {
                 .filter(f => f instanceof File)
                 .forEach(file => formData.append("thumbnail", file));
 
-            const res = await fetch(`${PRODUCT_API}/edit/${editingProduct._id}`, {
+            const res = await apiAdminClient(`/products/edit/${editingProduct._id}`, {
                 method: "PATCH",
                 body: formData,
             });
@@ -143,7 +140,7 @@ const AdminProduct = () => {
                     formData.append("thumbnail", file);
                 });
             }
-            await fetch(`${PRODUCT_API}/create`, {
+            await apiAdminClient(`/products/create`, {
                 method: "POST",
                 body: formData,
             });

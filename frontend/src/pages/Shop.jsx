@@ -9,7 +9,7 @@ export default function Shop() {
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [priceRange, setPriceRange] = useState([50000, 400000]);
+  const [priceRange, setPriceRange] = useState([0, 400000]);
   const [inputMin, setInputMin] = useState(priceRange[0]);
   const [inputMax, setInputMax] = useState(priceRange[1]);
   const [viewMode, setViewMode] = useState('grid'); // grid or list
@@ -81,7 +81,7 @@ export default function Shop() {
 
     if (search) {
       filtered = filtered.filter((p) =>
-        p.name.toLowerCase().includes(search.toLowerCase())
+        p.title.toLowerCase().includes(search.toLowerCase())
       );
     }
 
@@ -103,7 +103,7 @@ export default function Shop() {
 
     setFilteredProducts(filtered);
     setCurrentPage(1);
-  }, [selectedCategory, priceRange, search, sortBy]);
+  }, [selectedCategory, priceRange, search, sortBy, products]);
 
   // Pagination logic
   const indexOfLastProduct = currentPage * productsPerPage;
@@ -220,14 +220,14 @@ export default function Shop() {
                       className="absolute top-1/2 h-2 rounded-lg transform -translate-y-1/2"
                       style={{
                         backgroundColor: '#20161F',
-                        left: `${((priceRange[0] - 10000) / (400000 - 10000)) * 100}%`,
-                        width: `${((priceRange[1] - priceRange[0]) / (400000 - 10000)) * 100}%`,
+                        left: `${(priceRange[0] / 400000) * 100}%`,
+                        width: `${((priceRange[1] - priceRange[0]) / 400000) * 100}%`,
                       }}
                     ></div>
 
                     <input
                       type="range"
-                      min="10000"
+                      min="0"
                       max="400000"
                       step="1000"
                       value={priceRange[0]}
@@ -248,7 +248,7 @@ export default function Shop() {
 
                     <input
                       type="range"
-                      min="10000"
+                      min="0"
                       max="400000"
                       step="1000"
                       value={priceRange[1]}
@@ -320,7 +320,7 @@ export default function Shop() {
                         value={inputMin}
                         onChange={(e) => setInputMin(Number(e.target.value))}
                         onBlur={() => {
-                          let newMin = Math.max(10000, Math.min(inputMin, priceRange[1]));
+                          let newMin = Math.max(0, Math.min(inputMin, priceRange[1]));
                           setPriceRange([newMin, priceRange[1]]);
                           setInputMin(newMin);
                         }}
@@ -477,7 +477,7 @@ export default function Shop() {
                     onClick={() => {
                       setSearch('');
                       setSelectedCategory(null);
-                      setPriceRange([50000, 400000]);
+                      setPriceRange([0, 400000]);
                     }}
                     className="px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 text-white"
                     style={{ backgroundColor: '#20161F' }}
@@ -495,7 +495,7 @@ export default function Shop() {
                     }`}>
                     {currentProducts.map((product, index) => (
                       <div
-                        key={product.id}
+                        key={product._id}
                         className={`group bg-white rounded-2xl shadow-sm hover:shadow-xl hover-lift animate-fade-in overflow-hidden border border-gray-100 ${viewMode === 'list' ? 'flex flex-row h-72' : 'flex flex-col h-full'
                           }`}
                         style={{ animationDelay: `${index * 0.1}s` }}
@@ -507,7 +507,7 @@ export default function Shop() {
                           <div className="w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
                             <img
                               src={product.thumbnail[0] || "/placeholder.svg"}
-                              alt={product.name}
+                              alt={product.title}
                               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                               loading="lazy"
                             />
@@ -566,7 +566,7 @@ export default function Shop() {
                                   e.target.style.background = 'linear-gradient(135deg, #20161F 0%, #2d1f2d 100%)';
                                   e.target.style.boxShadow = '0 4px 14px 0 rgba(32, 22, 31, 0.2)';
                                 }}
-                                aria-label={`Thêm ${product.name} vào giỏ hàng`}
+                                aria-label={`Thêm ${product.title} vào giỏ hàng`}
                               >
                                 <ShoppingCart className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
                                 Thêm vào giỏ

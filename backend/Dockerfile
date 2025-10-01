@@ -7,6 +7,9 @@ RUN npm ci --omit=dev || npm install --omit=dev
 
 COPY . .
 
+RUN mkdir -p public/uploads \
+  && chown -R node:node public/uploads
+
 ENV PORT=3002
 EXPOSE 3002
 

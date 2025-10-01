@@ -1,0 +1,12 @@
+version: "3.9"
+
+services:
+  web:
+    # image: giatrong/quizrise-fe:latest
+    build: .
+    container_name: 2dish-fe
+    ports:
+      - "3052:80"
+    env_file:
+      - .env
+    restart: unless-stopped
