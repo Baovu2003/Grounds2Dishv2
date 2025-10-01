@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router";
 import useCartStore from "../store/useCartStore";
 import { Search, Filter, Grid, List, Heart, ShoppingCart, Star, ChevronLeft, ChevronRight } from "lucide-react";
+import { apiClient } from "../constants/apiUrl";
 
 export default function Shop() {
   const { addItem } = useCartStore();
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [priceRange, setPriceRange] = useState([50000, 400000]);
   const [inputMin, setInputMin] = useState(priceRange[0]);
@@ -23,11 +23,11 @@ export default function Shop() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true);
         const [catRes, prodRes] = await Promise.all([
-          fetch("http://localhost:5000/api/product-categories").then((res) => res.json()),
-          fetch("http://localhost:5000/api/products").then((res) => res.json()),
+          apiClient("/product-categories"),
+          apiClient("/products"),
         ]);
+
         console.log("categories", catRes);
         console.log("products", prodRes);
         setCategories(catRes);
@@ -35,8 +35,6 @@ export default function Shop() {
         setFilteredProducts(prodRes);
       } catch (err) {
         console.error("Lỗi khi load dữ liệu:", err);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -508,14 +506,12 @@ export default function Shop() {
                           {/* Product Image */}
                           <div className="w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
                             <img
-                              src={product.thumbnail || "/placeholder.svg"}
+                              src={product.thumbnail[0] || "/placeholder.svg"}
                               alt={product.name}
                               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                               loading="lazy"
                             />
                           </div>
-
-
                           {/* Wishlist Button */}
                           <div className="absolute top-3 right-3">
                             <button className="p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:bg-white hover:scale-110 transition-all duration-300 group/wishlist">
@@ -529,9 +525,12 @@ export default function Shop() {
                           }`}>
                           {/* Product Info */}
                           <div className="space-y-3">
-                            <h2 className="text-lg font-bold text-gray-900 leading-tight line-clamp-2 group-hover:text-gray-700 transition-colors duration-300">
+
+                            <Link
+                              to={`/productdetail/${product._id}`}
+                              className="text-lg font-bold text-gray-900 leading-tight line-clamp-2 group-hover:text-gray-700 transition-colors duration-300">
                               {product.title}
-                            </h2>
+                            </Link>
                             <p
                               className="text-gray-600 text-sm leading-relaxed line-clamp-2 cursor-help"
                               title={product.description}

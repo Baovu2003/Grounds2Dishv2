@@ -12,6 +12,9 @@ import LayoutAdmin from "./components/admin/LayoutAdmin";
 import AdminProduct from "./pages/admin/AdminProduct";
 import AdminCategory from "./pages/admin/AdminCategory";
 import AdminOrder from "./pages/admin/AdminOrder";
+import ProductDetail from "./pages/ProductDetail";
+import Login from "./pages/admin/Login";
+import ProtectedRoute from "./middleware/ProtectedRoute";
 
 const App = () => {
   const { theme } = useThemeStore();
@@ -32,6 +35,14 @@ const App = () => {
             <Layout>
               <Shop />
             </Layout>}
+        />
+        <Route
+          path="/productdetail/:id"
+          element={
+            <Layout>
+              <ProductDetail />
+            </Layout>
+          }
         />
         <Route
           path="/blog"
@@ -65,37 +76,52 @@ const App = () => {
           }
         />
         <Route
+          path="/login"
+          element={
+            <Login />
+          }
+        />
+        <Route
           path="/admin"
           element={
-            <LayoutAdmin>
-              <AdminDashboard />
-            </LayoutAdmin>
+            <ProtectedRoute>
+              <LayoutAdmin>
+                <AdminDashboard />
+              </LayoutAdmin>
+            </ProtectedRoute>
           }
         />
 
         <Route
           path="/admin/category"
           element={
-            <LayoutAdmin>
-              <AdminCategory />
-            </LayoutAdmin>
+            <ProtectedRoute>
+              <LayoutAdmin>
+                <AdminCategory />
+              </LayoutAdmin>
+            </ProtectedRoute>
           }
         />
 
         <Route
           path="/admin/product"
           element={
-            <LayoutAdmin>
-              <AdminProduct />
-            </LayoutAdmin>
+            <ProtectedRoute>
+              <LayoutAdmin>
+                <AdminProduct />
+              </LayoutAdmin>
+            </ProtectedRoute>
           }
         />
+
         <Route
           path="/admin/orders"
           element={
-            <LayoutAdmin>
-              <AdminOrder />
-            </LayoutAdmin>
+            <ProtectedRoute>
+              <LayoutAdmin>
+                <AdminOrder />
+              </LayoutAdmin>
+            </ProtectedRoute>
           }
         />
       </Routes>

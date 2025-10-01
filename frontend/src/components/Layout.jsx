@@ -1,6 +1,7 @@
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
+import FloatingContactBar from "./FloatingContactBar";
 
 const Layout = ({ children }) => {
   return (
@@ -11,6 +12,7 @@ const Layout = ({ children }) => {
           {children}
         </div>
       </main>
+      <FloatingContactBar side="right" vertical="middle" />
       <Footer />
     </div>
   );

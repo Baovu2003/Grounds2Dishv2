@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router";
 import useCartStore from "../store/useCartStore";
+import { apiClient } from "../constants/apiUrl";
 
 const HomePage = ({ productSeller = [] }) => {
   const { addItem } = useCartStore();
@@ -10,9 +11,10 @@ const HomePage = ({ productSeller = [] }) => {
   // Gọi API lấy danh sách sản phẩm
   const fetchProducts = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/products");
-      const data = await res.json();
-      setProducts(data);
+      const result = await apiClient("/products");
+      console.log("result", result)
+      setProducts(result || []);
+
     } catch (err) {
       console.error("Error fetching products:", err);
     } finally {
@@ -343,7 +345,7 @@ const HomePage = ({ productSeller = [] }) => {
               >
                 <div className="relative overflow-hidden rounded-xl mb-4">
                   <img
-                    src={product.thumbnail || "/images/placeholder.jpg"}
+                    src={product.thumbnail[0] || "/images/placeholder.jpg"}
                     alt={product.title}
                     className="h-64 w-full object-cover transition-transform duration-500 group-hover:scale-110"
                     loading="lazy"
@@ -367,7 +369,7 @@ const HomePage = ({ productSeller = [] }) => {
                 <div className="flex flex-col flex-grow justify-between">
                   <div>
                     <Link
-                      to={`/ProductDetail/Index/${product._id}`}
+                      to={`/productdetail/${product._id}`}
                       className="block max-w-full font-semibold text-lg text-neutral-800 
                 hover:text-primary-600 transition-colors duration-300 mb-2 
                 group-hover:underline 

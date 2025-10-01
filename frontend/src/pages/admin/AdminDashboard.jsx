@@ -2,8 +2,8 @@
 import React, { useEffect, useState } from "react"
 import { StatsCards } from "./StatsCards"
 import { RevenueChart } from "./RevenueChart"
+import { apiAdminClient } from "../../constants/apiUrl"
 
-const API_BASE_URL = "http://localhost:5000/api/dashboard"
 
 export default function AdminDashboard() {
     const [totalOrders, setTotalOrders] = useState({ totalConfirmed: 0, totalPending: 0, totalCanceled: 0 })
@@ -16,37 +16,37 @@ export default function AdminDashboard() {
 
     const fetchStats = async (isInitial = false) => {
         try {
-            if (isInitial) setLoading(true)
+            if (isInitial) setLoading(true);
 
-            const res = await fetch(`${API_BASE_URL}/stats/overview`)
-            if (!res.ok) throw new Error("Không thể tải dữ liệu dashboard")
+            const token = localStorage.getItem("token"); // 👈 lấy token đã lưu sau login
 
-            const data = await res.json()
+            console.log("token", token)
+            const data = await apiAdminClient("/dashboard/stats/overview");
 
-            // chỉ setState khi dữ liệu khác để tránh re-render dư thừa
             setTotalOrders((prev) =>
                 JSON.stringify(prev) === JSON.stringify(data.totalOrders) ? prev : data.totalOrders
-            )
+            );
             setTotalProductsSold((prev) =>
                 prev === data.totalProductsSold ? prev : data.totalProductsSold
-            )
+            );
             setTotalRevenue((prev) =>
                 prev === data.totalRevenue ? prev : data.totalRevenue
-            )
+            );
             setBestSellingProducts((prev) =>
                 JSON.stringify(prev) === JSON.stringify(data.bestSellingProducts) ? prev : data.bestSellingProducts
-            )
+            );
             setMonthlyRevenue((prev) =>
                 JSON.stringify(prev) === JSON.stringify(data.monthlyRevenue) ? prev : data.monthlyRevenue
-            )
+            );
 
         } catch (err) {
-            console.error(err)
-            setError(err.message)
+            console.error(err);
+            setError(err.message);
         } finally {
-            if (isInitial) setLoading(false)
+            if (isInitial) setLoading(false);
         }
-    }
+    };
+
 
     useEffect(() => {
         fetchStats(true) // lần đầu có loading

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
+import { apiAdminClient } from "../../constants/apiUrl";
 const PAGE_SIZE = 5; // số đơn mỗi trang
 
 const AdminOrder = () => {
@@ -17,8 +18,8 @@ const AdminOrder = () => {
     const fetchOrders = async () => {
         try {
             setLoading(true);
-            const res = await fetch("http://localhost:5000/api/orders");
-            const data = await res.json();
+            const data = await apiAdminClient("/orders");
+            setOrders(data);
             setOrders(data);
         } catch (err) {
             console.error("Error fetching orders:", err);
@@ -30,9 +31,8 @@ const AdminOrder = () => {
     // Cập nhật trạng thái đơn hàng
     const updateStatus = async (id, status) => {
         try {
-            await fetch(`http://localhost:5000/api/orders/status/${id}`, {
+            await apiAdminClient(`/orders/status/${id}`, {
                 method: "PATCH",
-                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ status }),
             });
             fetchOrders();

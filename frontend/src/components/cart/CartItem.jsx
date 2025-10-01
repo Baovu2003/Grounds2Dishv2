@@ -29,7 +29,7 @@ const CartItem = ({
               type="checkbox"
               className="checkbox"
               checked={item.selected}
-              onChange={() => onToggleSelect(item.id)}
+              onChange={() => onToggleSelect(item._id)}
               style={item.selected ? {
                 accentColor: '#20161F',
                 borderColor: '#20161F'
@@ -40,7 +40,7 @@ const CartItem = ({
           {/* Thumbnail */}
           <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
             <img
-              src={item.thumbnail || "/placeholder.svg"}
+              src={item.thumbnail[0] || "/placeholder.svg"}
               alt={item.name}
               className="w-full h-full object-cover"
             />
@@ -58,7 +58,7 @@ const CartItem = ({
           {/* Quantity */}
           <div className="flex items-center gap-2 w-32 justify-center">
             <button
-              onClick={() => onQuantityChange(item.id, item.quantity - 1)}
+              onClick={() => onQuantityChange(item._id, item.quantity - 1)}
               className="btn btn-sm btn-circle btn-outline border-neutral-300 hover:border-neutral-400"
               style={{ color: '#20161F' }}
             >
@@ -66,7 +66,7 @@ const CartItem = ({
             </button>
             <span className="w-8 text-center font-semibold text-neutral-900">{item.quantity}</span>
             <button
-              onClick={() => onQuantityChange(item.id, item.quantity + 1)}
+              onClick={() => onQuantityChange(item._id, item.quantity + 1)}
               className="btn btn-sm btn-circle btn-outline border-neutral-300 hover:border-neutral-400"
               style={{ color: '#20161F' }}
             >

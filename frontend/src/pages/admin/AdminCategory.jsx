@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Pencil, Trash2, Plus, X } from "lucide-react";
+import { apiAdminClient } from "../../constants/apiUrl";
 
-const API_URL = "http://localhost:5000/api/product-categories";
 
 const AdminCategory = () => {
     const [categories, setCategories] = useState([]);
@@ -16,8 +16,7 @@ const AdminCategory = () => {
     const fetchCategories = async () => {
         try {
             setLoading(true);
-            const res = await fetch(`${API_URL}/admin`);
-            const data = await res.json();
+            const data = await apiAdminClient("/product-categories/admin");
             setCategories(data);
         } catch (error) {
             console.error("Lỗi khi fetch danh mục:", error);
@@ -34,9 +33,8 @@ const AdminCategory = () => {
     const handleAdd = async (e) => {
         e.preventDefault();
         try {
-            await fetch(`${API_URL}/create`, {
+            await apiAdminClient("/product-categories/create", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ title: editingCategory.title }),
             });
             setShowAddForm(false);
@@ -53,9 +51,8 @@ const AdminCategory = () => {
     const handleUpdate = async (e) => {
         e.preventDefault();
         try {
-            await fetch(`${API_URL}/edit/${editingCategory._id}`, {
+            await apiAdminClient(`/product-categories/edit/${editingCategory._id}`, {
                 method: "PATCH",
-                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ title: editingCategory.title }),
             });
             setEditingCategory(null);
@@ -72,9 +69,12 @@ const AdminCategory = () => {
         if (!confirmAction) return;
         const { type, id } = confirmAction;
         try {
-            await fetch(`${API_URL}/${type === "delete" ? "delete" : "restore"}/${id}`, {
-                method: "PATCH",
-            });
+            await apiAdminClient(
+                `/product-categories/${type === "delete" ? "delete" : "restore"}/${id}`,
+                {
+                    method: "PATCH",
+                }
+            );
             fetchCategories();
             setToast({
                 message: type === "delete" ? "Xóa danh mục thành công !" : "Khôi phục danh mục thành công!",
