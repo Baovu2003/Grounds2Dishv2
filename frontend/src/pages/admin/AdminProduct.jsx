@@ -45,7 +45,7 @@ const AdminProduct = () => {
     const handleDelete = async (id) => {
         if (!window.confirm("Bạn có chắc muốn xóa sản phẩm này?")) return;
         try {
-            await fetch(`${PRODUCT_API}/edit/${id}`, {
+            await fetch(`${PRODUCT_API}/${id}/delete`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ deleted: true }),
@@ -58,7 +58,7 @@ const AdminProduct = () => {
     const handleRestore = async (id) => {
         if (!window.confirm("Bạn có chắc muốn khôi phục sản phẩm này?")) return;
         try {
-            await fetch(`${PRODUCT_API}/edit/${id}`, {
+            await fetch(`${PRODUCT_API}/${id}/restore`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ deleted: false }),
@@ -72,7 +72,7 @@ const AdminProduct = () => {
     // Toggle status
     const handleToggleStatus = async (id, status) => {
         try {
-            await fetch(`${PRODUCT_API}/edit/${id}`, {
+            await fetch(`${PRODUCT_API}/${id}/toggle-status`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -91,21 +91,32 @@ const AdminProduct = () => {
         try {
             const formData = new FormData();
             formData.append("title", editingProduct.title);
-            formData.append("product_category_id", editingProduct.product_category_id);
+            formData.append(
+                "product_category_id",
+                editingProduct.product_category_id._id || editingProduct.product_category_id
+            );
             formData.append("price", editingProduct.price);
             formData.append("description", editingProduct.description);
             formData.append("status", editingProduct.status || "active");
 
-            if (editingProduct.thumbnail instanceof File) {
-                formData.append("thumbnail", editingProduct.thumbnail);
-            } else if (typeof editingProduct.thumbnail === "string") {
-                formData.append("thumbnail", editingProduct.thumbnail);
-            }
+            // Chỉ lấy ảnh cũ còn lại trong mảng (người dùng chưa xóa)
+            const oldThumbnails = (editingProduct.thumbnail || []).filter(f => typeof f === "string");
+            formData.append("oldThumbnails", JSON.stringify(oldThumbnails));
 
-            await fetch(`${PRODUCT_API}/edit/${editingProduct._id}`, {
+            // Append file mới
+            (editingProduct.thumbnail || [])
+                .filter(f => f instanceof File)
+                .forEach(file => formData.append("thumbnail", file));
+
+            const res = await fetch(`${PRODUCT_API}/edit/${editingProduct._id}`, {
                 method: "PATCH",
                 body: formData,
             });
+
+            if (!res.ok) {
+                const err = await res.text();
+                throw new Error(err);
+            }
 
             setEditingProduct(null);
             fetchProducts();
@@ -113,6 +124,7 @@ const AdminProduct = () => {
             console.error("Update thất bại:", error);
         }
     };
+
 
     // Save Add
     const handleAdd = async (e) => {
@@ -125,10 +137,12 @@ const AdminProduct = () => {
             formData.append("description", editingProduct.description);
             formData.append("status", editingProduct.status || "active");
 
-            if (editingProduct.thumbnail instanceof File) {
-                formData.append("thumbnail", editingProduct.thumbnail);
+            // Nếu thumbnail là mảng nhiều ảnh
+            if (editingProduct.thumbnail?.length) {
+                editingProduct.thumbnail.forEach((file) => {
+                    formData.append("thumbnail", file);
+                });
             }
-
             await fetch(`${PRODUCT_API}/create`, {
                 method: "POST",
                 body: formData,
@@ -175,6 +189,7 @@ const AdminProduct = () => {
                             <th className="p-3 border">Tên</th>
                             <th className="p-3 border">Danh mục</th>
                             <th className="p-3 border">Giá</th>
+                            <th className="p-3 border">Đã xóa</th>
                             <th className="p-3 border">Trạng thái</th>
                             <th className="p-3 border text-center">Hành động</th>
                         </tr>
@@ -198,9 +213,9 @@ const AdminProduct = () => {
                                 return (
                                     <tr key={p._id} className="border-t hover:bg-gray-50">
                                         <td className="p-3 border">
-                                            {p.thumbnail ? (
+                                            {p.thumbnail && p.thumbnail.length > 0 ? (
                                                 <img
-                                                    src={p.thumbnail}
+                                                    src={p.thumbnail[0]} // lấy ảnh đầu tiên
                                                     alt={p.title}
                                                     className="w-16 h-16 object-cover rounded"
                                                 />
@@ -332,7 +347,7 @@ const AdminProduct = () => {
 
                             {/* Category select */}
                             <select
-                                value={editingProduct.product_category_id}
+                                value={editingProduct.product_category_id._id}
                                 onChange={(e) =>
                                     setEditingProduct({
                                         ...editingProduct,
@@ -350,34 +365,65 @@ const AdminProduct = () => {
                                 ))}
                             </select>
 
+
+
+                            {/* File input cho nhiều ảnh */}
                             <input
                                 type="file"
                                 accept="image/*"
-                                onChange={(e) =>
+                                multiple
+                                onChange={(e) => {
+                                    const newFiles = Array.from(e.target.files);
+                                    // gộp với file cũ (nếu có)
+                                    const combinedFiles = [
+                                        ...(Array.isArray(editingProduct.thumbnail) ? editingProduct.thumbnail : []),
+                                        ...newFiles
+                                    ].slice(0, 3); // tối đa 3 file
                                     setEditingProduct({
                                         ...editingProduct,
-                                        thumbnail: e.target.files?.[0],
-                                    })
-                                }
+                                        thumbnail: combinedFiles,
+                                    });
+                                }}
                                 className="w-full border rounded px-3 py-2"
                             />
 
-                            {typeof editingProduct.thumbnail === "string" &&
-                                editingProduct.thumbnail && (
-                                    <img
-                                        src={editingProduct.thumbnail}
-                                        alt="preview"
-                                        className="w-24 h-24 object-cover rounded mt-2"
-                                    />
-                                )}
-
-                            {editingProduct.thumbnail instanceof File && (
-                                <img
-                                    src={URL.createObjectURL(editingProduct.thumbnail)}
-                                    alt="preview"
-                                    className="w-24 h-24 object-cover rounded mt-2"
-                                />
-                            )}
+                            <div className="flex gap-2 mt-2">
+                                {(editingProduct?.thumbnail
+                                    ? Array.isArray(editingProduct.thumbnail)
+                                        ? editingProduct.thumbnail
+                                        : typeof editingProduct.thumbnail === "string"
+                                            ? [editingProduct.thumbnail]
+                                            : []
+                                    : []
+                                ).map((file, index) => {
+                                    let src = "";
+                                    if (typeof file === "string") src = file; // URL cũ
+                                    else if (file instanceof File) src = URL.createObjectURL(file); // File mới
+                                    return (
+                                        <div key={index} className="relative">
+                                            <img
+                                                src={src}
+                                                alt={`preview-${index}`}
+                                                className="w-24 h-24 object-cover rounded"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    const newThumbnails = [...editingProduct.thumbnail];
+                                                    newThumbnails.splice(index, 1); // xóa ảnh được click
+                                                    setEditingProduct({
+                                                        ...editingProduct,
+                                                        thumbnail: newThumbnails,
+                                                    });
+                                                }}
+                                                className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600"
+                                            >
+                                                ×
+                                            </button>
+                                        </div>
+                                    );
+                                })}
+                            </div>
 
                             <textarea
                                 value={editingProduct.description}
@@ -400,8 +446,9 @@ const AdminProduct = () => {
                         </form>
                     </div>
                 </div>
-            )}
-        </div>
+            )
+            }
+        </div >
     );
 };
 

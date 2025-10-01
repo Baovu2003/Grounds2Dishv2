@@ -11,7 +11,8 @@ const AdminOrder = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [statusFilter, setStatusFilter] = useState(""); // "" = tất cả trạng thái
     const [currentPage, setCurrentPage] = useState(1);
-
+    const [fromDate, setFromDate] = useState("");
+    const [toDate, setToDate] = useState("");
     // Lấy danh sách order
     const fetchOrders = async () => {
         try {
@@ -49,9 +50,17 @@ const AdminOrder = () => {
         const matchesSearch =
             order.fullname.toLowerCase().includes(searchTerm.toLowerCase()) ||
             order.phone.includes(searchTerm);
+
         const matchesStatus = statusFilter ? order.status === statusFilter : true;
-        return matchesSearch && matchesStatus;
+
+        let matchesDate = true;
+        const orderDate = new Date(order.createdAt);
+        if (fromDate) matchesDate = orderDate >= new Date(fromDate);
+        if (toDate) matchesDate = matchesDate && orderDate <= new Date(toDate);
+
+        return matchesSearch && matchesStatus && matchesDate;
     });
+
 
     // Pagination
     const totalPages = Math.ceil(filteredOrders.length / PAGE_SIZE);
@@ -147,6 +156,19 @@ const AdminOrder = () => {
                     <option value="confirmed">Confirmed</option>
                     <option value="canceled">Canceled</option>
                 </select>
+                {/* Filter theo ngày */}
+                <input
+                    type="date"
+                    value={fromDate}
+                    onChange={(e) => setFromDate(e.target.value)}
+                    className="border rounded px-3 py-2"
+                />
+                <input
+                    type="date"
+                    value={toDate}
+                    onChange={(e) => setToDate(e.target.value)}
+                    className="border rounded px-3 py-2"
+                />
                 <button
                     onClick={exportToExcel}
                     className="px-4 py-2 bg-blue-500 text-white rounded"

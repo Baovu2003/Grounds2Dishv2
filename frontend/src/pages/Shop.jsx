@@ -96,7 +96,7 @@ export default function Shop() {
         filtered.sort((a, b) => b.price - a.price);
         break;
       case 'name':
-        filtered.sort((a, b) => a.name.localeCompare(b.name));
+        filtered.sort((a, b) => a.title.localeCompare(b.title));
         break;
       default:
         // Keep original order
