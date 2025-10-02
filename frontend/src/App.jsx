@@ -15,6 +15,7 @@ import AdminOrder from "./pages/admin/AdminOrder";
 import ProductDetail from "./pages/ProductDetail";
 import Login from "./pages/admin/Login";
 import ProtectedRoute from "./middleware/ProtectedRoute";
+import Bill from "./pages/Bill";
 
 const App = () => {
   const { theme } = useThemeStore();
@@ -72,6 +73,14 @@ const App = () => {
           element={
             <Layout>
               <About />
+            </Layout>
+          }
+        />
+        <Route
+          path="/bill"
+          element={
+            <Layout>
+              <Bill />
             </Layout>
           }
         />

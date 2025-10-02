@@ -16,7 +16,7 @@ const AdminCategory = () => {
     const fetchCategories = async () => {
         try {
             setLoading(true);
-            const data = await apiAdminClient("/product-categories");
+            const data = await apiAdminClient("/product-categories/admin");
             setCategories(data);
         } catch (error) {
             console.error("Lỗi khi fetch danh mục:", error);
@@ -30,13 +30,22 @@ const AdminCategory = () => {
     }, []);
 
     // Handle Add
+    // Handle Add
     const handleAdd = async (e) => {
         e.preventDefault();
         try {
+            const formData = new FormData();
+            formData.append("title", editingCategory.title);
+            formData.append("description", editingCategory.description || "");
+            if (editingCategory.thumbnail instanceof File) {
+                formData.append("thumbnail", editingCategory.thumbnail);
+            }
+
             await apiAdminClient("/product-categories/create", {
                 method: "POST",
-                body: JSON.stringify({ title: editingCategory.title }),
+                body: formData,
             });
+
             setShowAddForm(false);
             setEditingCategory(null);
             fetchCategories();
@@ -51,10 +60,18 @@ const AdminCategory = () => {
     const handleUpdate = async (e) => {
         e.preventDefault();
         try {
+            const formData = new FormData();
+            formData.append("title", editingCategory.title);
+            formData.append("description", editingCategory.description || "");
+            if (editingCategory.thumbnail instanceof File) {
+                formData.append("thumbnail", editingCategory.thumbnail);
+            }
+
             await apiAdminClient(`/product-categories/edit/${editingCategory._id}`, {
                 method: "PATCH",
-                body: JSON.stringify({ title: editingCategory.title }),
+                body: formData,
             });
+
             setEditingCategory(null);
             fetchCategories();
             setToast({ message: "Cập nhật danh mục thành công!", type: "success" });
@@ -117,6 +134,8 @@ const AdminCategory = () => {
                     <thead>
                         <tr className="bg-gray-100 text-left text-sm font-semibold">
                             <th className="p-3 border">Tên danh mục</th>
+                            <th className="p-3 border">Mô tả danh mục</th>
+                            <th className="p-3 border">Ảnh</th>
                             <th className="p-3 border text-center">Hành động</th>
                         </tr>
                     </thead>
@@ -133,6 +152,16 @@ const AdminCategory = () => {
                             categories.map((c) => (
                                 <tr key={c._id} className="border-t hover:bg-gray-50">
                                     <td className="p-3 border">{c.title}</td>
+                                    <td className="p-3 border">{c.description}</td>
+                                    <td className="p-3 border">
+                                        <div className="flex items-center gap-3">
+                                            {c.thumbnail && (
+                                                <img src={c.thumbnail} alt={c.title} className="w-10 h-10 object-cover rounded" />
+                                            )}
+
+                                        </div>
+                                    </td>
+
                                     <td className="p-3 border text-center space-x-2">
                                         <button
                                             onClick={() => setEditingCategory(c)}
@@ -191,6 +220,33 @@ const AdminCategory = () => {
                                 placeholder="Tên danh mục"
                                 required
                             />
+
+                            {/* Mô tả danh mục */}
+                            <textarea
+                                value={editingCategory.description || ""}
+                                onChange={(e) => setEditingCategory({ ...editingCategory, description: e.target.value })}
+                                className="w-full border rounded px-3 py-2"
+                                placeholder="Mô tả danh mục"
+                                rows="3"
+                            />
+                            {/* Upload ảnh */}
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => setEditingCategory({ ...editingCategory, thumbnail: e.target.files[0] })}
+                                className="w-full border rounded px-3 py-2"
+                            />
+
+                            {/* Preview ảnh */}
+                            {editingCategory.thumbnail && (
+                                <div className="mt-2">
+                                    <img
+                                        src={editingCategory.thumbnail instanceof File ? URL.createObjectURL(editingCategory.thumbnail) : editingCategory.thumbnail}
+                                        alt="Preview"
+                                        className="w-32 h-32 object-cover rounded-lg border"
+                                    />
+                                </div>
+                            )}
                             <button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg">
                                 {showAddForm ? "Thêm mới" : "Lưu thay đổi"}
                             </button>

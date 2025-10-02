@@ -51,17 +51,7 @@ export default function Shop() {
       description: product.description
     });
 
-    // Show success feedback
-    const button = document.querySelector(`[data-product-id="${product.id}"]`);
-    if (button) {
-      const originalText = button.textContent;
-      button.textContent = "Đã thêm!";
-      button.classList.add("bg-green-500", "hover:bg-green-600");
-      setTimeout(() => {
-        button.textContent = originalText;
-        button.classList.remove("bg-green-500", "hover:bg-green-600");
-      }, 1500);
-    }
+
   };
 
   useEffect(() => {
@@ -552,7 +542,6 @@ export default function Shop() {
                             <div className=" transition-opacity duration-300">
                               <button
                                 onClick={() => handleAddToCart(product)}
-                                data-product-id={product.id}
                                 className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-semibold text-sm transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 active:scale-95 text-white"
                                 style={{
                                   background: 'linear-gradient(135deg, #20161F 0%, #2d1f2d 100%)',

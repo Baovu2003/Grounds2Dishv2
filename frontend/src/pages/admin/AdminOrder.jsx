@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import { apiAdminClient } from "../../constants/apiUrl";
+import Bill from "../Bill";
 const PAGE_SIZE = 5; // số đơn mỗi trang
 
 const AdminOrder = () => {
@@ -14,6 +15,9 @@ const AdminOrder = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [fromDate, setFromDate] = useState("");
     const [toDate, setToDate] = useState("");
+    const [selectedOrder, setSelectedOrder] = useState(null);
+
+    console.log("selectedOrder", selectedOrder)
     // Lấy danh sách order
     const fetchOrders = async () => {
         try {
@@ -250,7 +254,22 @@ const AdminOrder = () => {
                                             </button>
                                         </>
                                     )}
+                                    {order.status === "confirmed" && (
+                                        <button
+                                            onClick={() => setSelectedOrder(order)}
+                                            className="px-3 py-1 bg-blue-500 text-white rounded"
+                                        >
+                                            Xem bill
+                                        </button>
+                                    )}
+
+                                    {order.status === "canceled" && (
+                                        <span className="px-3 py-1 bg-gray-300 text-gray-700 rounded">
+                                            Đã hủy
+                                        </span>
+                                    )}
                                 </td>
+
                             </tr>
                         ))
                     )}
@@ -292,6 +311,24 @@ const AdminOrder = () => {
                     Sau
                 </button>
             </div>
+
+            {selectedOrder && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-xl shadow-lg w-[700px] max-h-[90vh] relative overflow-y-auto">
+                        {/* Nút đóng */}
+                        <button
+                            onClick={() => setSelectedOrder(null)}
+                            className="sticky top-2 right-2 float-right mr-2 text-gray-600 hover:text-black z-10"
+                        >
+                            ✕
+                        </button>
+
+                        {/* Nội dung Bill */}
+                        <Bill billData={selectedOrder} />
+                    </div>
+                </div>
+            )}
+
         </div>
     );
 };
