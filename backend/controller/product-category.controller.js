@@ -3,7 +3,9 @@ const ProductCategory = require("../model/product-category.model");
 // [GET] /api/product-categories
 module.exports.getAllCategories = async (req, res) => {
   try {
+    console.log("heheheheh");
     const categories = await ProductCategory.find({ deleted: false });
+    console.log("categories", categories);
     res.json(categories);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -20,11 +22,27 @@ module.exports.getAllCategoriesAdmin = async (req, res) => {
 };
 
 // [POST] /api/product-categories/create
+// module.exports.createCategory = async (req, res) => {
+//   try {
+//     const newCategory = new ProductCategory({
+//       title: req.body.title,
+//     });
+//     await newCategory.save();
+//     res.json(newCategory);
+//   } catch (err) {
+//     res.status(400).json({ error: err.message });
+//   }
+// };
 module.exports.createCategory = async (req, res) => {
   try {
     const newCategory = new ProductCategory({
       title: req.body.title,
+      description: req.body.description || "", // thêm description
+      thumbnail: req.file
+        ? `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`
+        : null, // lưu path ảnh
     });
+
     await newCategory.save();
     res.json(newCategory);
   } catch (err) {
@@ -35,12 +53,25 @@ module.exports.createCategory = async (req, res) => {
 // [PATCH] /api/product-categories/edit/:id
 module.exports.editCategory = async (req, res) => {
   try {
+    const updateData = {
+      title: req.body.title,
+      description: req.body.description, // thêm description
+    };
+
+    if (req.file) {
+      updateData.thumbnail = `${req.protocol}://${req.get("host")}/uploads/${
+        req.file.filename
+      }`;
+    }
+
     const category = await ProductCategory.findByIdAndUpdate(
       req.params.id,
-      { title: req.body.title },
+      updateData,
       { new: true }
     );
+
     if (!category) return res.status(404).json({ error: "Category not found" });
+
     res.json(category);
   } catch (err) {
     res.status(400).json({ error: err.message });

@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const productCategorySchema = new mongoose.Schema({
   title: String,
+  thumbnail: { type: String }, // link ảnh
+  description: { type: String }, // link ảnh
   deleted: {
     type: Boolean,
     default: false,
