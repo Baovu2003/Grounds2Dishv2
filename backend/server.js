@@ -15,6 +15,7 @@ connectDB();
 
 const productRoutes = require("./routes/product.routes");
 const orderRoutes = require("./routes/order.routes");
+const blogRoutes = require("./routes/blog.routes");
 const productCategoryRoutes = require("./routes/product-category.routes");
 const dashboardRoutes = require("./routes/dashboard.routes");
 const { authenticate, requireAdmin } = require("./middlewares/auth");
@@ -23,9 +24,10 @@ const authRoutes = require("./routes/auth.routes");
 app.use("/api/products", productRoutes);
 app.use("/api/product-categories", productCategoryRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/blogs", blogRoutes);
 app.use("/api/auth", authRoutes);
-
 app.use("/api/dashboard", authenticate, requireAdmin, dashboardRoutes);
+// Blog routes
 // Khởi động server
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
