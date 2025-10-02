@@ -17,10 +17,6 @@ export default function AdminDashboard() {
     const fetchStats = async (isInitial = false) => {
         try {
             if (isInitial) setLoading(true);
-
-            const token = localStorage.getItem("token"); // 👈 lấy token đã lưu sau login
-
-            console.log("token", token)
             const data = await apiAdminClient("/dashboard/stats/overview");
 
             setTotalOrders((prev) =>

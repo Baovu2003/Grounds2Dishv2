@@ -63,8 +63,8 @@ const Sidebar = () => {
         </Link>
 
         <Link
-          to="/admin/blog"
-          className={`btn btn-ghost justify-start w-full gap-3 px-3 normal-case ${currentPath === "/admin/blog" ? "btn-active" : ""}`}
+          to="/admin/blogs"
+          className={`btn btn-ghost justify-start w-full gap-3 px-3 normal-case ${currentPath === "/admin/blogs" ? "btn-active" : ""}`}
         >
           <BellIcon className="size-5 text-base-content opacity-70" />
           <span>Blog</span>

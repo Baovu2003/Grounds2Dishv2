@@ -5,16 +5,28 @@ import { ArrowRight, Users, Target, Award, Heart, Globe, Coffee, Leaf } from "lu
 const About = () => {
   const teamMembers = [
     {
-      name: "Nguyễn Văn A",
+      name: "Trần Thu Hoài",
       role: "CEO & Founder",
       image: "/images/anh1.jpg",
-      description: "Với hơn 10 năm kinh nghiệm trong ngành công nghiệp bền vững"
+      description: "Với nhiều năm kinh nghiệm dày dặn thông quá môi trường học cũng như đã đào tạo và trải nghiệm trong môi trường thực tế"
     },
     {
-      name: "Trần Thị B",
-      role: "CTO",
+      name: "Hoàng Thị Cẩm Ly",
+      role: "Marketing",
       image: "/images/anh2.jpg",
-      description: "Chuyên gia công nghệ tái chế và phát triển sản phẩm xanh"
+      description: "Chuyên gia trong lĩnh vực chiến lược tiếp thị, quảng cáo và xây dựng thương hiệu"
+    },
+    {
+      name: "Lê Văn C",
+      role: "Head of Marketing",
+      image: "/images/anh3.jpg",
+      description: "Chuyên gia marketing bền vững và phát triển thương hiệu"
+    },
+    {
+      name: "Lê Văn C",
+      role: "Head of Marketing",
+      image: "/images/anh3.jpg",
+      description: "Chuyên gia marketing bền vững và phát triển thương hiệu"
     },
     {
       name: "Lê Văn C",
@@ -31,7 +43,7 @@ const About = () => {
       description: "Grounds2Dish được thành lập với sứ mệnh biến bã cà phê thành giá trị mới"
     },
     {
-      year: "2021", 
+      year: "2021",
       title: "Sản phẩm đầu tiên",
       description: "Ra mắt dòng sản phẩm ly tái chế từ bã cà phê đầu tiên"
     },
@@ -91,12 +103,12 @@ const About = () => {
               Về Grounds2Dish
             </h1>
             <p className="text-xl text-white/90 max-w-3xl mx-auto leading-relaxed">
-              Sứ mệnh của chúng tôi là biến bã cà phê thành những sản phẩm hữu ích, 
+              Sứ mệnh của chúng tôi là biến bã cà phê thành những sản phẩm hữu ích,
               góp phần xây dựng một tương lai bền vững cho hành tinh
             </p>
           </div>
         </div>
-        
+
         {/* Decorative elements */}
         <div className="absolute top-10 right-10 w-32 h-32 opacity-10">
           <img src="/images/logo1.jpg" alt="Decorative" className="w-full h-full object-contain rounded-full" />
@@ -119,7 +131,7 @@ const About = () => {
               >
                 Home
                 <span className="absolute left-0 -bottom-1 w-0 h-0.5 transition-all group-hover:w-full"
-                      style={{ backgroundColor: '#20161F' }}></span>
+                  style={{ backgroundColor: '#20161F' }}></span>
               </Link>
             </li>
             <li>
@@ -139,18 +151,18 @@ const About = () => {
                 Sứ mệnh của chúng tôi
               </h2>
               <p className="text-lg text-neutral-700 leading-relaxed mb-6">
-                Tại Grounds2Dish, chúng tôi tin rằng mọi thứ đều có thể được tái sử dụng và tái chế. 
-                Bã cà phê - một phụ phẩm tưởng chừng như vô dụng - đã trở thành nguồn cảm hứng 
+                Tại Grounds2Dish, chúng tôi tin rằng mọi thứ đều có thể được tái sử dụng và tái chế.
+                Bã cà phê - một phụ phẩm tưởng chừng như vô dụng - đã trở thành nguồn cảm hứng
                 cho chúng tôi tạo ra những sản phẩm bền vững và hữu ích.
               </p>
               <p className="text-lg text-neutral-700 leading-relaxed mb-8">
-                Chúng tôi cam kết mang đến những giải pháp thân thiện với môi trường, 
+                Chúng tôi cam kết mang đến những giải pháp thân thiện với môi trường,
                 góp phần giảm thiểu rác thải nhựa và xây dựng một tương lai bền vững cho thế hệ mai sau.
               </p>
               <Link
                 to="/shop"
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-white transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105"
-                style={{ 
+                style={{
                   background: 'linear-gradient(135deg, #20161F 0%, #2d1f2d 100%)',
                   boxShadow: '0 4px 14px 0 rgba(32, 22, 31, 0.2)'
                 }}
@@ -191,7 +203,7 @@ const About = () => {
                 className="bg-white rounded-2xl p-8 shadow-sm border border-neutral-100 text-center hover:shadow-lg transition-all duration-300 hover-lift"
               >
                 <div className="w-16 h-16 mx-auto mb-6 rounded-full flex items-center justify-center"
-                     style={{ backgroundColor: 'rgba(32, 22, 31, 0.1)' }}>
+                  style={{ backgroundColor: 'rgba(32, 22, 31, 0.1)' }}>
                   <div style={{ color: '#20161F' }}>
                     {value.icon}
                   </div>
@@ -236,7 +248,7 @@ const About = () => {
                     </div>
                   </div>
                   <div className="w-8 h-8 bg-white rounded-full border-4 border-neutral-200 flex items-center justify-center relative z-10"
-                       style={{ borderColor: '#20161F' }}>
+                    style={{ borderColor: '#20161F' }}>
                     <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#20161F' }}></div>
                   </div>
                   <div className="w-1/2"></div>
@@ -290,14 +302,14 @@ const About = () => {
               Hãy cùng chúng tôi xây dựng tương lai bền vững
             </h2>
             <p className="text-lg text-neutral-600 mb-8 leading-relaxed">
-              Tham gia hành trình của chúng tôi và cùng nhau tạo ra những thay đổi tích cực 
+              Tham gia hành trình của chúng tôi và cùng nhau tạo ra những thay đổi tích cực
               cho môi trường và cộng đồng
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 to="/shop"
                 className="inline-flex items-center gap-2 px-8 py-4 rounded-xl font-semibold text-white transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105"
-                style={{ 
+                style={{
                   background: 'linear-gradient(135deg, #20161F 0%, #2d1f2d 100%)',
                   boxShadow: '0 4px 14px 0 rgba(32, 22, 31, 0.2)'
                 }}
@@ -308,7 +320,7 @@ const About = () => {
               <Link
                 to="/blog"
                 className="inline-flex items-center gap-2 px-8 py-4 rounded-xl font-semibold transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 border-2"
-                style={{ 
+                style={{
                   color: '#20161F',
                   borderColor: '#20161F',
                   backgroundColor: 'transparent'

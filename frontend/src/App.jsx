@@ -2,7 +2,6 @@ import { Route, Routes } from "react-router";
 import Layout from "./components/Layout";
 import { useThemeStore } from "./store/useThemeStore";
 import HomePage from "./pages/HomePage";
-import Blog from "./pages/Blog";
 import BlogDetailPage from "./pages/BlogDetail";
 import Shop from "./pages/Shop";
 import Cart from "./pages/Cart";
@@ -15,7 +14,10 @@ import AdminOrder from "./pages/admin/AdminOrder";
 import ProductDetail from "./pages/ProductDetail";
 import Login from "./pages/admin/Login";
 import ProtectedRoute from "./middleware/ProtectedRoute";
-import Bill from "./pages/Bill";
+import Blog from "./pages/Blog";
+import BlogDetail from "./pages/BlogDetail";
+import AdminBlog from "./pages/admin/AdminBlog";
+
 
 const App = () => {
   const { theme } = useThemeStore();
@@ -53,13 +55,24 @@ const App = () => {
             </Layout>
           }
         />
-        <Route
+        <Route path="/blog/:id" element={
+          <Layout>
+            <BlogDetail />
+          </Layout>
+        } />
+
+        {/* <Route path="/editor" element={<Layout>
+          <Editor />
+        </Layout>} /> */}
+
+        {/* Other pages */}
+        {/* <Route
           path="/blog/:id"
           element={
             <Layout>
               <BlogDetailPage />
             </Layout>}
-        />
+        /> */}
         <Route
           path="/cart"
           element={
@@ -73,14 +86,6 @@ const App = () => {
           element={
             <Layout>
               <About />
-            </Layout>
-          }
-        />
-        <Route
-          path="/bill"
-          element={
-            <Layout>
-              <Bill />
             </Layout>
           }
         />
@@ -129,6 +134,16 @@ const App = () => {
             <ProtectedRoute>
               <LayoutAdmin>
                 <AdminOrder />
+              </LayoutAdmin>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/blogs"
+          element={
+            <ProtectedRoute>
+              <LayoutAdmin>
+                <AdminBlog />
               </LayoutAdmin>
             </ProtectedRoute>
           }

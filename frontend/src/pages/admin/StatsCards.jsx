@@ -35,7 +35,10 @@ export function StatsCards({
         },
         {
             title: "Revenue",
-            value: totalRevenue ? `$${totalRevenue.toLocaleString()}` : "$0",
+            value: totalRevenue
+                ? new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(totalRevenue)
+                : "0 ₫",
+
             icon: DollarSign,
             description: "Total revenue",
         },

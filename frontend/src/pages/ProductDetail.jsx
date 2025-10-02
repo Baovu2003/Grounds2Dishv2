@@ -47,7 +47,7 @@ export default function ProductDetail() {
                 _id: product._id,
                 name: product.title,
                 price: product.price,
-                thumbnail: product.thumbnail[0],
+                thumbnail: product.thumbnail,
                 description: product.description,
             },
             quantity

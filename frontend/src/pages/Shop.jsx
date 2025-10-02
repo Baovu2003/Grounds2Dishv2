@@ -515,7 +515,16 @@ export default function Shop() {
                           }`}>
                           {/* Product Info */}
                           <div className="space-y-3">
-
+                            <div className="absolute top-4 right-4">
+                              <span
+                                className={`px-3 py-1 rounded-full text-xs font-semibold text-white shadow-medium ${product.status === "active"
+                                  ? "bg-gradient-to-r from-green-500 to-green-600"
+                                  : "bg-gradient-to-r from-gray-400 to-gray-600"
+                                  }`}
+                              >
+                                {product.status === "active" ? "Đang bán" : "Ngừng bán"}
+                              </span>
+                            </div>
                             <Link
                               to={`/productdetail/${product._id}`}
                               className="text-lg font-bold text-gray-900 leading-tight line-clamp-2 group-hover:text-gray-700 transition-colors duration-300">
@@ -539,7 +548,7 @@ export default function Shop() {
                             </div>
 
                             {/* Add to Cart Button - Only visible on hover */}
-                            <div className=" transition-opacity duration-300">
+                            {product.status === "active" && <div className=" transition-opacity duration-300">
                               <button
                                 onClick={() => handleAddToCart(product)}
                                 className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-semibold text-sm transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 active:scale-95 text-white"
@@ -560,7 +569,7 @@ export default function Shop() {
                                 <ShoppingCart className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
                                 Thêm vào giỏ
                               </button>
-                            </div>
+                            </div>}
                           </div>
                         </div>
                       </div>
