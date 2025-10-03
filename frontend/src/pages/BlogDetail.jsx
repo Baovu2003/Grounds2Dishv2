@@ -22,6 +22,16 @@ export default function BlogDeatil() {
 
     if (!blog) return <p className="p-6 text-center">Đang tải bài viết...</p>;
 
+    const renderArticle = (text) => {
+        if (!text) return { __html: "" };
+        // Convert markdown images ![alt](url) to img tags and keep line breaks
+        let html = text.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (m, alt, url) => {
+            return `<img src="${url}" alt="${alt}" class="my-6 rounded-xl shadow max-w-full mx-auto"/>`;
+        });
+        html = html.replace(/\n/g, "<br/>");
+        return { __html: html };
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-primary-50/30 mt-5">
             {/* Header + Breadcrumb */}
@@ -93,9 +103,7 @@ export default function BlogDeatil() {
 
 
                 </header>
-                <div className="mt-6 whitespace-pre-wrap leading-relaxed">
-                    {blog.article}
-                </div>
+                <div className="mt-6 leading-relaxed prose prose-neutral max-w-none" dangerouslySetInnerHTML={renderArticle(blog.article)}></div>
             </div>
         </div>
     );

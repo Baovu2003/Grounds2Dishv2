@@ -166,7 +166,10 @@ const Bill = ({ billData, }) => {
                                     <MapPin className="w-4 h-4 text-neutral-500 mt-1" />
                                     <div>
                                         <p className="text-sm text-neutral-600">Địa chỉ giao hàng</p>
-                                        <p className="font-semibold text-neutral-800">{billData.address}</p>
+                                        <p className="font-semibold text-neutral-800">{billData.address}
+                                            {billData.ward ? `, ${billData.ward}` : ""}
+                                            {billData.district ? `, ${billData.district}` : ""}
+                                            {billData.province ? `, ${billData.province}` : ""}</p>
                                     </div>
                                 </div>
                             </div>

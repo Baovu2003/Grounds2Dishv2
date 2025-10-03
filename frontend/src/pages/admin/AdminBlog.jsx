@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Pencil, Trash2, Plus, X } from "lucide-react";
 import { apiAdminClient } from "../../constants/apiUrl";
 
@@ -9,6 +9,59 @@ const AdminBlog = () => {
     const [showAddForm, setShowAddForm] = useState(false);
     const [confirmAction, setConfirmAction] = useState(null);
     const [toast, setToast] = useState(null);
+    const articleRef = useRef(null);
+    const lastSelectionRef = useRef({ start: 0, end: 0 });
+
+    const insertTextAtCursor = (text, posOverride) => {
+        const textarea = articleRef.current;
+        if (!textarea) return;
+        // if textarea not focused, append at end
+        const content = editingBlog.article || "";
+        let start;
+        let end;
+        if (posOverride && typeof posOverride.start === 'number') {
+            start = posOverride.start;
+            end = posOverride.end ?? posOverride.start;
+        } else {
+            start = typeof textarea.selectionStart === "number" ? textarea.selectionStart : content.length;
+            end = typeof textarea.selectionEnd === "number" ? textarea.selectionEnd : content.length;
+        }
+        // ensure each insertion starts on a new line
+        const needLeadingNewline = start > 0 && content[start - 1] !== "\n";
+        const insert = `${needLeadingNewline ? "\n" : ""}${text}`;
+        const before = content.slice(0, start);
+        const after = content.slice(end);
+        const next = `${before}${insert}${after}`;
+        setEditingBlog({ ...editingBlog, article: next });
+        requestAnimationFrame(() => {
+            const pos = (before + insert).length;
+            textarea.selectionStart = textarea.selectionEnd = pos;
+            textarea.focus();
+            lastSelectionRef.current = { start: pos, end: pos };
+        });
+    };
+
+    const copyToClipboard = async (text) => {
+        try {
+            await navigator.clipboard.writeText(text);
+            setToast({ message: "Đã copy link ảnh", type: "success" });
+        } catch {
+            setToast({ message: "Copy thất bại", type: "error" });
+        }
+    };
+
+    const focusToImageByName = (name) => {
+        const textarea = articleRef.current;
+        if (!textarea) return;
+        const content = editingBlog.article || "";
+        const token = `![${name}](`;
+        const idx = content.indexOf(token);
+        if (idx >= 0) {
+            const pos = idx + token.length;
+            textarea.focus();
+            textarea.selectionStart = textarea.selectionEnd = pos;
+        }
+    };
 
     // Fetch blogs
     const fetchBlogs = async () => {
@@ -39,6 +92,16 @@ const AdminBlog = () => {
             if (editingBlog.bannerImage instanceof File) {
                 formData.append("bannerImage", editingBlog.bannerImage);
             }
+            if (Array.isArray(editingBlog.contentImages)) {
+                editingBlog.contentImages.forEach((img) => {
+                    if (img instanceof File) {
+                        formData.append("contentImages", img);
+                    }
+                });
+            }
+            if (Array.isArray(editingBlog.contentImageUrls) && editingBlog.contentImageUrls.length) {
+                formData.append("contentImageUrls", JSON.stringify(editingBlog.contentImageUrls));
+            }
 
             await apiAdminClient("/blogs/create", {
                 method: "POST",
@@ -66,6 +129,16 @@ const AdminBlog = () => {
             formData.append("publishedAt", editingBlog.publishedAt || new Date().toISOString());
             if (editingBlog.bannerImage instanceof File) {
                 formData.append("bannerImage", editingBlog.bannerImage);
+            }
+            if (Array.isArray(editingBlog.contentImages)) {
+                editingBlog.contentImages.forEach((img) => {
+                    if (img instanceof File) {
+                        formData.append("contentImages", img);
+                    }
+                });
+            }
+            if (Array.isArray(editingBlog.contentImageUrls) && editingBlog.contentImageUrls.length) {
+                formData.append("contentImageUrls", JSON.stringify(editingBlog.contentImageUrls));
             }
 
             await apiAdminClient(`/blogs/edit/${editingBlog._id}`, {
@@ -119,10 +192,10 @@ const AdminBlog = () => {
                 <h1 className="text-2xl font-bold">Quản lý Blog</h1>
                 <button
                     onClick={() => {
-                        setEditingBlog({ title: "" });
+                        setEditingBlog({ title: "", contentImages: [] });
                         setShowAddForm(true);
                     }}
-                    className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+                    className="flex items-center gap-2 px-5 py-2 rounded-full bg-neutral-900 text-white hover:bg-neutral-800 active:scale-95 transition"
                 >
                     <Plus className="w-5 h-5" /> Thêm blog
                 </button>
@@ -159,6 +232,8 @@ const AdminBlog = () => {
                                             <img src={b.bannerImage} alt={b.title} className="w-16 h-16 object-cover rounded" />
                                         )}
                                     </td>
+                                    {/* Optionally show number of content images */}
+                                    {/* <td className="p-3 border">{Array.isArray(b.contentImages) ? b.contentImages.length : 0} ảnh</td> */}
                                     <td className="p-3 border">{new Date(b.publishedAt).toLocaleDateString()}</td>
                                     <td className="p-3 border text-center space-x-2">
                                         <button
@@ -193,7 +268,7 @@ const AdminBlog = () => {
             {/* Modal Form (Add + Edit) */}
             {(editingBlog && (showAddForm || editingBlog._id)) && (
                 <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-40">
-                    <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-lg">
+                    <div className="bg-white p-6 rounded-lg w-full max-w-3xl shadow-lg max-h-[85vh] overflow-y-auto">
                         <div className="flex justify-between items-center mb-4">
                             <h2 className="text-xl font-semibold">{showAddForm ? "Thêm blog" : "Chỉnh sửa blog"}</h2>
                             <button
@@ -207,47 +282,131 @@ const AdminBlog = () => {
                             </button>
                         </div>
 
-                        <form onSubmit={showAddForm ? handleAdd : handleUpdate} className="space-y-4">
+                        <form onSubmit={showAddForm ? handleAdd : handleUpdate} className="space-y-5">
+                            {/* Title like a big editor heading */}
                             <input
                                 type="text"
                                 value={editingBlog.title}
                                 onChange={(e) => setEditingBlog({ ...editingBlog, title: e.target.value })}
-                                className="w-full border rounded px-3 py-2"
-                                placeholder="Tiêu đề"
+                                className="w-full text-4xl md:text-5xl font-bold border-0 focus:ring-0 px-0 py-2 placeholder-gray-400"
+                                placeholder="How to make a blogging website"
                                 required
                             />
 
+                            {/* Banner image uploader (moved to top) */}
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-600">Ảnh tiêu đề (Banner)</label>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) => setEditingBlog({ ...editingBlog, bannerImage: e.target.files[0] })}
+                                    className="w-full border rounded px-3 py-2"
+                                />
+                                {editingBlog.bannerImage && (
+                                    <div className="mt-2">
+                                        <img
+                                            src={editingBlog.bannerImage instanceof File ? URL.createObjectURL(editingBlog.bannerImage) : editingBlog.bannerImage}
+                                            alt="Preview"
+                                            className="w-full max-h-60 object-contain rounded-lg border"
+                                        />
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Writing area */}
                             <textarea
                                 value={editingBlog.article || ""}
                                 onChange={(e) => setEditingBlog({ ...editingBlog, article: e.target.value })}
-                                className="w-full border rounded px-3 py-2"
-                                placeholder="Nội dung bài viết"
-                                rows="5"
+                                ref={articleRef}
+                                className="w-full h-80 md:h-96 border rounded-lg px-4 py-3 text-lg overflow-y-auto"
+                                placeholder="Start writing here..."
+                                onClick={(e) => {
+                                    lastSelectionRef.current = { start: e.target.selectionStart, end: e.target.selectionEnd };
+                                }}
+                                onKeyUp={(e) => {
+                                    lastSelectionRef.current = { start: e.target.selectionStart, end: e.target.selectionEnd };
+                                }}
+                                onSelect={(e) => {
+                                    lastSelectionRef.current = { start: e.target.selectionStart, end: e.target.selectionEnd };
+                                }}
                             />
-                            <input
-                                type="date"
-                                value={editingBlog.publishedAt ? new Date(editingBlog.publishedAt).toISOString().split("T")[0] : ""}
-                                onChange={(e) => setEditingBlog({ ...editingBlog, publishedAt: e.target.value })}
-                                className="w-full border rounded px-3 py-2"
-                            />
-                            <input
-                                type="file"
-                                accept="image/*"
-                                onChange={(e) => setEditingBlog({ ...editingBlog, bannerImage: e.target.files[0] })}
-                                className="w-full border rounded px-3 py-2"
-                            />
-                            {editingBlog.bannerImage && (
-                                <div className="mt-2">
-                                    <img
-                                        src={editingBlog.bannerImage instanceof File ? URL.createObjectURL(editingBlog.bannerImage) : editingBlog.bannerImage}
-                                        alt="Preview"
-                                        className="w-32 h-32 object-cover rounded-lg border"
-                                    />
-                                </div>
-                            )}
-                            <button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg">
-                                {showAddForm ? "Thêm mới" : "Lưu thay đổi"}
-                            </button>
+
+                            {/* Bottom toolbar: Upload images + Publish */}
+                            <div className="flex items-center gap-3">
+                                <input
+                                    id="content-images-input"
+                                    type="file"
+                                    accept="image/*"
+                                    multiple
+                                    className="hidden"
+                                    onChange={async (e) => {
+                                        const files = Array.from(e.target.files || []);
+                                        if (files.length === 0) return;
+                                        // Upload files sequentially and collect URLs
+                                        const uploadedUrls = [];
+                                        for (const file of files) {
+                                            const formData = new FormData();
+                                            formData.append("image", file);
+                                            try {
+                                                const url = await apiAdminClient("/blogs/upload", { method: "POST", body: formData });
+                                                uploadedUrls.push({ name: file.name, url });
+                                            } catch (err) {
+                                                console.error("Upload image failed", err);
+                                                setToast({ message: "Upload ảnh thất bại", type: "error" });
+                                            }
+                                        }
+
+                                        // Build new article content by inserting at last caret position
+                                        const textarea = articleRef.current;
+                                        const currentContent = (editingBlog.article || "");
+                                        const start = lastSelectionRef.current.start ?? currentContent.length;
+                                        const end = lastSelectionRef.current.end ?? start;
+                                        const before = currentContent.slice(0, start);
+                                        const after = currentContent.slice(end);
+                                        let insertion = '';
+                                        const needLeadingNewline = start > 0 && currentContent[start - 1] !== "\n";
+                                        if (needLeadingNewline) insertion += "\n";
+                                        uploadedUrls.forEach(({ name, url }, index) => {
+                                            insertion += `![${name}](${url})` + "\n";
+                                        });
+                                        const newContent = before + insertion + after;
+
+                                        // Update state once to avoid race conditions
+                                        setEditingBlog((prev) => ({
+                                            ...prev,
+                                            article: newContent,
+                                            contentImages: Array.isArray(prev.contentImages) ? [...prev.contentImages, ...files] : files,
+                                            contentImageUrls: Array.isArray(prev.contentImageUrls)
+                                                ? [...prev.contentImageUrls, ...uploadedUrls.map(x => x.url)]
+                                                : uploadedUrls.map(x => x.url),
+                                        }));
+
+                                        // Restore caret after insertion
+                                        requestAnimationFrame(() => {
+                                            const pos = (before + insertion).length;
+                                            if (textarea) {
+                                                textarea.focus();
+                                                textarea.selectionStart = textarea.selectionEnd = pos;
+                                                lastSelectionRef.current = { start: pos, end: pos };
+                                            }
+                                        });
+
+                                        e.target.value = "";
+                                    }}
+                                />
+                                <button
+                                    type="button"
+                                    className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-800"
+                                    onClick={() => document.getElementById("content-images-input").click()}
+                                >
+                                    Upload Image
+                                </button>
+                                <button type="submit" className="ml-auto px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white">
+                                    {showAddForm ? "Publish" : "Save"}
+                                </button>
+                            </div>
+
+                            {/* Links are now inserted directly into the editor; below preview list removed per request */}
                         </form>
                     </div>
                 </div>

@@ -4,18 +4,36 @@ const Blog = require("../model/blog.model");
 module.exports.createBlog = async (req, res) => {
   try {
     const { title, article } = req.body;
-    const bannerImage = req.file
-      ? `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`
+    const bannerImage = req.files && req.files.bannerImage && req.files.bannerImage[0]
+      ? `${req.protocol}://${req.get("host")}/uploads/${req.files.bannerImage[0].filename}`
       : req.body.bannerImage;
+
+    const fileImages = (req.files && req.files.contentImages ? req.files.contentImages : [])
+      .map((f) => `${req.protocol}://${req.get("host")}/uploads/${f.filename}`);
+    let urlImages = [];
+    if (req.body.contentImageUrls) {
+      if (Array.isArray(req.body.contentImageUrls)) {
+        urlImages = req.body.contentImageUrls;
+      } else {
+        try {
+          // try parse JSON string array, else push as single string
+          const parsed = JSON.parse(req.body.contentImageUrls);
+          urlImages = Array.isArray(parsed) ? parsed : [req.body.contentImageUrls];
+        } catch {
+          urlImages = [req.body.contentImageUrls];
+        }
+      }
+    }
+    const contentImages = [...fileImages, ...urlImages];
 
     const date = new Date();
     const blog = new Blog({
       title,
       article,
       bannerImage,
-      publishedAt: `${date.getDate()}-${
-        date.getMonth() + 1
-      }-${date.getFullYear()}`,
+      contentImages,
+      publishedAt: `${date.getDate()}-${date.getMonth() + 1
+        }-${date.getFullYear()}`,
     });
 
     await blog.save();
@@ -64,10 +82,29 @@ module.exports.updateBlog = async (req, res) => {
       readTime,
     };
 
-    if (req.file) {
-      updateData.bannerImage = `${req.protocol}://${req.get("host")}/uploads/${
-        req.file.filename
-      }`;
+    if (req.files && req.files.bannerImage && req.files.bannerImage[0]) {
+      updateData.bannerImage = `${req.protocol}://${req.get("host")}/uploads/${req.files.bannerImage[0].filename
+        }`;
+    }
+
+    const fileImages = req.files && req.files.contentImages && req.files.contentImages.length
+      ? req.files.contentImages.map((f) => `${req.protocol}://${req.get("host")}/uploads/${f.filename}`)
+      : [];
+    let urlImages = [];
+    if (req.body.contentImageUrls) {
+      if (Array.isArray(req.body.contentImageUrls)) {
+        urlImages = req.body.contentImageUrls;
+      } else {
+        try {
+          const parsed = JSON.parse(req.body.contentImageUrls);
+          urlImages = Array.isArray(parsed) ? parsed : [req.body.contentImageUrls];
+        } catch {
+          urlImages = [req.body.contentImageUrls];
+        }
+      }
+    }
+    if (fileImages.length || urlImages.length) {
+      updateData.contentImages = [...fileImages, ...urlImages];
     }
 
     const blog = await Blog.findByIdAndUpdate(req.params.id, updateData, {
