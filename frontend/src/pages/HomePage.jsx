@@ -107,11 +107,14 @@ const HomePage = ({ productSeller = [] }) => {
         {/* Auto Scroll Container */}
         <div className="relative overflow-hidden">
           <div className="flex justify-center gap-8 py-4">
-            <div className="flex gap-8 min-w-max">
-              {categories.slice(0, 3).map((cat) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              {categories.slice(0, 4).map((cat) => (
                 <div
                   key={cat._id}
-                  className="group relative w-80 h-96 rounded-3xl overflow-hidden shadow-large hover:shadow-xl transition-all duration-700 transform hover:-translate-y-3 hover:scale-105 bg-white"
+                  className="group relative w-full max-w-sm sm:max-w-md lg:max-w-xs 
+             aspect-[4/5] rounded-3xl overflow-hidden 
+             shadow-large hover:shadow-xl transition-all duration-700 
+             transform hover:-translate-y-3 hover:scale-105 bg-white"
                 >
                   <figure className="h-full w-full">
                     <img
@@ -121,23 +124,24 @@ const HomePage = ({ productSeller = [] }) => {
                     />
                   </figure>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
-                  <div className="absolute bottom-0 left-0 right-0 p-8 text-white transform translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
-                    <h3 className="text-2xl font-display font-bold mb-3 text-white">
+                  <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 text-white transform translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                    <h3 className="text-xl sm:text-2xl font-display font-bold mb-2 sm:mb-3">
                       {cat.title}
                     </h3>
-                    <p className="text-sm text-white/90 leading-relaxed mb-4">
+                    <p className="text-sm sm:text-base text-white/90 leading-relaxed mb-3 sm:mb-4">
                       {cat.description || "Không có mô tả cho danh mục này."}
                     </p>
-                    <button className="bg-primary-500 hover:bg-primary-600 text-white px-6 py-2 rounded-xl font-semibold transition-all duration-300 hover:scale-105">
+                    <button className="bg-primary-500 hover:bg-primary-600 text-white px-4 sm:px-6 py-2 rounded-xl font-semibold transition-all duration-300 hover:scale-105">
                       Khám phá
                     </button>
                   </div>
-                  <div className="absolute top-6 left-6">
-                    <span className="bg-white/90 backdrop-blur-sm text-primary-700 px-3 py-1 rounded-full text-xs font-bold">
+                  <div className="absolute top-4 left-4 sm:top-6 sm:left-6">
+                    <span className="bg-white/90 backdrop-blur-sm text-primary-700 px-2 sm:px-3 py-1 rounded-full text-xs font-bold">
                       {cat.slug?.toUpperCase() || "CATEGORY"}
                     </span>
                   </div>
                 </div>
+
               ))}
             </div>
           </div>

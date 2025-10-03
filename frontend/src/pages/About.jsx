@@ -38,8 +38,8 @@ const About = () => {
 
   const milestones = [
     {
-      year: "2020",
-      title: "Thành lập công ty",
+      year: "Tháng 8",
+      title: "Thành lập dự án",
       description: "Grounds2Dish được thành lập với sứ mệnh biến bã cà phê thành giá trị mới"
     },
     {

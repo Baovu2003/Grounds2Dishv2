@@ -32,9 +32,11 @@ export default function Blog() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-primary-50/30">
             {/* Hero / Header */}
-            <div className="absolute inset-0 bg-black/20"></div>
+            <div className="absolute "></div>
 
-            <section className="relative py-20 overflow-hidden" style={{ background: 'linear-gradient(135deg, #20161F 0%, #2d1f2d 50%, #1a0f1a 100%)' }}>
+            <section className="relative py-20 overflow-hidden"
+                style={{ background: 'linear-gradient(135deg, #20161F 0%, #2d1f2d 50%, #1a0f1a 100%)' }}
+            >
                 <div className="absolute inset-0 bg-black/20"></div>
                 <div className="relative z-10 max-w-7xl mx-auto px-6 text-center">
                     <div className="space-y-6">

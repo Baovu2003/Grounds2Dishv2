@@ -29,7 +29,7 @@ const DEFAULT_ITEMS = [
     {
         key: "messenger",
         label: "Facebook Messenger",
-        href: "https://m.me",
+        href: "https://www.facebook.com/messages/t/628654717005233",
         bg: "bg-[#0084FF] hover:bg-[#2b9bff]",
         icon: (
             <svg viewBox="0 0 24 24" className="w-5 h-5 md:w-6 md:h-6 text-white" aria-hidden="true">
