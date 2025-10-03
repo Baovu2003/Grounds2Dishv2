@@ -10,7 +10,12 @@ const AdminProduct = () => {
     const [showAddForm, setShowAddForm] = useState(false);
     const [confirmAction, setConfirmAction] = useState(null); // { message, onConfirm }
     const [toast, setToast] = useState(null); // { message, type }
-
+    const [filterCategory, setFilterCategory] = useState("");
+    const [searchTitle, setSearchTitle] = useState("");
+    const [filterPriceMin, setFilterPriceMin] = useState("");
+    const [filterPriceMax, setFilterPriceMax] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const productsPerPage = 5;
     // Auto hide toast
     useEffect(() => {
         if (toast) {
@@ -46,7 +51,9 @@ const AdminProduct = () => {
         fetchProducts();
         fetchCategories();
     }, []);
-
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [filterCategory, searchTitle, filterPriceMin, filterPriceMax]);
     // Delete product
     const handleDelete = (id) => {
         setConfirmAction({
@@ -175,6 +182,27 @@ const AdminProduct = () => {
         }
         setConfirmAction(null);
     };
+    const filteredProducts = products.filter((p) => {
+        // Filter by category
+        const matchCategory = filterCategory ? (
+            typeof p.product_category_id === "object"
+                ? p.product_category_id._id === filterCategory
+                : p.product_category_id === filterCategory
+        ) : true;
+        // Search by title
+        const matchTitle = searchTitle
+            ? p.title.toLowerCase().includes(searchTitle.toLowerCase())
+            : true;
+        // Filter by price range
+        const price = Number(p.price);
+        const matchPriceMin = filterPriceMin ? price >= Number(filterPriceMin) : true;
+        const matchPriceMax = filterPriceMax ? price <= Number(filterPriceMax) : true;
+        return matchCategory && matchTitle && matchPriceMin && matchPriceMax;
+    });
+    const indexOfLastProduct = currentPage * productsPerPage;
+    const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+    const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+    const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
     return (
         <div className="p-6">
@@ -198,7 +226,60 @@ const AdminProduct = () => {
                     <Plus className="w-5 h-5" /> Thêm sản phẩm
                 </button>
             </div>
+            <div className="flex flex-wrap gap-4 mb-4">
+                <select
+                    value={filterCategory}
+                    onChange={(e) => setFilterCategory(e.target.value)}
+                    className="border rounded px-3 py-2"
+                >
+                    <option value="">Tất cả danh mục</option>
+                    {categories.map((c) => (
+                        <option key={c._id} value={c._id}>{c.title}</option>
+                    ))}
+                </select>
+                <input
+                    type="text"
+                    value={searchTitle}
+                    onChange={(e) => setSearchTitle(e.target.value)}
+                    className="border rounded px-3 py-2"
+                    placeholder="Tìm theo tên sản phẩm"
+                />
+                <input
+                    type="number"
+                    value={filterPriceMin}
+                    onChange={(e) => {
+                        const value = Math.max(0, Number(e.target.value)); // không cho âm
+                        setFilterPriceMin(value);
+                    }}
+                    className="border rounded px-3 py-2"
+                    placeholder="Giá từ"
+                    min={0}
+                />
 
+                <input
+                    type="number"
+                    value={filterPriceMax}
+                    onChange={(e) => {
+                        const value = Math.max(0, Number(e.target.value)); // không cho âm
+                        setFilterPriceMax(value);
+                    }}
+                    className="border rounded px-3 py-2"
+                    placeholder="Giá đến"
+                    min={0}
+                />
+
+                <button
+                    className="px-4 py-2 rounded bg-gray-200"
+                    onClick={() => {
+                        setFilterCategory("");
+                        setSearchTitle("");
+                        setFilterPriceMin("");
+                        setFilterPriceMax("");
+                    }}
+                >
+                    Xóa lọc
+                </button>
+            </div>
             {/* Table */}
             <div className="overflow-x-auto rounded-lg shadow mb-6">
                 <table className="min-w-full bg-white border">
@@ -220,14 +301,14 @@ const AdminProduct = () => {
                                     Đang tải...
                                 </td>
                             </tr>
-                        ) : products.length === 0 ? (
+                        ) : currentProducts.length === 0 ? (
                             <tr>
                                 <td colSpan={7} className="text-center py-6">
                                     Không có sản phẩm nào
                                 </td>
                             </tr>
                         ) : (
-                            products.map((p) => (
+                            currentProducts.map((p) => (
                                 <tr key={p._id} className="border-t hover:bg-gray-50">
                                     <td className="p-3 border">
                                         {p.thumbnail && p.thumbnail.length > 0 ? (
@@ -307,6 +388,7 @@ const AdminProduct = () => {
                         )}
                     </tbody>
                 </table>
+
             </div>
 
             {/* Confirm Modal */}
@@ -328,7 +410,35 @@ const AdminProduct = () => {
                     </div>
                 </div>
             )}
-
+            {totalPages > 1 && (
+                <div className="flex justify-center mt-4">
+                    <nav className="flex gap-2">
+                        <button
+                            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                            disabled={currentPage === 1}
+                            className="px-3 py-2 rounded border"
+                        >
+                            Trước
+                        </button>
+                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
+                            <button
+                                key={number}
+                                onClick={() => setCurrentPage(number)}
+                                className={`px-3 py-1 rounded border ${currentPage === number ? "bg-blue-600 text-white" : ""}`}
+                            >
+                                {number}
+                            </button>
+                        ))}
+                        <button
+                            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                            disabled={currentPage === totalPages}
+                            className="px-3 py-2 rounded border"
+                        >
+                            Sau
+                        </button>
+                    </nav>
+                </div>
+            )}
             {/* Toast */}
             {toast && (
                 <div className="fixed top-5 right-5 z-50">

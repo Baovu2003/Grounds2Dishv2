@@ -205,10 +205,10 @@ const AdminOrder = () => {
                                 <td className="p-3 border">
                                     <div>
                                         <p className="font-medium">{order.fullname}</p>
-                                        <p className="text-sm text-gray-600">{order.email}</p>
-                                        <p className="text-sm text-gray-600">{order.phone}</p>
+                                        <p className="text-sm text-gray-600"><span><strong>Email:</strong></span> {order.email}</p>
+                                        <p className="text-sm text-gray-600"><span><strong>Phone:</strong></span> {order.phone}</p>
                                         <p className="text-sm">
-                                            {order.address}, {order.ward}, {order.district}, {order.province}
+                                            <span><strong>Address:</strong></span> {order.address}, {order.ward}, {order.district}, {order.province}
                                         </p>
                                     </div>
                                 </td>

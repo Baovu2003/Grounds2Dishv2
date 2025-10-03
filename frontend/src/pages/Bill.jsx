@@ -298,15 +298,7 @@ const Bill = ({ billData, }) => {
                             </div>
                         </div>
                     </div>
-                    {/* Action Buttons */}
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <Link to="/" className="btn-secondary">
-                            Về trang chủ
-                        </Link>
-                        <Link to="/shop" className="btn-primary">
-                            Tiếp tục mua sắm
-                        </Link>
-                    </div>
+
                 </div>
             </div>
         </div>

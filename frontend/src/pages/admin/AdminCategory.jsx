@@ -12,6 +12,9 @@ const AdminCategory = () => {
     const [confirmAction, setConfirmAction] = useState(null);
     const [toast, setToast] = useState(null); // { message: string, type: 'success'|'error' }
 
+    // ...existing code...
+    const [searchTitle, setSearchTitle] = useState("");
+
     // Fetch categories
     const fetchCategories = async () => {
         try {
@@ -112,20 +115,34 @@ const AdminCategory = () => {
         const timer = setTimeout(() => setToast(null), 3000);
         return () => clearTimeout(timer);
     }, [toast]);
+    const filteredCategories = categories.filter((c) =>
+        c.title.toLowerCase().includes(searchTitle.toLowerCase())
+    );
     return (
         <div className="p-6">
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
                 <h1 className="text-2xl font-bold">Quản lý danh mục</h1>
-                <button
-                    onClick={() => {
-                        setEditingCategory({ title: "" });
-                        setShowAddForm(true);
-                    }}
-                    className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
-                >
-                    <Plus className="w-5 h-5" /> Thêm danh mục
-                </button>
+                <div className="flex gap-2">
+                    <input
+                        type="text"
+                        value={searchTitle}
+                        onChange={e => {
+                            setSearchTitle(e.target.value);
+                        }}
+                        className="border rounded px-3 py-2"
+                        placeholder="Tìm kiếm theo tên"
+                    />
+                    <button
+                        onClick={() => {
+                            setEditingCategory({ title: "" });
+                            setShowAddForm(true);
+                        }}
+                        className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
+                    >
+                        <Plus className="w-5 h-5" /> Thêm danh mục
+                    </button>
+                </div>
             </div>
 
             {/* Table */}
@@ -144,12 +161,12 @@ const AdminCategory = () => {
                             <tr>
                                 <td colSpan={2} className="text-center py-6">Đang tải...</td>
                             </tr>
-                        ) : categories.length === 0 ? (
+                        ) : filteredCategories.length === 0 ? (
                             <tr>
                                 <td colSpan={2} className="text-center py-6">Không có danh mục nào</td>
                             </tr>
                         ) : (
-                            categories.map((c) => (
+                            filteredCategories.map((c) => (
                                 <tr key={c._id} className="border-t hover:bg-gray-50">
                                     <td className="p-3 border">{c.title}</td>
                                     <td className="p-3 border">{c.description}</td>
