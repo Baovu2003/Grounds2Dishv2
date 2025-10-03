@@ -20,9 +20,8 @@ import AdminBlog from "./pages/admin/AdminBlog";
 
 
 const App = () => {
-  const { theme } = useThemeStore();
   return (
-    <div className="h-screen" data-theme={theme}>
+    <div className="h-screen" >
       <Routes>
         <Route
           path="/"
