@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import {
   Heart,
   LogOutIcon,
@@ -14,6 +14,8 @@ import ThemeSelector from "./ThemeSelector";
 import useCartStore from "../store/useCartStore";
 
 const Navbar = () => {
+  const location = useLocation();
+  const isActive = (path) => location.pathname === path;
   const { getTotalItems } = useCartStore();
   const totalItems = getTotalItems();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -39,8 +41,8 @@ const Navbar = () => {
               </div>
               <div className="flex flex-col">
                 <span className="text-5xl font-display font-bold text-neutral-900 tracking-tight transition-colors duration-300 drop-shadow-sm"
-                      onMouseEnter={(e) => e.target.style.color = '#20161F'}
-                      onMouseLeave={(e) => e.target.style.color = '#1f2937'}>
+                  onMouseEnter={(e) => e.target.style.color = '#20161F'}
+                  onMouseLeave={(e) => e.target.style.color = '#1f2937'}>
                   Grounds2Dish
                 </span>
                 <span className="text-base text-neutral-600 font-body font-semibold tracking-wider uppercase">
@@ -62,20 +64,30 @@ const Navbar = () => {
                   <Link
                     to={item.to}
                     className="relative px-8 py-4 rounded-2xl font-body font-bold text-lg text-neutral-700 transition-all duration-300 group"
+                    style={
+                      isActive(item.to)
+                        ? { color: '#20161F', backgroundColor: 'rgba(32, 22, 31, 0.1)' }
+                        : {}
+                    }
                     onMouseEnter={(e) => {
                       e.target.style.color = '#20161F';
                       e.target.style.backgroundColor = 'rgba(32, 22, 31, 0.1)';
                     }}
                     onMouseLeave={(e) => {
-                      e.target.style.color = '#374151';
-                      e.target.style.backgroundColor = 'transparent';
+                      if (isActive(item.to)) {
+                        e.target.style.color = '#20161F';
+                        e.target.style.backgroundColor = 'rgba(32, 22, 31, 0.1)';
+                      } else {
+                        e.target.style.color = '#374151';
+                        e.target.style.backgroundColor = 'transparent';
+                      }
                     }}
                   >
                     <span className="relative z-10">{item.label}</span>
                     <div className="absolute inset-0 rounded-2xl scale-0 group-hover:scale-100 transition-transform duration-300"
-                          style={{ backgroundColor: 'rgba(32, 22, 31, 0.1)' }}></div>
-                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-1 transition-all duration-300 group-hover:w-12"
-                          style={{ backgroundColor: '#20161F' }}></div>
+                      style={{ backgroundColor: 'rgba(32, 22, 31, 0.1)' }}></div>
+                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 h-1 transition-all duration-300"
+                      style={{ backgroundColor: '#20161F', width: isActive(item.to) ? '3rem' : '0' }}></div>
                   </Link>
                 </li>
               ))}
@@ -84,37 +96,37 @@ const Navbar = () => {
 
           {/* ACTION BUTTONS */}
           <div className="flex items-center gap-4">
-            <Link to={"/wishlist"}>
+            {/* <Link to={"/wishlist"}>
               <button className="relative p-5 rounded-2xl text-neutral-600 transition-all duration-300 group"
-                      onMouseEnter={(e) => {
-                        e.target.style.color = '#20161F';
-                        e.target.style.backgroundColor = 'rgba(32, 22, 31, 0.1)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.target.style.color = '#6b7280';
-                        e.target.style.backgroundColor = 'transparent';
-                      }}>
+                onMouseEnter={(e) => {
+                  e.target.style.color = '#20161F';
+                  e.target.style.backgroundColor = 'rgba(32, 22, 31, 0.1)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.color = '#6b7280';
+                  e.target.style.backgroundColor = 'transparent';
+                }}>
                 <Heart className="h-8 w-8" />
                 <div className="absolute inset-0 rounded-2xl scale-0 group-hover:scale-100 transition-transform duration-300"
-                      style={{ backgroundColor: 'rgba(32, 22, 31, 0.1)' }}></div>
+                  style={{ backgroundColor: 'rgba(32, 22, 31, 0.1)' }}></div>
               </button>
-            </Link>
+            </Link> */}
 
             {/* <ThemeSelector /> */}
 
             <Link to="/cart" className="relative group">
               <button className="relative p-5 rounded-2xl text-neutral-600 transition-all duration-300"
-                      onMouseEnter={(e) => {
-                        e.target.style.color = '#20161F';
-                        e.target.style.backgroundColor = 'rgba(32, 22, 31, 0.1)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.target.style.color = '#6b7280';
-                        e.target.style.backgroundColor = 'transparent';
-                      }}>
+                onMouseEnter={(e) => {
+                  e.target.style.color = '#20161F';
+                  e.target.style.backgroundColor = 'rgba(32, 22, 31, 0.1)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.color = '#6b7280';
+                  e.target.style.backgroundColor = 'transparent';
+                }}>
                 <ShoppingCart className="h-8 w-8" />
                 <div className="absolute inset-0 rounded-2xl scale-0 group-hover:scale-100 transition-transform duration-300"
-                      style={{ backgroundColor: 'rgba(32, 22, 31, 0.1)' }}></div>
+                  style={{ backgroundColor: 'rgba(32, 22, 31, 0.1)' }}></div>
               </button>
               {totalItems > 0 && (
                 <span className="absolute -top-2 -right-2 bg-gradient-to-r from-accent-error to-red-500 text-white text-base rounded-full w-8 h-8 flex items-center justify-center font-bold shadow-medium animate-scale-in">
@@ -142,7 +154,7 @@ const Navbar = () => {
                 <Menu className="h-8 w-8" />
               )}
               <div className="absolute inset-0 rounded-2xl scale-0 group-hover:scale-100 transition-transform duration-300"
-                    style={{ backgroundColor: 'rgba(32, 22, 31, 0.1)' }}></div>
+                style={{ backgroundColor: 'rgba(32, 22, 31, 0.1)' }}></div>
             </button>
           </div>
         </div>
@@ -162,13 +174,23 @@ const Navbar = () => {
                   to={item.to}
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block px-8 py-5 rounded-2xl font-body font-bold text-xl text-neutral-700 transition-all duration-300 group"
+                  style={
+                    isActive(item.to)
+                      ? { color: '#20161F', backgroundColor: 'rgba(32, 22, 31, 0.1)' }
+                      : {}
+                  }
                   onMouseEnter={(e) => {
                     e.target.style.color = '#20161F';
                     e.target.style.backgroundColor = 'rgba(32, 22, 31, 0.1)';
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.color = '#374151';
-                    e.target.style.backgroundColor = 'transparent';
+                    if (isActive(item.to)) {
+                      e.target.style.color = '#20161F';
+                      e.target.style.backgroundColor = 'rgba(32, 22, 31, 0.1)';
+                    } else {
+                      e.target.style.color = '#374151';
+                      e.target.style.backgroundColor = 'transparent';
+                    }
                   }}
                 >
                   {item.label}
