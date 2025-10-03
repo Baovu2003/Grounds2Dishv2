@@ -5,6 +5,8 @@ import { apiClient } from "../constants/apiUrl";
 
 export default function Blog() {
     const [blogs, setBlogs] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const pageSize = 6;
 
     useEffect(() => {
         const fetchBlogs = async () => {
@@ -17,6 +19,15 @@ export default function Blog() {
         };
         fetchBlogs();
     }, []);
+
+    const totalPages = Math.max(1, Math.ceil(blogs.length / pageSize));
+    const startIdx = (currentPage - 1) * pageSize;
+    const pageBlogs = blogs.slice(startIdx, startIdx + pageSize);
+    const gotoPage = (p) => {
+        if (p < 1 || p > totalPages) return;
+        setCurrentPage(p);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-primary-50/30">
@@ -81,20 +92,37 @@ export default function Blog() {
                     <p className="text-center text-gray-500">No blogs available yet.</p>
                 ) : (
                     <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-                        {blogs.slice(0, 6).map((blog) => (
+                        {pageBlogs.map((blog) => (
                             <BlogCard key={blog._id} blog={blog} />
                         ))}
                     </div>
                 )}
 
-                {blogs.length > 6 && (
-                    <div className="mt-12 text-center">
-                        <Link
-                            to="/blog"
-                            className="inline-block px-6 py-3 rounded-lg bg-purple-600 text-white font-semibold hover:bg-purple-700 transition"
+                {blogs.length > pageSize && (
+                    <div className="mt-10 flex items-center justify-center gap-2">
+                        <button
+                            onClick={() => gotoPage(currentPage - 1)}
+                            className="px-3 py-2 rounded-lg bg-neutral-200 text-neutral-800 disabled:opacity-50"
+                            disabled={currentPage === 1}
                         >
-                            View More Blogs →
-                        </Link>
+                            Prev
+                        </button>
+                        {Array.from({ length: totalPages }).map((_, i) => (
+                            <button
+                                key={i}
+                                onClick={() => gotoPage(i + 1)}
+                                className={`px-3 py-2 rounded-lg border ${currentPage === i + 1 ? 'bg-neutral-900 text-white border-neutral-900' : 'bg-white text-neutral-800 border-neutral-200'}`}
+                            >
+                                {i + 1}
+                            </button>
+                        ))}
+                        <button
+                            onClick={() => gotoPage(currentPage + 1)}
+                            className="px-3 py-2 rounded-lg bg-neutral-200 text-neutral-800 disabled:opacity-50"
+                            disabled={currentPage === totalPages}
+                        >
+                            Next
+                        </button>
                     </div>
                 )}
             </section>

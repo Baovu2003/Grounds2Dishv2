@@ -16,6 +16,16 @@ export default function BlogCard({ blog }) {
         )
     }
 
+    const previewText = (() => {
+        const raw = blog.article || "";
+        // remove markdown image syntax and standalone urls for card preview
+        const withoutImages = raw.replace(/!\[[^\]]*\]\(([^)]+)\)/g, "");
+        const withoutUrls = withoutImages
+            .replace(/https?:\/\/\S+/g, "")
+            .replace(/\((https?:\/\/[^\s)]+)\)/g, "");
+        return withoutUrls.replace(/\n+/g, " ").trim();
+    })();
+
     return (
         <div className="group relative bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-amber-100">
             <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-amber-100 to-orange-100">
@@ -37,7 +47,7 @@ export default function BlogCard({ blog }) {
                 </h2>
 
                 <p className="text-sm leading-relaxed line-clamp-2">
-                    {blog.article?.substring(0, 100)}...
+                    {previewText.substring(0, 100)}...
                 </p>
 
                 <div className="flex items-center justify-between">

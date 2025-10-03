@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router";
 import { ArrowLeft, Calendar, User, Clock, Share2, Heart, Tag } from "lucide-react";
 import { apiClient } from "../constants/apiUrl";
+import BlogCard from "./BlogCard";
 
 export default function BlogDeatil() {
     const { id } = useParams();
     const navigate = useNavigate();
     const [blog, setBlog] = useState(null);
+    const [related, setRelated] = useState([]);
 
     useEffect(() => {
         const fetchBlog = async () => {
@@ -18,6 +20,19 @@ export default function BlogDeatil() {
             }
         };
         fetchBlog();
+    }, [id]);
+
+    useEffect(() => {
+        const fetchRelated = async () => {
+            try {
+                const list = await apiClient("/blogs");
+                const filtered = list.filter((b) => b._id !== id).slice(0, 3);
+                setRelated(filtered);
+            } catch (err) {
+                console.error("Lỗi khi tải gợi ý:", err.message);
+            }
+        };
+        fetchRelated();
     }, [id]);
 
     if (!blog) return <p className="p-6 text-center">Đang tải bài viết...</p>;
@@ -105,6 +120,16 @@ export default function BlogDeatil() {
                 </header>
                 <div className="mt-6 leading-relaxed prose prose-neutral max-w-none" dangerouslySetInnerHTML={renderArticle(blog.article)}></div>
             </div>
+            {related.length > 0 && (
+                <div className="max-w-6xl mx-auto px-6 pb-16">
+                    <h3 className="text-2xl font-bold mb-6">Có thể bạn cũng thích</h3>
+                    <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                        {related.map((b) => (
+                            <BlogCard key={b._id} blog={b} />
+                        ))}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
