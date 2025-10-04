@@ -59,7 +59,7 @@ const HomePage = ({ productSeller = [] }) => {
   return (
     <div>
       {/* Hero Section */}
-      <section className="relative h-[700px] flex items-center justify-center overflow-hidden">
+      <section className="relative h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px] flex items-center justify-center overflow-hidden">
         {/* Background image */}
         <img
           className="absolute inset-0 w-full h-full object-cover"
@@ -70,9 +70,9 @@ const HomePage = ({ productSeller = [] }) => {
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/40 to-black/60"></div>
 
         {/* Content */}
-        <div className="relative z-10 text-center text-white space-y-8 max-w-4xl mx-auto px-6">
-          <div className="space-y-4">
-            <h1 className="text-6xl md:text-7xl font-extrabold drop-shadow-2xl tracking-tight text-white">
+        <div className="relative z-10 text-center text-white space-y-4 sm:space-y-6 md:space-y-8 max-w-4xl mx-auto px-4 sm:px-6">
+          <div className="space-y-2 sm:space-y-3 md:space-y-4">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold drop-shadow-2xl tracking-tight text-white">
               Grounds2Dish
             </h1>
             <div className="w-24 h-1 bg-gradient-to-r from-green-500 to-amber-600 mx-auto rounded-full"></div>
@@ -84,9 +84,9 @@ const HomePage = ({ productSeller = [] }) => {
         </div>
 
         {/* Decorative elements */}
-        <div className="absolute bottom-0 right-0 w-40 h-40 opacity-20">
+        <div className="absolute bottom-0 right-0 w-20 h-20 lg:h-60 lg:w-60  opacity-20">
           <img
-            className="w-full h-full object-contain"
+            className="w-full  object-contain"
             src="/images/logo1.jpg"
             alt="Decorative"
           />

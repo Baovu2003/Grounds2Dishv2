@@ -26,7 +26,7 @@ const Navbar = () => {
 
   return (
     <nav className="bg-white/98 backdrop-blur-xl border-b border-neutral-100 sticky top-0 z-50 shadow-soft">
-      <div className="container mx-auto px-8 sm:px-12 lg:px-16">
+      <div className="container mx-auto px-1 sm:px-8 lg:px-16">
         <div className="flex items-center justify-between h-28">
           {/* LOGO SECTION */}
           <div className="flex items-center">
@@ -36,16 +36,16 @@ const Navbar = () => {
                 <img
                   src="/images/logo.jpg"
                   alt="Grounds2Dish Logo"
-                  className="relative h-20 w-20 rounded-3xl shadow-medium object-cover transition-all duration-300 group-hover:scale-105 group-hover:shadow-large"
+                  className="relative h-12 w-12 sm:h-16 sm:w-16 lg:h-20 lg:w-20 rounded-2xl sm:rounded-3xl shadow-medium object-cover transition-all duration-300 group-hover:scale-105 group-hover:shadow-large"
                 />
               </div>
               <div className="flex flex-col">
-                <span className="text-5xl font-display font-bold text-neutral-900 tracking-tight transition-colors duration-300 drop-shadow-sm"
+                <span className="text-2xl sm:text-3xl lg:text-5xl font-display font-bold text-neutral-900 tracking-tight transition-colors duration-300 drop-shadow-sm"
                   onMouseEnter={(e) => e.target.style.color = '#20161F'}
                   onMouseLeave={(e) => e.target.style.color = '#1f2937'}>
                   Grounds2Dish
                 </span>
-                <span className="text-base text-neutral-600 font-body font-semibold tracking-wider uppercase">
+                <span className="text-xs sm:text-sm lg:text-base  text-neutral-600 font-body font-semibold tracking-wider uppercase">
                   Sustainable Living
                 </span>
               </div>
@@ -124,7 +124,7 @@ const Navbar = () => {
                   e.target.style.color = '#6b7280';
                   e.target.style.backgroundColor = 'transparent';
                 }}>
-                <ShoppingCart className="h-8 w-8" />
+                <ShoppingCart className="h-5 w-5 sm:h-6 sm:w-6 lg:h-8 lg:w-8" />
                 <div className="absolute inset-0 rounded-2xl scale-0 group-hover:scale-100 transition-transform duration-300"
                   style={{ backgroundColor: 'rgba(32, 22, 31, 0.1)' }}></div>
               </button>
@@ -138,7 +138,7 @@ const Navbar = () => {
             {/* MOBILE MENU BUTTON */}
             <button
               onClick={toggleMobileMenu}
-              className="lg:hidden relative p-5 rounded-2xl text-neutral-600 transition-all duration-300 group"
+              className="lg:hidden relative p-3 sm:p-4 rounded-xl sm:rounded-2xl rounded-2xl text-neutral-600 transition-all duration-300 group"
               onMouseEnter={(e) => {
                 e.target.style.color = '#20161F';
                 e.target.style.backgroundColor = 'rgba(32, 22, 31, 0.1)';
@@ -162,7 +162,7 @@ const Navbar = () => {
         {/* MOBILE MENU */}
         {isMobileMenuOpen && (
           <div className="lg:hidden border-t border-neutral-100 bg-white/95 backdrop-blur-xl">
-            <div className="px-8 py-10 space-y-3">
+            <div className="px-4 py-6 sm:px-8 sm:py-10 space-y-2 sm:space-y-3">
               {[
                 { to: "/", label: "Home" },
                 { to: "/shop", label: "Shop Online" },
@@ -173,7 +173,7 @@ const Navbar = () => {
                   key={item.to}
                   to={item.to}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block px-8 py-5 rounded-2xl font-body font-bold text-xl text-neutral-700 transition-all duration-300 group"
+                  className="block px-4 py-3 sm:px-8 sm:py-5 rounded-xl sm:rounded-2xl font-body font-bold text-xl text-neutral-700 transition-all duration-300 group"
                   style={
                     isActive(item.to)
                       ? { color: '#20161F', backgroundColor: 'rgba(32, 22, 31, 0.1)' }
