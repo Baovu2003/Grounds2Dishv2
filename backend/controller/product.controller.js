@@ -7,7 +7,10 @@ module.exports.getAllProducts = async (req, res) => {
       path: "product_category_id",
       select: "title deleted",
       match: { deleted: false }, // chỉ populate nếu category chưa bị xóa
-    });
+    }).map(({thumbnail, ...rest}) => ({
+      thumbnail: thumbnail.map(fileName => `${req.protocol}://${req.get("host")}/api/uploads/${fileName}`),
+      ...rest
+    }));;
     // Lọc những sản phẩm mà category đã bị xóa (populate trả về null)
     const filteredProducts = products.filter(
       (p) => p.product_category_id !== null
@@ -25,7 +28,10 @@ module.exports.getAllProductsByAdmin = async (req, res) => {
     const products = await Product.find().populate(
       "product_category_id",
       "title"
-    ); // populate category
+    ).map(({thumbnail, ...rest}) => ({
+      thumbnail: thumbnail.map(fileName => `${req.protocol}://${req.get("host")}/api/uploads/${fileName}`),
+      ...rest
+    })); // populate category
     console.log("products", products);
     res.json(products);
   } catch (err) {
@@ -39,13 +45,16 @@ module.exports.getProductById = async (req, res) => {
       path: "product_category_id",
       select: "title deleted",
       match: { deleted: false }, // chỉ populate nếu category chưa bị xóa
-    });
+    })
 
     if (!product || product.deleted) {
       return res.status(404).json({ error: "Không tìm thấy sản phẩm" });
     }
 
-    res.json(product);
+    res.json({
+      ...product.toObject(),
+      thumbnail: product.thumbnail.map(fileName => `${req.protocol}://${req.get("host")}/api/uploads/${fileName}`)
+    });
   } catch (err) {
     console.error(err);
     res.status(400).json({ error: err.message });
@@ -59,7 +68,7 @@ module.exports.createProduct = async (req, res) => {
     const imageUrls =
       req.files?.map(
         (file) =>
-          `${req.protocol}://${req.get("host")}/uploads/${file.filename}`
+          `${file.filename}`
       ) || [];
 
     const newProduct = new Product({
