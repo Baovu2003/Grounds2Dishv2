@@ -39,7 +39,7 @@ module.exports.createCategory = async (req, res) => {
       title: req.body.title,
       description: req.body.description || "", // thêm description
       thumbnail: req.file
-        ? `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`
+        ? `${req.file.filename}`
         : null, // lưu path ảnh
     });
 
@@ -59,7 +59,7 @@ module.exports.editCategory = async (req, res) => {
     };
 
     if (req.file) {
-      updateData.thumbnail = `${req.protocol}://${req.get("host")}/uploads/${
+      updateData.thumbnail = `${
         req.file.filename
       }`;
     }
