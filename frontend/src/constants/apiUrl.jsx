@@ -1,6 +1,6 @@
 // src/utils/apiClient.js
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://34.81.54.65:3002/api";
+  import.meta.env.VITE_API_BASE_URL || "/api";
 
 // Hàm lấy token từ localStorage
 const getToken = () => localStorage.getItem("token");
