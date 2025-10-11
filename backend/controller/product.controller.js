@@ -111,7 +111,7 @@ module.exports.editProduct = async (req, res) => {
     const newThumbnails =
       req.files?.map(
         (file) =>
-          `${req.protocol}://${req.get("host")}/uploads/${file.filename}`
+          `${file.filename}`
       ) || [];
 
     // Gộp ảnh cũ + ảnh mới
