@@ -9,8 +9,7 @@ require("dotenv").config();
 app.use(cors());
 const PORT = process.env.PORT || 3002;
 const path = require("path");
-app.use("/api/uploads", express.static(path.join(__dirname, "public/uploads")));
-
+app.use("/api/uploads", express.static(path.join(__dirname, "public", "uploads")));
 const { connectDB } = require("./db/database");
 connectDB();
 
