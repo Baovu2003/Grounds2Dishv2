@@ -3,18 +3,23 @@ const Product = require("../model/product.model");
 // [GET] /api/products
 module.exports.getAllProducts = async (req, res) => {
   try {
-    const products = await Product.find({ deleted: false }).populate({
-      path: "product_category_id",
-      select: "title deleted",
-      match: { deleted: false }, // chỉ populate nếu category chưa bị xóa
-    }).map(({thumbnail, ...rest}) => ({
-      thumbnail: thumbnail.map(fileName => `${req.protocol}://${req.get("host")}/api/uploads/${fileName}`),
-      ...rest
-    }));;
+    const products = await Product.find({ deleted: false })
+      .populate({
+        path: "product_category_id",
+        select: "title deleted",
+        match: { deleted: false }, // chỉ populate nếu category chưa bị xóa
+      })
+      .lean();
     // Lọc những sản phẩm mà category đã bị xóa (populate trả về null)
-    const filteredProducts = products.filter(
-      (p) => p.product_category_id !== null
-    );
+    const filteredProducts = products
+      .map(({ thumbnail, ...rest }) => ({
+        thumbnail: thumbnail.map(
+          (fileName) =>
+            `${req.protocol}://${req.get("host")}/api/uploads/${fileName}`
+        ),
+        ...rest,
+      }))
+      .filter((p) => p.product_category_id !== null);
 
     res.json(filteredProducts);
   } catch (err) {
@@ -25,15 +30,18 @@ module.exports.getAllProducts = async (req, res) => {
 // [GET] /api/products/admin
 module.exports.getAllProductsByAdmin = async (req, res) => {
   try {
-    const products = await Product.find().populate(
-      "product_category_id",
-      "title"
-    ).map(({thumbnail, ...rest}) => ({
-      thumbnail: thumbnail.map(fileName => `${req.protocol}://${req.get("host")}/api/uploads/${fileName}`),
-      ...rest
-    })); // populate category
-    console.log("products", products);
-    res.json(products);
+    const products = await Product.find()
+      .populate("product_category_id", "title")
+      .lean();
+    res.json(
+      products.map(({ thumbnail, ...rest }) => ({
+        thumbnail: thumbnail.map(
+          (fileName) =>
+            `${req.protocol}://${req.get("host")}/api/uploads/${fileName}`
+        ),
+        ...rest,
+      }))
+    );
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -41,19 +49,24 @@ module.exports.getAllProductsByAdmin = async (req, res) => {
 // [GET] /api/products/:id
 module.exports.getProductById = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id).populate({
-      path: "product_category_id",
-      select: "title deleted",
-      match: { deleted: false }, // chỉ populate nếu category chưa bị xóa
-    })
+    const product = await Product.findById(req.params.id)
+      .populate({
+        path: "product_category_id",
+        select: "title deleted",
+        match: { deleted: false }, // chỉ populate nếu category chưa bị xóa
+      })
+      .lean();
 
     if (!product || product.deleted) {
       return res.status(404).json({ error: "Không tìm thấy sản phẩm" });
     }
 
     res.json({
-      ...product.toObject(),
-      thumbnail: product.thumbnail.map(fileName => `${req.protocol}://${req.get("host")}/api/uploads/${fileName}`)
+      ...product,
+      thumbnail: product.thumbnail.map(
+        (fileName) =>
+          `${req.protocol}://${req.get("host")}/api/uploads/${fileName}`
+      ),
     });
   } catch (err) {
     console.error(err);
@@ -65,11 +78,7 @@ module.exports.getProductById = async (req, res) => {
 module.exports.createProduct = async (req, res) => {
   try {
     // req.files là mảng các file upload
-    const imageUrls =
-      req.files?.map(
-        (file) =>
-          `${file.filename}`
-      ) || [];
+    const imageUrls = req.files?.map((file) => `${file.filename}`) || [];
 
     const newProduct = new Product({
       ...req.body,
