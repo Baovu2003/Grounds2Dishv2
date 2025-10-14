@@ -10,11 +10,9 @@ const {
 } = require("../controller/blog.controller");
 
 const { authenticate, requireAdmin } = require("../middlewares/auth");
-const multer = require("multer");
-const storageMulter = require("../helpers/storageMulter");
+const upload = require("../middlewares/upload");
 
 const router = express.Router();
-const upload = multer({ storage: storageMulter() });
 
 // API Blog
 router.post(
@@ -54,7 +52,7 @@ router.post(
   upload.single("image"),
   (req, res) => {
     if (!req.file) return res.status(400).json({ error: "No file" });
-    const url = `${req.file.filename}`;
+    const url = req.file.path; // Cloudinary URL
     res.json(url);
   }
 );

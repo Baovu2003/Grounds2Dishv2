@@ -10,9 +10,7 @@ const {
   getAllCategoriesAdmin,
 } = require("../controller/product-category.controller");
 const { authenticate, requireAdmin } = require("../middlewares/auth");
-const multer = require("multer");
-const storageMulter = require("../helpers/storageMulter");
-const upload = multer({ storage: storageMulter() });
+const upload = require("../middlewares/upload");
 router.get("/", getAllCategories);
 router.get("/admin", authenticate, requireAdmin, getAllCategoriesAdmin);
 // router.post("/create", authenticate, requireAdmin, createCategory);

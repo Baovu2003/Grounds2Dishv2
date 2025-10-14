@@ -11,15 +11,7 @@ module.exports.getAllProducts = async (req, res) => {
       })
       .lean();
     // Lọc những sản phẩm mà category đã bị xóa (populate trả về null)
-    const filteredProducts = products
-      .map(({ thumbnail, ...rest }) => ({
-        thumbnail: thumbnail.map(
-          (fileName) =>
-            `${req.protocol}://${req.get("host")}/api/uploads/${fileName}`
-        ),
-        ...rest,
-      }))
-      .filter((p) => p.product_category_id !== null);
+    const filteredProducts = products.filter((p) => p.product_category_id !== null);
 
     res.json(filteredProducts);
   } catch (err) {
@@ -33,15 +25,7 @@ module.exports.getAllProductsByAdmin = async (req, res) => {
     const products = await Product.find()
       .populate("product_category_id", "title")
       .lean();
-    res.json(
-      products.map(({ thumbnail, ...rest }) => ({
-        thumbnail: thumbnail.map(
-          (fileName) =>
-            `${req.protocol}://${req.get("host")}/api/uploads/${fileName}`
-        ),
-        ...rest,
-      }))
-    );
+    res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -61,13 +45,7 @@ module.exports.getProductById = async (req, res) => {
       return res.status(404).json({ error: "Không tìm thấy sản phẩm" });
     }
 
-    res.json({
-      ...product,
-      thumbnail: product.thumbnail.map(
-        (fileName) =>
-          `${req.protocol}://${req.get("host")}/api/uploads/${fileName}`
-      ),
-    });
+    res.json(product);
   } catch (err) {
     console.error(err);
     res.status(400).json({ error: err.message });
@@ -77,8 +55,8 @@ module.exports.getProductById = async (req, res) => {
 // [POST] /api/products/create
 module.exports.createProduct = async (req, res) => {
   try {
-    // req.files là mảng các file upload
-    const imageUrls = req.files?.map((file) => `${file.filename}`) || [];
+    // req.files là mảng các file upload - Cloudinary trả về URL ở file.path
+    const imageUrls = req.files?.map((file) => file.path) || [];
 
     const newProduct = new Product({
       ...req.body,
@@ -107,12 +85,8 @@ module.exports.editProduct = async (req, res) => {
       }
     }
 
-    // Tạo URL cho các file mới upload
-    const newThumbnails =
-      req.files?.map(
-        (file) =>
-          `${file.filename}`
-      ) || [];
+    // Tạo URL cho các file mới upload - Cloudinary trả về URL ở file.path
+    const newThumbnails = req.files?.map((file) => file.path) || [];
 
     // Gộp ảnh cũ + ảnh mới
     const thumbnails = [...oldThumbnails, ...newThumbnails];

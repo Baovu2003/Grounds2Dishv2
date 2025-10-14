@@ -1,8 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const multer = require("multer");
 
-const storageMulter = require("../helpers/storageMulter");
 const {
   getAllProductsByAdmin,
   getAllProducts,
@@ -15,8 +13,7 @@ const {
 } = require("../controller/product.controller");
 
 const { authenticate, requireAdmin } = require("../middlewares/auth");
-
-const upload = multer({ storage: storageMulter() });
+const upload = require("../middlewares/upload");
 
 // Public: GET all products
 router.get("/", getAllProducts);

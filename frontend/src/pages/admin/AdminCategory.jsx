@@ -6,6 +6,7 @@ import { apiAdminClient } from "../../constants/apiUrl";
 const AdminCategory = () => {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [editingCategory, setEditingCategory] = useState(null);
     const [showAddForm, setShowAddForm] = useState(false);
 
@@ -33,10 +34,12 @@ const AdminCategory = () => {
     }, []);
 
     // Handle Add
-    // Handle Add
     const handleAdd = async (e) => {
         e.preventDefault();
+        if (isSubmitting) return;
+        
         try {
+            setIsSubmitting(true);
             const formData = new FormData();
             formData.append("title", editingCategory.title);
             formData.append("description", editingCategory.description || "");
@@ -56,13 +59,18 @@ const AdminCategory = () => {
         } catch (error) {
             console.error("Thêm thất bại:", error);
             setToast({ message: "Thêm danh mục thất bại!", type: "error" });
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
     // Handle Update
     const handleUpdate = async (e) => {
         e.preventDefault();
+        if (isSubmitting) return;
+        
         try {
+            setIsSubmitting(true);
             const formData = new FormData();
             formData.append("title", editingCategory.title);
             formData.append("description", editingCategory.description || "");
@@ -81,6 +89,8 @@ const AdminCategory = () => {
         } catch (error) {
             console.error("Update thất bại:", error);
             setToast({ message: "Cập nhật danh mục thất bại!", type: "error" });
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -264,8 +274,12 @@ const AdminCategory = () => {
                                     />
                                 </div>
                             )}
-                            <button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg">
-                                {showAddForm ? "Thêm mới" : "Lưu thay đổi"}
+                            <button 
+                                type="submit" 
+                                disabled={isSubmitting}
+                                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {isSubmitting ? "Đang xử lý..." : (showAddForm ? "Thêm mới" : "Lưu thay đổi")}
                             </button>
                         </form>
                     </div>

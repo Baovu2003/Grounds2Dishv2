@@ -6,6 +6,7 @@ const AdminProduct = () => {
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [editingProduct, setEditingProduct] = useState(null);
     const [showAddForm, setShowAddForm] = useState(false);
     const [confirmAction, setConfirmAction] = useState(null); // { message, onConfirm }
@@ -108,7 +109,10 @@ const AdminProduct = () => {
     // Save Update
     const handleUpdate = async (e) => {
         e.preventDefault();
+        if (isSubmitting) return;
+        
         try {
+            setIsSubmitting(true);
             const formData = new FormData();
             formData.append("title", editingProduct.title);
             formData.append(
@@ -141,13 +145,18 @@ const AdminProduct = () => {
         } catch (error) {
             console.error("Update thất bại:", error);
             setToast({ message: "Cập nhật thất bại!", type: "error" });
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
     // Save Add
     const handleAdd = async (e) => {
         e.preventDefault();
+        if (isSubmitting) return;
+        
         try {
+            setIsSubmitting(true);
             const formData = new FormData();
             formData.append("title", editingProduct.title);
             formData.append("product_category_id", editingProduct.product_category_id);
@@ -172,6 +181,8 @@ const AdminProduct = () => {
         } catch (error) {
             console.error("Thêm thất bại:", error);
             setToast({ message: "Thêm sản phẩm thất bại!", type: "error" });
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -587,9 +598,10 @@ const AdminProduct = () => {
 
                             <button
                                 type="submit"
-                                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg"
+                                disabled={isSubmitting}
+                                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                {showAddForm ? "Thêm mới" : "Lưu thay đổi"}
+                                {isSubmitting ? "Đang xử lý..." : (showAddForm ? "Thêm mới" : "Lưu thay đổi")}
                             </button>
                         </form>
                     </div>

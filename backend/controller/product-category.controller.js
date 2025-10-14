@@ -38,9 +38,7 @@ module.exports.createCategory = async (req, res) => {
     const newCategory = new ProductCategory({
       title: req.body.title,
       description: req.body.description || "", // thêm description
-      thumbnail: req.file
-        ? `${req.file.filename}`
-        : null, // lưu path ảnh
+      thumbnail: req.file ? req.file.path : null, // Cloudinary URL
     });
 
     await newCategory.save();
@@ -59,9 +57,7 @@ module.exports.editCategory = async (req, res) => {
     };
 
     if (req.file) {
-      updateData.thumbnail = `${
-        req.file.filename
-      }`;
+      updateData.thumbnail = req.file.path; // Cloudinary URL
     }
 
     const category = await ProductCategory.findByIdAndUpdate(

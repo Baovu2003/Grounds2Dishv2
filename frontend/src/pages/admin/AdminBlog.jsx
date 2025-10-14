@@ -5,6 +5,7 @@ import { apiAdminClient } from "../../constants/apiUrl";
 const AdminBlog = () => {
     const [blogs, setBlogs] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [editingBlog, setEditingBlog] = useState(null);
     const [showAddForm, setShowAddForm] = useState(false);
     const [confirmAction, setConfirmAction] = useState(null);
@@ -83,7 +84,10 @@ const AdminBlog = () => {
     // Handle Add
     const handleAdd = async (e) => {
         e.preventDefault();
+        if (isSubmitting) return;
+        
         try {
+            setIsSubmitting(true);
             const formData = new FormData();
             formData.append("title", editingBlog.title);
             formData.append("description", editingBlog.description || "");
@@ -115,13 +119,18 @@ const AdminBlog = () => {
         } catch (error) {
             console.error("Thêm blog thất bại:", error);
             setToast({ message: "Thêm blog thất bại!", type: "error" });
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
     // Handle Update
     const handleUpdate = async (e) => {
         e.preventDefault();
+        if (isSubmitting) return;
+        
         try {
+            setIsSubmitting(true);
             const formData = new FormData();
             formData.append("title", editingBlog.title);
             formData.append("description", editingBlog.description || "");
@@ -152,6 +161,8 @@ const AdminBlog = () => {
         } catch (error) {
             console.error("Update thất bại:", error);
             setToast({ message: "Cập nhật blog thất bại!", type: "error" });
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -401,8 +412,12 @@ const AdminBlog = () => {
                                 >
                                     Upload Image
                                 </button>
-                                <button type="submit" className="ml-auto px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white">
-                                    {showAddForm ? "Publish" : "Save"}
+                                <button 
+                                    type="submit" 
+                                    disabled={isSubmitting}
+                                    className="ml-auto px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    {isSubmitting ? "Đang xử lý..." : (showAddForm ? "Publish" : "Save")}
                                 </button>
                             </div>
 

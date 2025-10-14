@@ -5,11 +5,11 @@ module.exports.createBlog = async (req, res) => {
   try {
     const { title, article } = req.body;
     const bannerImage = req.files && req.files.bannerImage && req.files.bannerImage[0]
-      ? `${req.files.bannerImage[0].filename}`
+      ? req.files.bannerImage[0].path // Cloudinary URL
       : req.body.bannerImage;
 
     const fileImages = (req.files && req.files.contentImages ? req.files.contentImages : [])
-      .map((f) => `${f.filename}`);
+      .map((f) => f.path); // Cloudinary URL
     let urlImages = [];
     if (req.body.contentImageUrls) {
       if (Array.isArray(req.body.contentImageUrls)) {
@@ -83,12 +83,11 @@ module.exports.updateBlog = async (req, res) => {
     };
 
     if (req.files && req.files.bannerImage && req.files.bannerImage[0]) {
-      updateData.bannerImage = `${req.files.bannerImage[0].filename
-        }`;
+      updateData.bannerImage = req.files.bannerImage[0].path; // Cloudinary URL
     }
 
     const fileImages = req.files && req.files.contentImages && req.files.contentImages.length
-      ? req.files.contentImages.map((f) => `${f.filename}`)
+      ? req.files.contentImages.map((f) => f.path) // Cloudinary URL
       : [];
     let urlImages = [];
     if (req.body.contentImageUrls) {
