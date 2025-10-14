@@ -59,14 +59,10 @@ const HomePage = ({ productSeller = [] }) => {
   return (
     <div>
       {/* Hero Section */}
+
       <section className="relative h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px] flex items-center justify-center overflow-hidden">
         {/* Background image */}
-        <img
-          className="absolute inset-0 w-full h-full object-cover"
-          src="/images/header-background1.jpg"
-          alt="Hero Banner"
-        />
-
+        <img className="absolute inset-0 w-full h-full object-contain" src="/images/background.jpg" alt="Hero Banner" />
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/40 to-black/60"></div>
 
         {/* Content */}
@@ -82,15 +78,23 @@ const HomePage = ({ productSeller = [] }) => {
             Biến bã cà phê thành giá trị mới!
           </p>
         </div>
-
-        {/* Decorative elements */}
-        <div className="absolute bottom-0 right-0 w-20 h-20 lg:h-60 lg:w-60  opacity-20">
-          <img
-            className="w-full  object-contain"
-            src="/images/logo1.jpg"
-            alt="Decorative"
-          />
+        {/* Decorative element - Bottom Left */}
+        <div className="absolute bottom-0 left-0 w-20 h-20 lg:h-60 lg:w-60 opacity-20">
+          <img className="w-full object-contain" src="/images/logo2.jpg" alt="Decorative" />
         </div>
+        {/* Decorative element - Bottom Right (original) */}
+        <div className="absolute bottom-0 right-0 w-20 h-20 lg:h-60 lg:w-60 opacity-20">
+          <img className="w-full object-contain" src="/images/logo1.jpg" alt="Decorative" />
+        </div>
+
+        {/* Decorative element - Top Left */}
+        <div className="absolute top-0 left-0 w-20 h-20 lg:h-60 lg:w-60 opacity-20">
+          <img className="w-full object-contain" src="/images/logo1.jpg" alt="Decorative" />
+        </div>
+        <div className="absolute top-0 right-0 w-20 h-20 lg:h-60 lg:w-60 opacity-20">
+          <img className="w-full object-contain" src="/images/logo.jpg" alt="Decorative" />
+        </div>
+
       </section>
       <section className="px-8 py-16 bg-base-100">
         {/* Tiêu đề */}
@@ -141,7 +145,6 @@ const HomePage = ({ productSeller = [] }) => {
                     </span>
                   </div>
                 </div>
-
               ))}
             </div>
           </div>

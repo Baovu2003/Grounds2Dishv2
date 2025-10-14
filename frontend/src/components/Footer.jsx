@@ -106,7 +106,8 @@ const Footer = () => {
                       />
                     </svg>
                   </div>
-                  <span className="text-neutral-300">+84 123 456 789</span>
+                  {/* hoaihoai1442003@gmail.com */}
+                  <span className="text-neutral-300">+0963 908 311</span>
                 </div>
                 <div className="flex items-center space-x-3 group">
                   <div className="p-2 rounded-lg bg-neutral-800 group-hover:bg-primary-500 transition-colors duration-300">
