@@ -13,7 +13,11 @@ const HomePage = ({ productSeller = [] }) => {
     try {
       setLoading(true);
       const data = await apiClient("/product-categories");
-      setCategories(data);
+      console.log("Data from API:", data);
+      console.log("Is array?", Array.isArray(data));
+
+      // setCategories(data);
+      setCategories(Array.isArray(data) ? data : data.categories || []);
     } catch (error) {
       console.error("Lỗi khi fetch danh mục:", error);
     } finally {
@@ -112,7 +116,7 @@ const HomePage = ({ productSeller = [] }) => {
         <div className="relative overflow-hidden">
           <div className="flex justify-center gap-8 py-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {categories.slice(0, 4).map((cat) => (
+              {(categories || []).slice(0, 4).map((cat) => (
                 <div
                   key={cat._id}
                   className="group relative w-full max-w-sm sm:max-w-md lg:max-w-xs 
