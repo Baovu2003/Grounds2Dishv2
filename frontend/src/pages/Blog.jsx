@@ -12,17 +12,20 @@ export default function Blog() {
         const fetchBlogs = async () => {
             try {
                 const data = await apiClient("/blogs");
-                setBlogs(data);
+                // Xử lý response - đảm bảo luôn là array
+                const blogsData = Array.isArray(data) ? data : (data?.data || []);
+                setBlogs(blogsData);
             } catch (error) {
                 console.error("Lỗi khi tải blogs:", error.message);
+                setBlogs([]);
             }
         };
         fetchBlogs();
     }, []);
 
-    const totalPages = Math.max(1, Math.ceil(blogs.length / pageSize));
+    const totalPages = Math.max(1, Math.ceil((Array.isArray(blogs) ? blogs.length : 0) / pageSize));
     const startIdx = (currentPage - 1) * pageSize;
-    const pageBlogs = blogs.slice(startIdx, startIdx + pageSize);
+    const pageBlogs = Array.isArray(blogs) ? blogs.slice(startIdx, startIdx + pageSize) : [];
     const gotoPage = (p) => {
         if (p < 1 || p > totalPages) return;
         setCurrentPage(p);
@@ -90,17 +93,17 @@ export default function Blog() {
                 <h2 className="text-2xl font-bold text-gray-800 mb-8 text-center">
                     Latest Posts
                 </h2>
-                {blogs.length === 0 ? (
+                {!Array.isArray(blogs) || blogs.length === 0 ? (
                     <p className="text-center text-gray-500">No blogs available yet.</p>
                 ) : (
                     <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-                        {pageBlogs.map((blog) => (
+                        {Array.isArray(pageBlogs) && pageBlogs.map((blog) => (
                             <BlogCard key={blog._id} blog={blog} />
                         ))}
                     </div>
                 )}
 
-                {blogs.length > pageSize && (
+                {Array.isArray(blogs) && blogs.length > pageSize && (
                     <div className="mt-10 flex items-center justify-center gap-2">
                         <button
                             onClick={() => gotoPage(currentPage - 1)}

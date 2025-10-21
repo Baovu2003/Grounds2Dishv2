@@ -23,10 +23,12 @@ const AdminOrder = () => {
         try {
             setLoading(true);
             const data = await apiAdminClient("/orders");
-            setOrders(data);
-            setOrders(data);
+            // Xử lý response - đảm bảo luôn là array
+            const ordersData = Array.isArray(data) ? data : (data?.data || []);
+            setOrders(ordersData);
         } catch (err) {
             console.error("Error fetching orders:", err);
+            setOrders([]);
         } finally {
             setLoading(false);
         }
@@ -50,10 +52,10 @@ const AdminOrder = () => {
     }, []);
 
     // Filter orders theo tên, sdt và trạng thái
-    const filteredOrders = orders.filter((order) => {
+    const filteredOrders = Array.isArray(orders) ? orders.filter((order) => {
         const matchesSearch =
-            order.fullname.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            order.phone.includes(searchTerm);
+            order.fullname?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            order.phone?.includes(searchTerm);
 
         const matchesStatus = statusFilter ? order.status === statusFilter : true;
 
@@ -63,15 +65,16 @@ const AdminOrder = () => {
         if (toDate) matchesDate = matchesDate && orderDate <= new Date(toDate);
 
         return matchesSearch && matchesStatus && matchesDate;
-    });
+    }) : [];
 
 
     // Pagination
-    const totalPages = Math.ceil(filteredOrders.length / PAGE_SIZE);
-    const paginatedOrders = filteredOrders.slice(
-        (currentPage - 1) * PAGE_SIZE,
-        currentPage * PAGE_SIZE
-    );
+    const totalPages = Array.isArray(filteredOrders) 
+        ? Math.ceil(filteredOrders.length / PAGE_SIZE)
+        : 0;
+    const paginatedOrders = Array.isArray(filteredOrders) 
+        ? filteredOrders.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
+        : [];
 
     // Hàm tạo danh sách số trang (với dấu ...)
     const getPageNumbers = (totalPages, currentPage) => {
@@ -200,7 +203,7 @@ const AdminOrder = () => {
                             </td>
                         </tr>
                     ) : (
-                        paginatedOrders.map((order) => (
+                        Array.isArray(paginatedOrders) && paginatedOrders.map((order) => (
                             <tr key={order._id} className="border-t hover:bg-gray-50">
                                 <td className="p-3 border">
                                     <div>

@@ -21,9 +21,12 @@ const AdminCategory = () => {
         try {
             setLoading(true);
             const data = await apiAdminClient("/product-categories/admin");
-            setCategories(data);
+            // Xử lý response - đảm bảo luôn là array
+            const categoriesData = Array.isArray(data) ? data : (data?.data || []);
+            setCategories(categoriesData);
         } catch (error) {
             console.error("Lỗi khi fetch danh mục:", error);
+            setCategories([]);
         } finally {
             setLoading(false);
         }
@@ -125,9 +128,9 @@ const AdminCategory = () => {
         const timer = setTimeout(() => setToast(null), 3000);
         return () => clearTimeout(timer);
     }, [toast]);
-    const filteredCategories = categories.filter((c) =>
-        c.title.toLowerCase().includes(searchTitle.toLowerCase())
-    );
+    const filteredCategories = Array.isArray(categories) ? categories.filter((c) =>
+        c.title?.toLowerCase().includes(searchTitle.toLowerCase())
+    ) : [];
     return (
         <div className="p-6">
             {/* Header */}
@@ -176,7 +179,7 @@ const AdminCategory = () => {
                                 <td colSpan={2} className="text-center py-6">Không có danh mục nào</td>
                             </tr>
                         ) : (
-                            filteredCategories.map((c) => (
+                            Array.isArray(filteredCategories) && filteredCategories.map((c) => (
                                 <tr key={c._id} className="border-t hover:bg-gray-50">
                                     <td className="p-3 border">{c.title}</td>
                                     <td className="p-3 border">{c.description}</td>

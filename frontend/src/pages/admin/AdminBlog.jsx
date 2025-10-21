@@ -69,9 +69,12 @@ const AdminBlog = () => {
         try {
             setLoading(true);
             const data = await apiAdminClient("/blogs/admin");
-            setBlogs(data);
+            // Xử lý response - đảm bảo luôn là array
+            const blogsData = Array.isArray(data) ? data : (data?.data || []);
+            setBlogs(blogsData);
         } catch (error) {
             console.error("Lỗi khi fetch blogs:", error);
+            setBlogs([]);
         } finally {
             setLoading(false);
         }
@@ -234,7 +237,7 @@ const AdminBlog = () => {
                                 <td colSpan={5} className="text-center py-6">Không có blog nào</td>
                             </tr>
                         ) : (
-                            blogs.map((b) => (
+                            Array.isArray(blogs) && blogs.map((b) => (
                                 <tr key={b._id} className="border-t hover:bg-gray-50">
                                     <td className="p-3 border">{b.title}</td>
                                     <td className="p-3 border">{b.article}</td>

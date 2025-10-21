@@ -26,10 +26,13 @@ export default function BlogDeatil() {
         const fetchRelated = async () => {
             try {
                 const list = await apiClient("/blogs");
-                const filtered = list.filter((b) => b._id !== id).slice(0, 3);
+                // Xử lý response - đảm bảo luôn là array
+                const blogsData = Array.isArray(list) ? list : (list?.data || []);
+                const filtered = blogsData.filter((b) => b._id !== id).slice(0, 3);
                 setRelated(filtered);
             } catch (err) {
                 console.error("Lỗi khi tải gợi ý:", err.message);
+                setRelated([]);
             }
         };
         fetchRelated();

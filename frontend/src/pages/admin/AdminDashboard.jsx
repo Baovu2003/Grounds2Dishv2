@@ -28,16 +28,27 @@ export default function AdminDashboard() {
             setTotalRevenue((prev) =>
                 prev === data.totalRevenue ? prev : data.totalRevenue
             );
+            // Đảm bảo bestSellingProducts luôn là array
+            const bestSelling = Array.isArray(data.bestSellingProducts) 
+                ? data.bestSellingProducts 
+                : (data.bestSellingProducts?.data || []);
             setBestSellingProducts((prev) =>
-                JSON.stringify(prev) === JSON.stringify(data.bestSellingProducts) ? prev : data.bestSellingProducts
+                JSON.stringify(prev) === JSON.stringify(bestSelling) ? prev : bestSelling
             );
+            // Đảm bảo monthlyRevenue luôn là array
+            const monthlyRev = Array.isArray(data.monthlyRevenue)
+                ? data.monthlyRevenue
+                : (data.monthlyRevenue?.data || []);
             setMonthlyRevenue((prev) =>
-                JSON.stringify(prev) === JSON.stringify(data.monthlyRevenue) ? prev : data.monthlyRevenue
+                JSON.stringify(prev) === JSON.stringify(monthlyRev) ? prev : monthlyRev
             );
 
         } catch (err) {
             console.error(err);
             setError(err.message);
+            // Set defaults on error
+            setBestSellingProducts([]);
+            setMonthlyRevenue([]);
         } finally {
             if (isInitial) setLoading(false);
         }

@@ -30,9 +30,12 @@ const AdminProduct = () => {
         try {
             setLoading(true);
             const data = await apiAdminClient("/products/admin");
-            setProducts(data);
+            // Xử lý response - đảm bảo luôn là array
+            const productsData = Array.isArray(data) ? data : (data?.data || []);
+            setProducts(productsData);
         } catch (error) {
             console.error("Lỗi khi fetch sản phẩm:", error);
+            setProducts([]);
         } finally {
             setLoading(false);
         }
@@ -42,9 +45,12 @@ const AdminProduct = () => {
     const fetchCategories = async () => {
         try {
             const data = await apiAdminClient("/product-categories");
-            setCategories(data);
+            // Xử lý response - đảm bảo luôn là array
+            const categoriesData = Array.isArray(data) ? data : (data?.data || []);
+            setCategories(categoriesData);
         } catch (error) {
             console.error("Lỗi khi fetch danh mục:", error);
+            setCategories([]);
         }
     };
 
@@ -193,7 +199,7 @@ const AdminProduct = () => {
         }
         setConfirmAction(null);
     };
-    const filteredProducts = products.filter((p) => {
+    const filteredProducts = Array.isArray(products) ? products.filter((p) => {
         // Filter by category
         const matchCategory = filterCategory ? (
             typeof p.product_category_id === "object"
@@ -202,18 +208,22 @@ const AdminProduct = () => {
         ) : true;
         // Search by title
         const matchTitle = searchTitle
-            ? p.title.toLowerCase().includes(searchTitle.toLowerCase())
+            ? p.title?.toLowerCase().includes(searchTitle.toLowerCase())
             : true;
         // Filter by price range
         const price = Number(p.price);
         const matchPriceMin = filterPriceMin ? price >= Number(filterPriceMin) : true;
         const matchPriceMax = filterPriceMax ? price <= Number(filterPriceMax) : true;
         return matchCategory && matchTitle && matchPriceMin && matchPriceMax;
-    });
+    }) : [];
     const indexOfLastProduct = currentPage * productsPerPage;
     const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-    const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
-    const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+    const currentProducts = Array.isArray(filteredProducts) 
+        ? filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct)
+        : [];
+    const totalPages = Array.isArray(filteredProducts) 
+        ? Math.ceil(filteredProducts.length / productsPerPage)
+        : 0;
 
     return (
         <div className="p-6">
@@ -244,7 +254,7 @@ const AdminProduct = () => {
                     className="border rounded px-3 py-2"
                 >
                     <option value="">Tất cả danh mục</option>
-                    {categories.map((c) => (
+                    {Array.isArray(categories) && categories.map((c) => (
                         <option key={c._id} value={c._id}>{c.title}</option>
                     ))}
                 </select>
@@ -319,7 +329,7 @@ const AdminProduct = () => {
                                 </td>
                             </tr>
                         ) : (
-                            currentProducts.map((p) => (
+                            Array.isArray(currentProducts) && currentProducts.map((p) => (
                                 <tr key={p._id} className="border-t hover:bg-gray-50">
                                     <td className="p-3 border">
                                         {p.thumbnail && p.thumbnail.length > 0 ? (
@@ -529,7 +539,7 @@ const AdminProduct = () => {
                                 required
                             >
                                 <option value="">Chọn danh mục</option>
-                                {categories.map((c) => (
+                                {Array.isArray(categories) && categories.map((c) => (
                                     <option key={c._id} value={c._id}>
                                         {c.title}
                                     </option>
