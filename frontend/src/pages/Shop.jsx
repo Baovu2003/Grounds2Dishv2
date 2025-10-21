@@ -16,7 +16,7 @@ export default function Shop() {
   const [sortBy, setSortBy] = useState('default'); // default, price-low, price-high, name
 
   const [search, setSearch] = useState("");
-  const [filteredProducts, setFilteredProducts] = useState(products);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(6);
 
@@ -28,11 +28,19 @@ export default function Shop() {
           apiClient("/products"),
         ]);
 
-        console.log("categories", catRes);
-        console.log("products", prodRes);
-        setCategories(catRes);
-        setProducts(prodRes);
-        setFilteredProducts(prodRes);
+        console.log("categories response", catRes);
+        console.log("products response", prodRes);
+        
+        // Xử lý response - kiểm tra nếu có data property thì lấy data, nếu không thì lấy toàn bộ response
+        const categoriesData = Array.isArray(catRes) ? catRes : (catRes?.data || []);
+        const productsData = Array.isArray(prodRes) ? prodRes : (prodRes?.data || []);
+        
+        console.log("categories data", categoriesData);
+        console.log("products data", productsData);
+        
+        setCategories(categoriesData);
+        setProducts(productsData);
+        setFilteredProducts(productsData);
       } catch (err) {
         console.error("Lỗi khi load dữ liệu:", err);
       }
@@ -55,12 +63,19 @@ export default function Shop() {
   };
 
   useEffect(() => {
-    let filtered = products;
+    // Đảm bảo products là array trước khi filter
+    if (!Array.isArray(products)) {
+      console.warn("Products is not an array:", products);
+      setFilteredProducts([]);
+      return;
+    }
+
+    let filtered = [...products]; // Clone array để tránh mutate
     console.log("filtered", filtered)
     console.log("products", products)
 
     if (selectedCategory) {
-      filtered = filtered.filter((p) => p.product_category_id._id === selectedCategory);
+      filtered = filtered.filter((p) => p.product_category_id?._id === selectedCategory);
     }
 
     console.log("selectedCategory", selectedCategory)
@@ -71,7 +86,7 @@ export default function Shop() {
 
     if (search) {
       filtered = filtered.filter((p) =>
-        p.title.toLowerCase().includes(search.toLowerCase())
+        p.title?.toLowerCase().includes(search.toLowerCase())
       );
     }
 
@@ -84,7 +99,7 @@ export default function Shop() {
         filtered.sort((a, b) => b.price - a.price);
         break;
       case 'name':
-        filtered.sort((a, b) => a.title.localeCompare(b.title));
+        filtered.sort((a, b) => a.title?.localeCompare(b.title) || 0);
         break;
       default:
         // Keep original order
@@ -98,11 +113,12 @@ export default function Shop() {
   // Pagination logic
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = filteredProducts.slice(
-    indexOfFirstProduct,
-    indexOfLastProduct
-  );
-  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+  const currentProducts = Array.isArray(filteredProducts) 
+    ? filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct)
+    : [];
+  const totalPages = Array.isArray(filteredProducts) 
+    ? Math.ceil(filteredProducts.length / productsPerPage)
+    : 0;
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -181,7 +197,7 @@ export default function Shop() {
                       Tất cả sản phẩm
                     </button>
 
-                    {categories?.map((c) => (
+                    {Array.isArray(categories) && categories.map((c) => (
                       <button
                         key={c._id}
                         onClick={() => setSelectedCategory(c._id)}
@@ -447,7 +463,7 @@ export default function Shop() {
               </div>
 
               {/* Products Grid/List */}
-              {filteredProducts.length === 0 ? (
+              {!Array.isArray(filteredProducts) || filteredProducts.length === 0 ? (
                 <div className="text-center py-24">
                   <div className="relative mb-8">
                     <div className="text-9xl mb-4 animate-float opacity-20">☕</div>
@@ -483,7 +499,7 @@ export default function Shop() {
                     ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'
                     : 'space-y-6'
                     }`}>
-                    {currentProducts.map((product, index) => (
+                    {Array.isArray(currentProducts) && currentProducts.map((product, index) => (
                       <div
                         key={product._id}
                         className={`group bg-white rounded-2xl shadow-sm hover:shadow-xl hover-lift animate-fade-in overflow-hidden border border-gray-100 ${viewMode === 'list' ? 'flex flex-row h-72' : 'flex flex-col h-full'
