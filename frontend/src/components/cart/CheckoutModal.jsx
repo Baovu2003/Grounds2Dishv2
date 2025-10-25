@@ -8,6 +8,8 @@ const CheckoutModal = ({
   setOrderForm,
   selectedItems,
   totalPrice,
+  cupDiscount = 0,
+  finalPrice,
   clearSelected,
   setSuccessMessage,
 }) => {
@@ -396,14 +398,22 @@ const CheckoutModal = ({
               <div className="space-y-2 text-sm">
                 {selectedItems.map((item) => (
                   <div key={item.id} className="flex justify-between items-center py-1">
-                    <span className="text-neutral-700">{item.name} x{item.quantity}</span>
+                    <span className="text-neutral-700">{item.title || item.name} x{item.quantity}</span>
                     <span className="font-semibold" style={{ color: '#20161F' }}>{formatPrice(item.price * item.quantity)}</span>
                   </div>
                 ))}
+                
+                {cupDiscount > 0 && (
+                  <div className="flex justify-between items-center py-1 text-green-600">
+                    <span>🎉 Giảm giá cốc (2 cốc -10%)</span>
+                    <span className="font-semibold">-{formatPrice(cupDiscount)}</span>
+                  </div>
+                )}
+                
                 <div className="border-t border-neutral-300 pt-3 mt-3">
                   <div className="flex justify-between items-center">
                     <span className="font-bold text-neutral-900 text-base">Tổng cộng:</span>
-                    <span className="font-bold text-lg" style={{ color: '#20161F' }}>{formatPrice(totalPrice)}</span>
+                    <span className="font-bold text-lg" style={{ color: '#20161F' }}>{formatPrice(finalPrice || totalPrice)}</span>
                   </div>
                 </div>
               </div>

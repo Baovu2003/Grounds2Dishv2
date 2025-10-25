@@ -18,6 +18,8 @@ const Cart = () => {
     getTotalPrice,
     getTotalSelectedItems,
     getSelectedItems,
+    getCupDiscount,
+    getFinalPrice,
   } = useCartStore();
 
   const [showCheckout, setShowCheckout] = useState(false);
@@ -35,8 +37,8 @@ const Cart = () => {
   const selectedItems = getSelectedItems();
   const totalPrice = getTotalPrice();
   const totalSelectedItems = getTotalSelectedItems();
-  console.log("getSelectedItems", getSelectedItems)
-  console.log("totalPrice", totalPrice)
+  const cupDiscount = getCupDiscount();
+  const finalPrice = getFinalPrice();
   const handleQuantityChange = (productId, newQuantity) => {
     if (newQuantity < 1) {
       removeItem(productId);
@@ -85,6 +87,8 @@ const Cart = () => {
               <OrderSummary
                 totalPrice={totalPrice}
                 totalSelectedItems={totalSelectedItems}
+                cupDiscount={cupDiscount}
+                finalPrice={finalPrice}
                 onCheckout={() => setShowCheckout(true)}
               />
             </div>
@@ -96,6 +100,8 @@ const Cart = () => {
               setOrderForm={setOrderForm}
               selectedItems={selectedItems}
               totalPrice={totalPrice}
+              cupDiscount={cupDiscount}
+              finalPrice={finalPrice}
               clearSelected={clearSelected}
               setSuccessMessage={setSuccessMessage}
             />

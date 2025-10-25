@@ -46,9 +46,11 @@ export default function ProductDetail() {
             {
                 _id: product._id,
                 name: product.title,
+                title: product.title,
                 price: product.price,
                 thumbnail: product.thumbnail,
                 description: product.description,
+                product_category_id: product.product_category_id,
             },
             quantity
         );

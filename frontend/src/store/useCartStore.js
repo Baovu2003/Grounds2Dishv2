@@ -130,6 +130,50 @@ const useCartStore = create((set, get) => ({
       .filter((item) => item.selected)
       .reduce((total, item) => total + item.quantity, 0);
   },
+
+  // Tính giảm giá cho cốc (từ 2 cốc trở lên giảm 10% tổng giá cốc)
+  getCupDiscount: () => {
+    const items = get().items || [];
+    const selectedItems = items.filter((item) => item.selected);
+    
+    console.log("=== DEBUG CUP DISCOUNT ===");
+    console.log("All items:", items);
+    console.log("Selected items:", selectedItems);
+    
+    // Lọc các sản phẩm là cốc (category title chứa chữ "cốc")
+    const cupItems = selectedItems.filter(item => {
+      const categoryTitle = item.product_category_id?.title || "";
+      console.log(`Item: ${item.name}, Category: ${categoryTitle}`);
+      return categoryTitle.toLowerCase().includes("cốc");
+    });
+
+    console.log("Cup items found:", cupItems);
+
+    // Tính tổng số lượng cốc
+    const totalCups = cupItems.reduce((sum, item) => sum + item.quantity, 0);
+    console.log("Total cups:", totalCups);
+    
+    // Nếu có ít hơn 2 cốc thì không giảm
+    if (totalCups < 2) return 0;
+
+    // Tính tổng giá của tất cả cốc
+    const totalCupPrice = cupItems.reduce((sum, item) => 
+      sum + (item.price * item.quantity), 0
+    );
+
+    // Giảm 10% tổng giá cốc
+    const discount = totalCupPrice * 0.10;
+    console.log("Discount:", discount);
+    
+    return Math.floor(discount);
+  },
+
+  // Tổng giá sau khi giảm
+  getFinalPrice: () => {
+    const totalPrice = get().getTotalPrice();
+    const discount = get().getCupDiscount();
+    return totalPrice - discount;
+  },
 }));
 
 export default useCartStore;
