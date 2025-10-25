@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Pencil, Trash2, Plus, X } from "lucide-react";
 import { apiAdminClient } from "../../constants/apiUrl";
+import { compressImage } from "../../utils/imageCompression";
 
 
 const AdminCategory = () => {
@@ -47,7 +48,9 @@ const AdminCategory = () => {
             formData.append("title", editingCategory.title);
             formData.append("description", editingCategory.description || "");
             if (editingCategory.thumbnail instanceof File) {
-                formData.append("thumbnail", editingCategory.thumbnail);
+                // Nén ảnh trước khi gửi
+                const compressed = await compressImage(editingCategory.thumbnail, { quality: 0.85 });
+                formData.append("thumbnail", compressed);
             }
 
             await apiAdminClient("/product-categories/create", {
@@ -78,7 +81,9 @@ const AdminCategory = () => {
             formData.append("title", editingCategory.title);
             formData.append("description", editingCategory.description || "");
             if (editingCategory.thumbnail instanceof File) {
-                formData.append("thumbnail", editingCategory.thumbnail);
+                // Nén ảnh trước khi gửi
+                const compressed = await compressImage(editingCategory.thumbnail, { quality: 0.85 });
+                formData.append("thumbnail", compressed);
             }
 
             await apiAdminClient(`/product-categories/edit/${editingCategory._id}`, {

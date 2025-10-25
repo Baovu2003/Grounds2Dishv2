@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Pencil, Trash2, Eye, EyeOff, Plus, X } from "lucide-react";
 import { apiAdminClient } from "../../constants/apiUrl";
+import { compressImage } from "../../utils/imageCompression";
 
 const AdminProduct = () => {
     const [products, setProducts] = useState([]);
@@ -135,10 +136,12 @@ const AdminProduct = () => {
             );
             formData.append("oldThumbnails", JSON.stringify(oldThumbnails));
 
-            // File mới
-            (editingProduct.thumbnail || [])
-                .filter((f) => f instanceof File)
-                .forEach((file) => formData.append("thumbnail", file));
+            // Nén và upload file mới
+            const newFiles = (editingProduct.thumbnail || []).filter((f) => f instanceof File);
+            for (const file of newFiles) {
+                const compressed = await compressImage(file, { quality: 0.85 });
+                formData.append("thumbnail", compressed);
+            }
 
             await apiAdminClient(`/products/edit/${editingProduct._id}`, {
                 method: "PATCH",
@@ -170,10 +173,12 @@ const AdminProduct = () => {
             formData.append("description", editingProduct.description);
             formData.append("status", editingProduct.status || "active");
 
+            // Nén ảnh trước khi upload
             if (editingProduct.thumbnail?.length) {
-                editingProduct.thumbnail.forEach((file) => {
-                    formData.append("thumbnail", file);
-                });
+                for (const file of editingProduct.thumbnail) {
+                    const compressed = await compressImage(file, { quality: 0.85 });
+                    formData.append("thumbnail", compressed);
+                }
             }
             await apiAdminClient(`/products/create`, {
                 method: "POST",

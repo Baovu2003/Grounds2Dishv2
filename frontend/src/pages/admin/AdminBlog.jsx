@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Pencil, Trash2, Plus, X } from "lucide-react";
 import { apiAdminClient } from "../../constants/apiUrl";
+import { compressImage } from "../../utils/imageCompression";
 
 const AdminBlog = () => {
     const [blogs, setBlogs] = useState([]);
@@ -96,16 +97,23 @@ const AdminBlog = () => {
             formData.append("description", editingBlog.description || "");
             formData.append("article", editingBlog.article || "");
             formData.append("publishedAt", editingBlog.publishedAt || new Date().toISOString());
+            
+            // Nén ảnh banner trước khi gửi
             if (editingBlog.bannerImage instanceof File) {
-                formData.append("bannerImage", editingBlog.bannerImage);
+                const compressed = await compressImage(editingBlog.bannerImage, { quality: 0.85 });
+                formData.append("bannerImage", compressed);
             }
+            
+            // Nén các ảnh content trước khi gửi
             if (Array.isArray(editingBlog.contentImages)) {
-                editingBlog.contentImages.forEach((img) => {
+                for (const img of editingBlog.contentImages) {
                     if (img instanceof File) {
-                        formData.append("contentImages", img);
+                        const compressed = await compressImage(img, { quality: 0.85 });
+                        formData.append("contentImages", compressed);
                     }
-                });
+                }
             }
+            
             if (Array.isArray(editingBlog.contentImageUrls) && editingBlog.contentImageUrls.length) {
                 formData.append("contentImageUrls", JSON.stringify(editingBlog.contentImageUrls));
             }
@@ -139,16 +147,23 @@ const AdminBlog = () => {
             formData.append("description", editingBlog.description || "");
             formData.append("article", editingBlog.article || "");
             formData.append("publishedAt", editingBlog.publishedAt || new Date().toISOString());
+            
+            // Nén ảnh banner trước khi gửi
             if (editingBlog.bannerImage instanceof File) {
-                formData.append("bannerImage", editingBlog.bannerImage);
+                const compressed = await compressImage(editingBlog.bannerImage, { quality: 0.85 });
+                formData.append("bannerImage", compressed);
             }
+            
+            // Nén các ảnh content trước khi gửi
             if (Array.isArray(editingBlog.contentImages)) {
-                editingBlog.contentImages.forEach((img) => {
+                for (const img of editingBlog.contentImages) {
                     if (img instanceof File) {
-                        formData.append("contentImages", img);
+                        const compressed = await compressImage(img, { quality: 0.85 });
+                        formData.append("contentImages", compressed);
                     }
-                });
+                }
             }
+            
             if (Array.isArray(editingBlog.contentImageUrls) && editingBlog.contentImageUrls.length) {
                 formData.append("contentImageUrls", JSON.stringify(editingBlog.contentImageUrls));
             }
@@ -360,7 +375,9 @@ const AdminBlog = () => {
                                         const uploadedUrls = [];
                                         for (const file of files) {
                                             const formData = new FormData();
-                                            formData.append("image", file);
+                                            // Nén ảnh trước khi upload
+                                            const compressed = await compressImage(file, { quality: 0.85 });
+                                            formData.append("image", compressed);
                                             try {
                                                 const url = await apiAdminClient("/blogs/upload", { method: "POST", body: formData });
                                                 uploadedUrls.push({ name: file.name, url });
@@ -380,7 +397,7 @@ const AdminBlog = () => {
                                         let insertion = '';
                                         const needLeadingNewline = start > 0 && currentContent[start - 1] !== "\n";
                                         if (needLeadingNewline) insertion += "\n";
-                                        uploadedUrls.forEach(({ name, url }, index) => {
+                                        uploadedUrls.forEach(({ name, url }) => {
                                             insertion += `![${name}](${url})` + "\n";
                                         });
                                         const newContent = before + insertion + after;
