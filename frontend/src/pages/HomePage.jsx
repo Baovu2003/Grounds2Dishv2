@@ -334,16 +334,15 @@ const HomePage = ({ productSeller = [] }) => {
 
             <div className="max-w-3xl mx-auto space-y-6">
               <p className="text-xl md:text-2xl text-white/95 leading-relaxed font-light">
-                Với sứ mệnh lan tỏa giải pháp xanh trong tiêu dùng, AirX Coffee –
-                Veritas Việt Nam đã thành công sản xuất ly tái chế từ bã cà phê,
-                mang lại lựa chọn thay thế ly nhựa truyền thống.
+                Grounds2Dish là thương hiệu Việt trong hành trình biến bã cà phê – thứ tưởng chừng bỏ đi – thành những sản phẩm xanh đầy giá trị như cốc, muỗng, dao, dĩa và ống hút sinh học. Với thông điệp “Giá trị mới từ dư vị cũ”, chúng tôi mong muốn khơi dậy một lối sống bền vững, nơi mỗi lựa chọn nhỏ trong hôm nay đều góp phần bảo vệ Trái Đất ngày mai.
+
               </p>
 
               <p className="text-lg md:text-xl text-white/90 leading-relaxed">
-                Sản phẩm được thiết kế không chỉ bền đẹp mà còn thân thiện môi trường,
-                tận dụng tối đa nguồn phụ phẩm tự nhiên. Sau quá trình nghiên cứu dài hạn,
-                AirX hiện diện tại hơn 50 quốc gia và tự hào đáp ứng đầy đủ các tiêu chuẩn
-                chất lượng toàn cầu.
+
+                Mỗi sản phẩm Grounds2Dish là sự hòa quyện giữa sáng tạo, tâm huyết và tinh thần trách nhiệm với môi trường – mang đến cho bạn không chỉ vật dụng thân thiện mà còn là câu chuyện đẹp về hành trình tái sinh của hạt cà phê.
+
+                Hãy cùng Grounds2Dish sống xanh hơn, tinh tế hơn – bắt đầu từ những điều giản dị trên bàn ăn mỗi ngày. 🌿
               </p>
             </div>
           </div>

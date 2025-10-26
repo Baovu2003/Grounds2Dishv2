@@ -69,10 +69,10 @@ const AdminOrder = () => {
 
 
     // Pagination
-    const totalPages = Array.isArray(filteredOrders) 
+    const totalPages = Array.isArray(filteredOrders)
         ? Math.ceil(filteredOrders.length / PAGE_SIZE)
         : 0;
-    const paginatedOrders = Array.isArray(filteredOrders) 
+    const paginatedOrders = Array.isArray(filteredOrders)
         ? filteredOrders.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
         : [];
 
@@ -190,6 +190,8 @@ const AdminOrder = () => {
                     <tr className="bg-gray-100">
                         <th className="p-3 border">Khách hàng</th>
                         <th className="p-3 border">Sản phẩm</th>
+                        <th className="p-2">Tổng tiền-Giảm giá-Thành Tiền</th>
+                        <th className="p-2">Thành tiền</th>
                         <th className="p-3 border">Trạng thái</th>
                         <th className="p-3 border">Ngày tạo</th>
                         <th className="p-3 border">Hành động</th>
@@ -225,6 +227,17 @@ const AdminOrder = () => {
                                         ))}
                                     </ul>
                                 </td>
+
+                                <td className="p-2 text-red-600">
+                                    {order.totalPrice?.toLocaleString()}₫
+                                    <span className="text-gray-500 mx-1">-</span>
+                                    {order.cupDiscount?.toLocaleString()}₫
+                                    <span className="text-gray-500 mx-1">=</span>
+                                    <span className="text-green-700 font-semibold">
+                                        {order.finalPrice?.toLocaleString()}₫
+                                    </span>
+                                </td>
+
                                 <td className="p-3 border">
                                     <span
                                         className={`px-3 py-1 rounded text-xs font-medium ${order.status === "pending"

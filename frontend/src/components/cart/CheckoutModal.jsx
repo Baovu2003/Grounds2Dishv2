@@ -128,14 +128,18 @@ const CheckoutModal = ({
           quantity: item.quantity,
           price: item.price,
         })),
+        totalPrice,
+        cupDiscount,
+        finalPrice,
       };
+      console.log("Body", body)
 
       await apiClient("/orders/create", {
         method: "POST",
         body: JSON.stringify(body),
       });
 
-      // Gọi toast từ Cart
+      // // Gọi toast từ Cart
       setSuccessMessage("Đặt hàng thành công 🎉");
       clearSelected();
       onClose();
@@ -402,14 +406,14 @@ const CheckoutModal = ({
                     <span className="font-semibold" style={{ color: '#20161F' }}>{formatPrice(item.price * item.quantity)}</span>
                   </div>
                 ))}
-                
+
                 {cupDiscount > 0 && (
                   <div className="flex justify-between items-center py-1 text-green-600">
                     <span>🎉 Giảm giá cốc (2 cốc -10%)</span>
                     <span className="font-semibold">-{formatPrice(cupDiscount)}</span>
                   </div>
                 )}
-                
+
                 <div className="border-t border-neutral-300 pt-3 mt-3">
                   <div className="flex justify-between items-center">
                     <span className="font-bold text-neutral-900 text-base">Tổng cộng:</span>

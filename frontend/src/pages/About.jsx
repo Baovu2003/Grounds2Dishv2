@@ -2,65 +2,71 @@ import React from "react";
 import { Link } from "react-router";
 import { ArrowRight, Users, Target, Award, Heart, Globe, Coffee, Leaf } from "lucide-react";
 
+
 const About = () => {
   const teamMembers = [
     {
       name: "Trần Thu Hoài",
       role: "CEO & Founder",
       image: "/images/anh1.jpg",
-      description: "Với nhiều năm kinh nghiệm dày dặn thông quá môi trường học cũng như đã đào tạo và trải nghiệm trong môi trường thực tế"
+      description: "Là người sáng lập và dẫn dắt dự án Grounds2Dish, Trần Thu Hoài giữ vai trò định hướng chiến lược và quản lý toàn bộ hoạt động của doanh nghiệp. Với tinh thần khởi nghiệp xanh và niềm đam mê phát triển bền vững, chị Hoài là người khởi xướng ý tưởng “Giá trị mới từ dư vị cũ”, biến bã cà phê tưởng chừng vô dụng thành những sản phẩm thân thiện với môi trường.Tầm nhìn của chị là đưa Grounds2Dish trở thành thương hiệu Việt tiên phong trong tái chế và sản xuất sản phẩm sinh học."
     },
     {
       name: "Hoàng Thị Cẩm Ly",
-      role: "Marketing",
+      role: "CFO(Chief Financial Officer)",
       image: "/images/anh2.jpg",
-      description: "Chuyên gia trong lĩnh vực chiến lược tiếp thị, quảng cáo và xây dựng thương hiệu"
+      description: "Hoàng Thị Cẩm Ly phụ trách quản lý tài chính và hoạch định ngân sách cho dự án. Chị đảm bảo mọi hoạt động đầu tư, chi phí sản xuất và phân phối được tối ưu hiệu quả. Với tư duy phân tích sắc bén và khả năng dự báo tài chính tốt, chị Ly đóng vai trò quan trọng trong việc giúp Grounds2Dish phát triển bền vững, minh bạch và có lộ trình tăng trưởng rõ ràng.Chị tin rằng: “Tài chính bền vững là nền móng của một thương hiệu xanh vững mạnh.”"
     },
     {
-      name: "Lê Văn C",
-      role: "Head of Marketing",
+      name: "Nguyễn Thị Linh",
+      role: "CCO(Chief Communication Officer)",
       image: "/images/anh3.jpg",
-      description: "Chuyên gia marketing bền vững và phát triển thương hiệu"
+      description: "Nguyễn Thị Linh là người định hình và triển khai chiến lược truyền thông, xây dựng hình ảnh thương hiệu Grounds2Dish gần gũi với cộng đồng. Với khả năng sáng tạo nội dung và kết nối tốt, chị Linh giúp lan tỏa thông điệp sống xanh, giảm rác thải và bảo vệ môi trường đến giới trẻ, sinh viên và người tiêu dùng hiện đại.Chị luôn hướng tới việc biến mỗi sản phẩm Grounds2Dish thành một câu chuyện truyền cảm hứng."
     },
     {
-      name: "Lê Văn C",
-      role: "Head of Marketing",
+      name: "Nghiêm Thị Thanh Nhã",
+      role: "CMO(Chief Marketing Officer)",
       image: "/images/anh3.jpg",
-      description: "Chuyên gia marketing bền vững và phát triển thương hiệu"
+      description: "Giữ vai trò Giám đốc Marketing, Nghiêm Thị Thanh Nhã chịu trách nhiệm nghiên cứu thị trường, phát triển sản phẩm và hoạch định chiến lược marketing tổng thể. Với tinh thần sáng tạo và am hiểu xu hướng tiêu dùng xanh, chị Nhã giúp Grounds2Dish khẳng định vị thế thương hiệu Việt tiên phong trong dòng sản phẩm sinh học từ bã cà phê.Chị tin rằng marketing không chỉ là bán hàng, mà là lan tỏa lối sống xanh."
     },
     {
-      name: "Lê Văn C",
-      role: "Head of Marketing",
+      name: "Hoàng Đức Anh",
+      role: "CIO(Chief Innovation Officer)",
       image: "/images/anh3.jpg",
-      description: "Chuyên gia marketing bền vững và phát triển thương hiệu"
+      description: "Hoàng Đức Anh là người phụ trách công nghệ và đổi mới sáng tạo trong dự án. Anh chịu trách nhiệm nghiên cứu quy trình tái chế bã cà phê, cải tiến công nghệ sản xuất và đảm bảo chất lượng sản phẩm. Với tư duy kỹ thuật và đam mê sáng tạo, anh Đức Anh góp phần quan trọng trong việc hiện thực hóa ý tưởng biến bã cà phê thành những sản phẩm bền vững và thân thiện với môi trường.Anh luôn tâm niệm: “Đổi mới là chìa khóa để phát triển bền vững.”"
     }
   ];
 
   const milestones = [
     {
-      year: "Tháng 8",
-      title: "Thành lập dự án",
-      description: "Grounds2Dish được thành lập với sứ mệnh biến bã cà phê thành giá trị mới"
+      year: "Đầu năm 2025",
+      title: " Thành lập dự án Grounds2Dish",
+      description: "Dự án Grounds2Dish chính thức được thành lập với sứ mệnh tái chế bã cà phê thành sản phẩm sinh học thân thiện môi trường, hướng tới xây dựng lối sống xanh và kinh tế tuần hoàn."
     },
     {
-      year: "2021",
-      title: "Sản phẩm đầu tiên",
-      description: "Ra mắt dòng sản phẩm ly tái chế từ bã cà phê đầu tiên"
+      year: "Tháng 6/2025",
+      title: "Nghiên cứu, kiểm định & hoàn thiện sản phẩm",
+      description: "Tiến hành nghiên cứu công thức tái chế, kiểm định chất lượng, và thiết kế bao bì cho các sản phẩm đầu tiên: cốc, dao, dĩa, muỗng từ bã cà phê."
     },
     {
-      year: "2022",
-      title: "Mở rộng thị trường",
-      description: "Xuất khẩu sản phẩm ra 10 quốc gia đầu tiên"
+      year: "Tháng 8/2025",
+      title: "Hoàn thiện thương hiệu & chuẩn bị ra mắt",
+      description: "Hoàn tất bộ nhận diện thương hiệu, chiến dịch truyền thông “Giá trị mới từ dư vị cũ” và hệ thống bán hàng trực tuyến"
     },
     {
-      year: "2023",
-      title: "Công nhận quốc tế",
-      description: "Nhận giải thưởng 'Sản phẩm bền vững tốt nhất' tại Châu Á"
+      year: " Ngày 26/10/2025",
+      title: "– Ra mắt sản phẩm & website chính thức",
+      description: "Grounds2Dish chính thức ra mắt bộ sản phẩm và website thương mại điện tử, đánh dấu bước ngoặt quan trọng trong hành trình phát triển thương hiệu xanh Việt Nam."
     },
     {
-      year: "2024",
-      title: "Phát triển toàn cầu",
-      description: "Hiện diện tại hơn 50 quốc gia trên toàn thế giới"
+      year: "Cuối năm 2025",
+      title: "Mở rộng hợp tác & truyền thông cộng đồng",
+      description: "Hợp tác với quán cà phê, doanh nghiệp xanh để thu gom bã cà phê, đồng thời triển khai chuỗi hoạt động lan tỏa ý thức bảo vệ môi trường."
+    },
+    {
+      year: "Tầm nhìn 2026 ",
+      title: " Vươn tầm thương hiệu xanh Việt",
+      description: "Grounds2Dish đặt mục tiêu mở rộng thị trường trong nước và quốc tế, tham gia triển lãm khởi nghiệp xanh và hội chợ môi trường, khẳng định vị thế thương hiệu Việt tiên phong trong tái chế bã cà phê"
     }
   ];
 
@@ -220,43 +226,63 @@ const About = () => {
         </section>
 
         {/* Timeline Section */}
-        <section className="mb-20">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-display font-bold text-neutral-900 mb-4">
+        <section className="mb-8">
+          <div className="text-center mb-6">
+            <h2 className="text-2xl font-display font-bold text-neutral-900 mb-1">
               Hành trình phát triển
             </h2>
-            <p className="text-lg text-neutral-600 max-w-2xl mx-auto">
+            <p className="text-sm text-neutral-600 max-w-md mx-auto">
               Những cột mốc quan trọng trong hành trình xây dựng Grounds2Dish
             </p>
           </div>
+
           <div className="relative">
-            <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-neutral-200 to-neutral-300"></div>
-            <div className="space-y-12">
+            <div className="absolute left-1/2 transform -translate-x-1/2 w-0.5 h-full bg-gradient-to-b from-neutral-200 to-neutral-300"></div>
+
+            <div className="space-y-5">
               {milestones.map((milestone, index) => (
-                <div key={index} className={`flex items-center ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'}`}>
-                  <div className={`w-1/2 ${index % 2 === 0 ? 'pr-8 text-right' : 'pl-8 text-left'}`}>
-                    <div className="bg-white rounded-2xl p-6 shadow-sm border border-neutral-100">
-                      <div className="text-2xl font-bold mb-2" style={{ color: '#20161F' }}>
+                <div
+                  key={index}
+                  className={`flex items-center ${index % 2 === 0 ? "flex-row" : "flex-row-reverse"
+                    }`}
+                >
+                  <div
+                    className={`w-1/2 ${index % 2 === 0 ? "pr-3 text-right" : "pl-3 text-left"
+                      }`}
+                  >
+                    <div className="bg-white rounded-lg p-3 shadow-sm border border-neutral-100">
+                      <div
+                        className="text-base font-semibold mb-1"
+                        style={{ color: "#20161F" }}
+                      >
                         {milestone.year}
                       </div>
-                      <h3 className="text-xl font-bold text-neutral-900 mb-2">
+                      <h3 className="text-sm font-bold text-neutral-900 mb-1">
                         {milestone.title}
                       </h3>
-                      <p className="text-neutral-600">
+                      <p className="text-xs text-neutral-600 leading-snug">
                         {milestone.description}
                       </p>
                     </div>
                   </div>
-                  <div className="w-8 h-8 bg-white rounded-full border-4 border-neutral-200 flex items-center justify-center relative z-10"
-                    style={{ borderColor: '#20161F' }}>
-                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#20161F' }}></div>
+
+                  <div
+                    className="w-4 h-4 bg-white rounded-full border-2 flex items-center justify-center relative z-10"
+                    style={{ borderColor: "#20161F" }}
+                  >
+                    <div
+                      className="w-1.5 h-1.5 rounded-full"
+                      style={{ backgroundColor: "#20161F" }}
+                    ></div>
                   </div>
+
                   <div className="w-1/2"></div>
                 </div>
               ))}
             </div>
           </div>
         </section>
+
 
         {/* Team Section */}
         <section className="mb-20">

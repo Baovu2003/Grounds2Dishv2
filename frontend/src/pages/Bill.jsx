@@ -3,8 +3,6 @@ import { Link } from "react-router";
 import { Calendar, Package, CreditCard, MapPin, Phone, Mail, User, FileText, CheckCircle, Clock, XCircle } from "lucide-react";
 const Bill = ({ billData, }) => {
 
-
-
     // Sample bill data - replace with actual API call
 
     const formatPrice = (price) => {
@@ -230,6 +228,8 @@ const Bill = ({ billData, }) => {
                     </div>
 
                     {/* Order Summary */}
+
+                    {/* Order Summary */}
                     <div className="card mb-8">
                         <div className="flex items-center gap-3 mb-6">
                             <div className="p-2 rounded-xl bg-purple-100">
@@ -238,45 +238,34 @@ const Bill = ({ billData, }) => {
                             <h2 className="text-xl font-bold text-neutral-800">Tổng kết đơn hàng</h2>
                         </div>
 
-                        {/* Tính toán subtotal, shipping, total */}
-                        {(() => {
-                            const subtotal = billData.products.reduce(
-                                (sum, item) => sum + item.price * item.quantity,
-                                0
-                            );
-                            const shipping = 30000; // bạn có thể lấy từ API nếu có
-                            const total = subtotal + shipping;
+                        <div className="space-y-4">
+                            <div className="flex justify-between items-center py-2">
+                                <span className="text-neutral-600">Tổng tiền:</span>
+                                <span className="font-semibold text-neutral-800">
+                                    {formatPrice(billData.totalPrice || 0)}
+                                </span>
+                            </div>
 
-                            return (
-                                <div className="space-y-4">
-                                    <div className="flex justify-between items-center py-2">
-                                        <span className="text-neutral-600">Tạm tính:</span>
-                                        <span className="font-semibold text-neutral-800">
-                                            {formatPrice(subtotal)}
-                                        </span>
-                                    </div>
-                                    <div className="flex justify-between items-center py-2">
-                                        <span className="text-neutral-600">Phí vận chuyển:</span>
-                                        <span className="font-semibold text-neutral-800">
-                                            {formatPrice(shipping)}
-                                        </span>
-                                    </div>
-                                    <div className="border-t border-neutral-200 pt-4">
-                                        <div className="flex justify-between items-center">
-                                            <span className="text-lg font-bold text-neutral-800">
-                                                Tổng cộng:
-                                            </span>
-                                            <span
-                                                className="text-2xl font-bold"
-                                                style={{ color: "#20161F" }}
-                                            >
-                                                {formatPrice(total)}
-                                            </span>
-                                        </div>
-                                    </div>
+                            <div className="flex justify-between items-center py-2">
+                                <span className="text-neutral-600">Giảm giá:</span>
+                                <span className="font-semibold text-red-600">
+                                    - {formatPrice(billData.cupDiscount || 0)}
+                                </span>
+                            </div>
+
+                            <div className="border-t border-neutral-200 pt-4">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-lg font-bold text-neutral-800">
+                                        Thành tiền:
+                                    </span>
+                                    <span
+                                        className="text-2xl font-bold text-green-700"
+                                    >
+                                        {formatPrice(billData.finalPrice || 0)}
+                                    </span>
                                 </div>
-                            );
-                        })()}
+                            </div>
+                        </div>
 
                         <div className="mt-6 pt-6 border-t border-neutral-200">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

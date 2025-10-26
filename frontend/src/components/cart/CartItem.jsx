@@ -1,94 +1,80 @@
 import React from "react";
 import { Trash2, Plus, Minus } from "lucide-react";
 
-const CartItem = ({
-  item,
-  onQuantityChange,
-  onRemove,
-  onToggleSelect
-}) => {
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat("vi-VN", {
+const CartItem = ({ item, onQuantityChange, onRemove, onToggleSelect }) => {
+  const formatPrice = (price) =>
+    new Intl.NumberFormat("vi-VN", {
       style: "currency",
       currency: "VND",
     }).format(price);
-  };
 
   return (
     <div
-      className={`card bg-white border-2 transition-all duration-300 ${item.selected
-        ? "shadow-lg"
-        : "border-neutral-100 hover:border-neutral-300"
+      className={`bg-white border rounded-2xl transition-all duration-300 ${item.selected ? "shadow-md border-[#20161F]" : "border-neutral-200"
         }`}
-      style={item.selected ? { borderColor: '#20161F' } : {}}
     >
-      <div className="card-body p-6">
-        <div className="flex items-center gap-4">
-          <div className="w-8 flex justify-center">
-            <input
-              type="checkbox"
-              className="checkbox"
-              checked={item.selected}
-              onChange={() => onToggleSelect(item._id)}
-              style={item.selected ? {
-                accentColor: '#20161F',
-                borderColor: '#20161F'
-              } : {}}
-            />
-          </div>
+      <div className="flex items-center gap-4 p-4">
+        {/* Checkbox */}
+        <input
+          type="checkbox"
+          checked={item.selected}
+          onChange={() => onToggleSelect(item._id)}
+          className="w-5 h-5 accent-[#20161F]"
+        />
 
-          {/* Thumbnail */}
-          <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
-            <img
-              src={item.thumbnail[0] || "/placeholder.svg"}
-              alt={item.name}
-              className="w-full h-full object-cover"
-            />
-          </div>
+        {/* Thumbnail */}
+        <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+          <img
+            src={item.thumbnail?.[0] || "/placeholder.svg"}
+            alt={item.name}
+            className="w-full h-full object-cover"
+          />
+        </div>
 
-          {/* Info */}
-          <div className="flex-1">
-            <h3 className="text-lg font-semibold mb-1 text-neutral-900">{item.name}</h3>
-            <p className="text-sm mb-2 text-neutral-600">{item.description}</p>
-            <div className="font-bold text-lg" style={{ color: '#20161F' }}>
-              {formatPrice(item.price)}
-            </div>
-          </div>
-
-          {/* Quantity */}
-          <div className="flex items-center gap-2 w-32 justify-center">
-            <button
-              onClick={() => onQuantityChange(item._id, item.quantity - 1)}
-              className="btn btn-sm btn-circle btn-outline border-neutral-300 hover:border-neutral-400"
-              style={{ color: '#20161F' }}
-            >
-              <Minus className="w-4 h-4" />
-            </button>
-            <span className="w-8 text-center font-semibold text-neutral-900">{item.quantity}</span>
-            <button
-              onClick={() => onQuantityChange(item._id, item.quantity + 1)}
-              className="btn btn-sm btn-circle btn-outline border-neutral-300 hover:border-neutral-400"
-              style={{ color: '#20161F' }}
-            >
-              <Plus className="w-4 h-4" />
-            </button>
-          </div>
-
-          {/* Total */}
-          <div className="w-32 text-right font-bold text-lg" style={{ color: '#20161F' }}>
-            {formatPrice(item.price * item.quantity)}
-          </div>
-
-          {/* Remove */}
-          <div className="w-12 flex justify-center">
-            <button
-              onClick={() => onRemove(item._id)}
-              className="btn btn-sm btn-ghost text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors duration-300"
-            >
-              <Trash2 className="w-4 h-4" />
-            </button>
+        {/* Product info */}
+        <div className="flex-1 min-w-0">
+          <h3 className="text-base sm:text-lg font-semibold text-neutral-900 truncate">
+            {item.name}
+          </h3>
+          <p className="text-sm text-neutral-600 line-clamp-2">
+            {item.description}
+          </p>
+          <div className="font-bold text-base sm:text-lg text-[#20161F] mt-1">
+            {formatPrice(item.price)}
           </div>
         </div>
+
+        {/* Quantity */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => onQuantityChange(item._id, item.quantity - 1)}
+            className="p-1 border rounded-full hover:bg-neutral-100"
+          >
+            <Minus className="w-4 h-4 text-[#20161F]" />
+          </button>
+          <span className="w-6 text-center font-semibold text-neutral-900">
+            {item.quantity}
+          </span>
+          <button
+            onClick={() => onQuantityChange(item._id, item.quantity + 1)}
+            className="p-1 border rounded-full hover:bg-neutral-100"
+          >
+            <Plus className="w-4 h-4 text-[#20161F]" />
+          </button>
+        </div>
+
+        {/* Total */}
+        <div className="w-28 text-right font-bold text-[#20161F]">
+          {formatPrice(item.price * item.quantity)}
+        </div>
+
+        {/* Remove */}
+        <button
+          onClick={() => onRemove(item._id)}
+          className="text-red-500 hover:text-red-600 p-2"
+        >
+          <Trash2 className="w-4 h-4" />
+        </button>
       </div>
     </div>
   );
