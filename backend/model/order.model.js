@@ -22,7 +22,9 @@ const orderSchema = new mongoose.Schema({
       price: Number,
     },
   ],
-
+  totalPrice: { type: Number, required: false },
+  cupDiscount: { type: Number, required: false },
+  finalPrice: { type: Number, required: false },
   status: {
     type: String,
     enum: ["pending", "confirmed", "canceled"],

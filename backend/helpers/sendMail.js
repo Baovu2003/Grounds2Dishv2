@@ -95,11 +95,26 @@ module.exports.sendMail = (email, subject, order) => {
             ${productRows}
           </tbody>
           <tfoot>
-            <tr>
-              <td colspan="2" style="text-align: right; font-weight: bold;">Tổng cộng:</td>
-              <td style="text-align: right; font-weight: bold;">${totalPrice} ₫</td>
-            </tr>
-          </tfoot>
+  <tr>
+    <td colspan="2" style="text-align:right; font-weight:bold;">Tạm tính:</td>
+    <td style="text-align:right;">${order.totalPrice.toLocaleString()} ₫</td>
+  </tr>
+
+  ${
+    order.cupDiscount > 0
+      ? `<tr>
+           <td colspan="2" style="text-align:right; color:green; font-weight:bold;">Giảm giá (10% cốc):</td>
+           <td style="text-align:right; color:green;">- ${order.cupDiscount.toLocaleString()} ₫</td>
+         </tr>`
+      : ""
+  }
+
+  <tr>
+    <td colspan="2" style="text-align:right; font-weight:bold;">Tổng cộng:</td>
+    <td style="text-align:right; font-weight:bold;">${order.finalPrice.toLocaleString()} ₫</td>
+  </tr>
+</tfoot>
+
         </table>
 
         <p>Nếu bạn có bất kỳ thắc mắc nào, hãy liên hệ với chúng tôi qua email hoặc hotline.</p>

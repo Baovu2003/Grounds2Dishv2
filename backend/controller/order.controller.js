@@ -3,6 +3,7 @@ const { sendMail } = require("../helpers/sendMail");
 
 // [POST] /api/orders/create
 module.exports.createOrder = async (req, res) => {
+  console.log("req.body", req.body);
   try {
     // Tạo order mới từ body
     const newOrder = new Order({
@@ -15,6 +16,10 @@ module.exports.createOrder = async (req, res) => {
       ward: req.body.ward,
       note: req.body.note,
       products: req.body.products,
+      totalPrice: req.body.totalPrice,
+      cupDiscount: req.body.cupDiscount,
+      finalPrice: req.body.finalPrice,
+
       status: "pending",
     });
 
@@ -47,6 +52,9 @@ module.exports.createOrder = async (req, res) => {
           quantity: p.quantity,
           price: p.price,
         })),
+        totalPrice: populatedOrder.totalPrice,
+        cupDiscount: populatedOrder.cupDiscount,
+        finalPrice: populatedOrder.finalPrice,
       };
 
       console.log("Order to send:", orderToSend);
@@ -63,6 +71,7 @@ module.exports.createOrder = async (req, res) => {
 module.exports.getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find().populate("products.product_id");
+    console.log(orders);
     res.json(orders);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -73,6 +82,7 @@ module.exports.getAllOrders = async (req, res) => {
 module.exports.updateOrderStatus = async (req, res) => {
   try {
     const { status } = req.body;
+    console.log("status", status);
     const allowed = ["pending", "confirmed", "canceled"];
     if (!allowed.includes(status)) {
       return res.status(400).json({ error: "Invalid status" });
@@ -83,7 +93,7 @@ module.exports.updateOrderStatus = async (req, res) => {
       { status },
       { new: true }
     ).populate("products.product_id");
-
+    console.log("order", order);
     if (!order) return res.status(404).json({ error: "Order not found" });
 
     // Gửi mail thông báo trạng thái thay đổi
@@ -110,6 +120,9 @@ module.exports.updateOrderStatus = async (req, res) => {
             quantity: p.quantity,
             price: p.price,
           })),
+          totalPrice: order.totalPrice,
+          cupDiscount: order.cupDiscount,
+          finalPrice: order.finalPrice,
         };
         console.log("orderToSend", orderToSend);
 
