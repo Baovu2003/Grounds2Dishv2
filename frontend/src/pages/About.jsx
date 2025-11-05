@@ -8,31 +8,31 @@ const About = () => {
     {
       name: "Trần Thu Hoài",
       role: "CEO & Founder",
-      image: "/images/anh1.jpg",
+      image: "/images/ThuHoai.jpg",
       description: "Là người sáng lập và dẫn dắt dự án Grounds2Dish, Trần Thu Hoài giữ vai trò định hướng chiến lược và quản lý toàn bộ hoạt động của doanh nghiệp. Với tinh thần khởi nghiệp xanh và niềm đam mê phát triển bền vững, chị Hoài là người khởi xướng ý tưởng “Giá trị mới từ dư vị cũ”, biến bã cà phê tưởng chừng vô dụng thành những sản phẩm thân thiện với môi trường.Tầm nhìn của chị là đưa Grounds2Dish trở thành thương hiệu Việt tiên phong trong tái chế và sản xuất sản phẩm sinh học."
     },
     {
       name: "Hoàng Thị Cẩm Ly",
       role: "CFO(Chief Financial Officer)",
-      image: "/images/anh2.jpg",
+      image: "/images/HoangLy.jpg",
       description: "Hoàng Thị Cẩm Ly phụ trách quản lý tài chính và hoạch định ngân sách cho dự án. Chị đảm bảo mọi hoạt động đầu tư, chi phí sản xuất và phân phối được tối ưu hiệu quả. Với tư duy phân tích sắc bén và khả năng dự báo tài chính tốt, chị Ly đóng vai trò quan trọng trong việc giúp Grounds2Dish phát triển bền vững, minh bạch và có lộ trình tăng trưởng rõ ràng.Chị tin rằng: “Tài chính bền vững là nền móng của một thương hiệu xanh vững mạnh.”"
     },
     {
       name: "Nguyễn Thị Linh",
       role: "CCO(Chief Communication Officer)",
-      image: "/images/anh3.jpg",
+      image: "/images/linh.jpg",
       description: "Nguyễn Thị Linh là người định hình và triển khai chiến lược truyền thông, xây dựng hình ảnh thương hiệu Grounds2Dish gần gũi với cộng đồng. Với khả năng sáng tạo nội dung và kết nối tốt, chị Linh giúp lan tỏa thông điệp sống xanh, giảm rác thải và bảo vệ môi trường đến giới trẻ, sinh viên và người tiêu dùng hiện đại.Chị luôn hướng tới việc biến mỗi sản phẩm Grounds2Dish thành một câu chuyện truyền cảm hứng."
     },
     {
       name: "Nghiêm Thị Thanh Nhã",
       role: "CMO(Chief Marketing Officer)",
-      image: "/images/anh3.jpg",
+      image: "/images/thanhnha.jpg",
       description: "Giữ vai trò Giám đốc Marketing, Nghiêm Thị Thanh Nhã chịu trách nhiệm nghiên cứu thị trường, phát triển sản phẩm và hoạch định chiến lược marketing tổng thể. Với tinh thần sáng tạo và am hiểu xu hướng tiêu dùng xanh, chị Nhã giúp Grounds2Dish khẳng định vị thế thương hiệu Việt tiên phong trong dòng sản phẩm sinh học từ bã cà phê.Chị tin rằng marketing không chỉ là bán hàng, mà là lan tỏa lối sống xanh."
     },
     {
       name: "Hoàng Đức Anh",
       role: "CIO(Chief Innovation Officer)",
-      image: "/images/anh3.jpg",
+      image: "/images/ducanh.jpg",
       description: "Hoàng Đức Anh là người phụ trách công nghệ và đổi mới sáng tạo trong dự án. Anh chịu trách nhiệm nghiên cứu quy trình tái chế bã cà phê, cải tiến công nghệ sản xuất và đảm bảo chất lượng sản phẩm. Với tư duy kỹ thuật và đam mê sáng tạo, anh Đức Anh góp phần quan trọng trong việc hiện thực hóa ý tưởng biến bã cà phê thành những sản phẩm bền vững và thân thiện với môi trường.Anh luôn tâm niệm: “Đổi mới là chìa khóa để phát triển bền vững.”"
     }
   ];
@@ -144,7 +144,7 @@ const About = () => {
               <span className="text-neutral-400">/</span>
             </li>
             <li className="text-neutral-900 font-semibold">
-              About Us
+              Về chúng tôi
             </li>
           </ol>
         </nav>
@@ -180,7 +180,7 @@ const About = () => {
             <div className="relative">
               <div className="aspect-square rounded-2xl overflow-hidden shadow-xl">
                 <img
-                  src="/images/header-background1.jpg"
+                  src="/images/IMG_3313.JPG"
                   alt="Our Mission"
                   className="w-full h-full object-cover"
                 />

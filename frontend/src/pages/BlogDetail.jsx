@@ -112,11 +112,9 @@ export default function BlogDeatil() {
                         </div>
                         <div className="flex items-center gap-2">
                             <Calendar className="w-5 h-5" />
-                            {new Date(blog.publishedAt).toLocaleDateString("vi-VN")}
+                            {(blog.publishedAt)}
                         </div>
-                        <div className="flex items-center gap-2">
-                            <Clock className="w-5 h-5" /> {blog.readTime || "5 phút đọc"}
-                        </div>
+
                     </div>
 
 

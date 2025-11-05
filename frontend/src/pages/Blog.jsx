@@ -77,7 +77,7 @@ export default function Blog() {
                                 onMouseEnter={(e) => e.target.style.color = '#20161F'}
                                 onMouseLeave={(e) => e.target.style.color = '#6b7280'}
                             >
-                                Home
+                                Trang chủ
                                 <span className="absolute left-0 -bottom-1 w-0 h-0.5 transition-all group-hover:w-full"
                                     style={{ backgroundColor: '#20161F' }}></span>
                             </Link>
@@ -91,10 +91,10 @@ export default function Blog() {
                     </ol>
                 </nav>
                 <h2 className="text-2xl font-bold text-gray-800 mb-8 text-center">
-                    Latest Posts
+                    Các blog của chúng tôi
                 </h2>
                 {!Array.isArray(blogs) || blogs.length === 0 ? (
-                    <p className="text-center text-gray-500">No blogs available yet.</p>
+                    <p className="text-center text-gray-500">Không có blog nào để hiển thị</p>
                 ) : (
                     <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
                         {Array.isArray(pageBlogs) && pageBlogs.map((blog) => (
@@ -110,7 +110,7 @@ export default function Blog() {
                             className="px-3 py-2 rounded-lg bg-neutral-200 text-neutral-800 disabled:opacity-50"
                             disabled={currentPage === 1}
                         >
-                            Prev
+                            Trước
                         </button>
                         {Array.from({ length: totalPages }).map((_, i) => (
                             <button
@@ -126,7 +126,7 @@ export default function Blog() {
                             className="px-3 py-2 rounded-lg bg-neutral-200 text-neutral-800 disabled:opacity-50"
                             disabled={currentPage === totalPages}
                         >
-                            Next
+                            Tiếp
                         </button>
                     </div>
                 )}

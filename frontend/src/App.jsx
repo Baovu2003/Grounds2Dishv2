@@ -1,6 +1,5 @@
 import { Route, Routes } from "react-router";
 import Layout from "./components/Layout";
-import { useThemeStore } from "./store/useThemeStore";
 import HomePage from "./pages/HomePage";
 import BlogDetailPage from "./pages/BlogDetail";
 import Shop from "./pages/Shop";

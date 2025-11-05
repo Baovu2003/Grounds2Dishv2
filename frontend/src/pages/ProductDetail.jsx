@@ -3,21 +3,19 @@ import { useParams, Link } from "react-router";
 import useCartStore from "../store/useCartStore";
 import { apiClient } from "../constants/apiUrl";
 
-const PRODUCT_API = "http://localhost:5000/api/products";
-
 export default function ProductDetail() {
     const { id } = useParams();
     const { addItem } = useCartStore();
     const [product, setProduct] = useState(null);
     const [quantity, setQuantity] = useState(1);
     const [mainImage, setMainImage] = useState("");
+    const [activeTab, setActiveTab] = useState("description"); // tab: description | ingredients | usage
 
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                const data = await apiClient(`/products/${id}`)
-                if (!data) throw new Error(data.error || "Lỗi khi lấy sản phẩm");
-
+                const data = await apiClient(`/products/${id}`);
+                if (!data) throw new Error("Lỗi khi lấy sản phẩm");
                 setProduct(data);
                 setMainImage(data.thumbnail?.[0] || "");
             } catch (err) {
@@ -59,7 +57,7 @@ export default function ProductDetail() {
     return (
         <div className="section-padding">
             <div className="container-custom grid grid-cols-1 lg:grid-cols-2 gap-10">
-                {/* Gallery */}
+                {/* Hình ảnh sản phẩm */}
                 <div className="bg-white rounded-3xl shadow-lg overflow-hidden">
                     <div className="aspect-[4/3] w-full overflow-hidden">
                         <img
@@ -105,7 +103,7 @@ export default function ProductDetail() {
                         }).format(product.price)}
                     </div>
 
-                    {/* Quantity + Buttons */}
+                    {/* Số lượng + nút thêm giỏ */}
                     <div className="flex items-center gap-4 flex-wrap">
                         <div className="flex items-center gap-2 border rounded-xl">
                             <button
@@ -139,8 +137,58 @@ export default function ProductDetail() {
                             Tiếp tục mua sắm
                         </Link>
                     </div>
+                    <div className="container-custom mt-12">
+                        <div className="flex border-b border-gray-200">
+                            {[
+                                { id: "description", label: "Mô tả sản phẩm" },
+                                { id: "ingredients", label: "Thành phần" },
+                                { id: "usage", label: "Cách sử dụng" },
+                            ].map((tab) => (
+                                <button
+                                    key={tab.id}
+                                    onClick={() => setActiveTab(tab.id)}
+                                    className={`py-3 px-6 text-sm font-medium transition-colors ${activeTab === tab.id
+                                        ? "border-b-2 border-blue-600 text-blue-600"
+                                        : "text-gray-500 hover:text-gray-800"
+                                        }`}
+                                >
+                                    {tab.label}
+                                </button>
+                            ))}
+                        </div>
+
+                        <div className="bg-white p-6 rounded-b-2xl shadow mt-2">
+                            {activeTab === "description" && (
+                                <p className="text-gray-700 leading-relaxed">
+                                    {product.description || "Chưa có mô tả cho sản phẩm này."}
+                                </p>
+                            )}
+                            {activeTab === "ingredients" && (
+                                <ul className="list-disc ml-5 text-gray-700 space-y-2">
+                                    {product.ingredients?.length ? (
+                                        product.ingredients.map((item, idx) => (
+                                            <li key={idx}>{item}</li>
+                                        ))
+                                    ) : (
+                                        <p>Chưa có thông tin thành phần.</p>
+                                    )}
+                                </ul>
+                            )}
+                            {activeTab === "usage" && (
+                                <ul className=" ml-5 text-gray-700 space-y-2">
+                                    {product.usage?.length ? (
+                                        product.usage.map((step, idx) => <li key={idx}>{step}</li>)
+                                    ) : (
+                                        <p>Chưa có hướng dẫn sử dụng.</p>
+                                    )}
+                                </ul>
+                            )}
+                        </div>
+                    </div>
                 </div>
             </div>
+
+
         </div>
     );
 }

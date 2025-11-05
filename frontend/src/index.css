@@ -6,7 +6,8 @@
 
 @layer base {
   html {
-    font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    /* font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; */
+    font-family: 'Times New Roman', Times, serif;
     scroll-behavior: smooth;
   }
 
@@ -49,7 +50,7 @@
     @apply text-white font-medium px-6 py-3 rounded-xl transition-all duration-300 shadow-soft hover:shadow-medium hover:scale-105 active:scale-95;
     background-color: #20161F;
   }
-  
+
   .btn-primary:hover {
     background-color: #2d1f2d;
   }
@@ -59,7 +60,7 @@
     color: #20161F;
     border-color: #a8a0a8;
   }
-  
+
   .btn-secondary:hover {
     color: #2d1f2d;
     border-color: #989098;
@@ -72,7 +73,7 @@
   .input-field {
     @apply w-full px-4 py-3 rounded-xl border border-neutral-300 transition-all duration-300 bg-white placeholder-neutral-400;
   }
-  
+
   .input-field:focus {
     border-color: #20161F;
     box-shadow: 0 0 0 3px rgba(32, 22, 31, 0.2);
@@ -165,6 +166,7 @@
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -180,6 +182,7 @@
     opacity: 0;
     transform: scale(0.8);
   }
+
   to {
     opacity: 1;
     transform: scale(1);

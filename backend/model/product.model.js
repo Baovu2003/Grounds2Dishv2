@@ -15,6 +15,16 @@ const productSchema = new mongoose.Schema({
     type: [String], // mỗi phần tử là một URL hoặc path ảnh
     default: [], // mặc định là mảng rỗng
   },
+  // 🆕 Thêm field: thành phần & cách sử dụng
+  ingredients: {
+    type: [String], // danh sách các thành phần
+    default: [],
+  },
+  usage: {
+    type: [String], // danh sách các bước / hướng dẫn sử dụng
+    default: [],
+  },
+
   status: String,
   deleted: {
     type: Boolean,

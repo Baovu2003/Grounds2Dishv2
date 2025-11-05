@@ -56,7 +56,7 @@ export default function BlogCard({ blog }) {
                         className="inline-flex items-center gap-2  font-semibold text-sm hover:text-amber-900 transition-all duration-300 group/link"
                     >
                         <span className="border-b-2 border-amber-700/0 transition-all duration-300">
-                            Read more
+                            Xem chi tiết
                         </span>
                         <svg
                             className="w-4 h-4 transition-transform duration-300 group-hover/link:translate-x-1"

@@ -15,51 +15,100 @@ const Footer = () => {
                   tự nhiên.
                 </p>
               </div>
-              <div className="flex space-x-4">
+              <div className="flex space-x-4 mt-3">
                 {[
                   {
                     name: "Facebook",
                     url: "https://www.facebook.com/people/Grounds2Dish/61576865499705/",
-                    path: "M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"
-                  }
+                    type: "svg",
+                    path: "M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z",
+                  },
+                  {
+                    name: "Zalo",
+                    url: "https://zalo.me/84963908311",
+                    type: "image",
+                    icon: "/images/Icon_of_Zalo.svg.webp",
+                  },
+                  {
+                    name: "TikTok",
+                    url: "https://www.tiktok.com/@grounds2dish",
+                    type: "image",
+                    icon: "/images/tiktok-01.jpg",
+                  },
+                  {
+                    name: "Messenger",
+                    url: "https://www.facebook.com/messages/t/628654717005233",
+                    type: "image",
+                    icon: "/images/message.png",
+                  },
                 ].map((social, idx) => (
                   <a
                     key={idx}
                     href={social.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group p-3 rounded-xl bg-neutral-800 hover:bg-primary-500 transition-all duration-300 hover:scale-110"
+                    className="group w-10 h-10 flex items-center justify-center rounded-2xl bg-neutral-800 hover:bg-primary-500 transition-all duration-300 hover:scale-110"
                     aria-label={social.name}
+                    title={social.name}
                   >
-                    <svg
-                      className="w-5 h-5 text-neutral-400 group-hover:text-white transition-colors duration-300"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={social.path} />
-                    </svg>
+                    {social.type === "svg" ? (
+                      <svg
+                        className="w-6 h-6 text-neutral-300 group-hover:text-white transition-colors duration-300"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d={social.path}
+                        />
+                      </svg>
+                    ) : (
+                      <img
+                        src={social.icon}
+                        alt={social.name}
+                        className="w-6 h-6 object-contain group-hover:brightness-125 transition-all duration-300"
+                      />
+                    )}
                   </a>
                 ))}
               </div>
+
             </div>
 
             <div className="space-y-6">
               <h4 className="text-lg font-semibold text-white">Liên kết nhanh</h4>
               <ul className="space-y-3">
-                {["Về chúng tôi", "Sản phẩm", "Tin tức", "Liên hệ", "Chính sách"].map((link, idx) => (
+                {[
+                  { name: "Về chúng tôi", href: "/about" },
+                  { name: "Sản phẩm", href: "#" },
+                  { name: "Tin tức", href: "/blog" },
+                  { name: "Liên hệ", email: "hoaihoai1442003@gmail.com" },
+                  { name: "Chính sách", href: "/about" },
+                ].map((item, idx) => (
                   <li key={idx}>
-                    <a
-                      href="#"
-                      className="text-neutral-300 hover:text-primary-400 transition-colors duration-300 group flex items-center"
-                    >
-                      <span className="w-0 h-0.5 bg-primary-500 transition-all duration-300 group-hover:w-4 mr-0 group-hover:mr-2"></span>
-                      {link}
-                    </a>
+                    {item.email ? (
+                      // Hiển thị email (không cần link)
+                      <span className="text-neutral-300 flex items-center">
+                        <span className="w-0 h-0.5 bg-primary-500 transition-all duration-300 group-hover:w-4 mr-0 group-hover:mr-2"></span>
+                        {item.name}: {item.email}
+                      </span>
+                    ) : (
+                      <a
+                        href={item.href}
+                        className="text-neutral-300 hover:text-primary-400 transition-colors duration-300 group flex items-center"
+                      >
+                        <span className="w-0 h-0.5 bg-primary-500 transition-all duration-300 group-hover:w-4 mr-0 group-hover:mr-2"></span>
+                        {item.name}
+                      </a>
+                    )}
                   </li>
                 ))}
               </ul>
             </div>
+
 
             <div className="space-y-6">
               <h4 className="text-lg font-semibold text-white">Liên hệ</h4>

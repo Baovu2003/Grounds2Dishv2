@@ -4,6 +4,7 @@ const {
   createOrder,
   getAllOrders,
   updateOrderStatus,
+  updatePaymentStatus,
 } = require("../controller/order.controller");
 
 // User tạo đơn
@@ -14,5 +15,6 @@ router.get("/", getAllOrders);
 
 // Admin đổi trạng thái đơn
 router.patch("/status/:id", updateOrderStatus);
+router.patch("/payments/:id", updatePaymentStatus);
 
 module.exports = router;

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router";
 import useCartStore from "../store/useCartStore";
 import { apiClient } from "../constants/apiUrl";
+import { ShoppingCart } from "lucide-react";
 
 const HomePage = ({ productSeller = [] }) => {
   const { addItem } = useCartStore();
@@ -100,91 +101,6 @@ const HomePage = ({ productSeller = [] }) => {
         </div>
 
       </section>
-      <section className="px-8 py-16 bg-base-100">
-        {/* Tiêu đề */}
-        <div className="text-center mb-12">
-          <div className="text-2xl text-accent mb-2 animate-pulse">~~~</div>
-          <div className="text-sm text-base-content uppercase tracking-[0.3em] mb-4 font-semibold">
-            SUSTAINABLE COLLECTION
-          </div>
-          <h2 className="text-4xl font-extrabold text-base-content">
-            DANH MỤC SẢN PHẨM
-          </h2>
-        </div>
-
-        {/* Auto Scroll Container */}
-        <div className="relative overflow-hidden">
-          <div className="flex justify-center gap-8 py-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {(categories || []).slice(0, 4).map((cat) => (
-                <div
-                  key={cat._id}
-                  className="group relative w-full max-w-sm sm:max-w-md lg:max-w-xs 
-             aspect-[4/5] rounded-3xl overflow-hidden 
-             shadow-large hover:shadow-xl transition-all duration-700 
-             transform hover:-translate-y-3 hover:scale-105 bg-white"
-                >
-                  <figure className="h-full w-full">
-                    <img
-                      src={cat.thumbnail || "/images/placeholder.jpg"}
-                      alt={cat.name}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
-                  </figure>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
-                  <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 text-white transform translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
-                    <h3 className="text-xl sm:text-2xl font-display font-bold mb-2 sm:mb-3">
-                      {cat.title}
-                    </h3>
-                    <p className="text-sm sm:text-base text-white/90 leading-relaxed mb-3 sm:mb-4">
-                      {cat.description || "Không có mô tả cho danh mục này."}
-                    </p>
-                    <button className="bg-primary-500 hover:bg-primary-600 text-white px-4 sm:px-6 py-2 rounded-xl font-semibold transition-all duration-300 hover:scale-105">
-                      Khám phá
-                    </button>
-                  </div>
-                  <div className="absolute top-4 left-4 sm:top-6 sm:left-6">
-                    <span className="bg-white/90 backdrop-blur-sm text-primary-700 px-2 sm:px-3 py-1 rounded-full text-xs font-bold">
-                      {cat.slug?.toUpperCase() || "CATEGORY"}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-
-      <section className="px-8 py-16 bg-base-100">
-        <div className="text-center mb-12">
-          <div className="text-2xl text-green-500 mb-2 animate-pulse">~~~</div>
-          <div className="text-sm text-base-content uppercase tracking-[0.3em] mb-4">
-            SUSTAINABLE COLLECTION
-          </div>
-          <h2 className="text-4xl font-extrabold text-base-content">
-            Nguồn gốc của sản phẩm
-          </h2>
-        </div>
-
-        <div className="flex justify-center">
-          <video
-            className="w-full max-w-3xl rounded-lg shadow-lg"
-            controls
-            autoPlay
-            loop
-            muted
-            poster="/images/header-background1.jpg"
-          >
-            <source
-              src="https://www.youtube.com/watch?v=EZc1TE0bml0"
-              type="video/mp4"
-            />
-            Trình duyệt của bạn không hỗ trợ video.
-          </video>
-        </div>
-      </section>
-
       {/* SẢN PHẨM BÁN CHẠY */}
       <section className="section-padding bg-gradient-to-br from-neutral-50 to-primary-50/30">
         <div className="container-custom">
@@ -269,20 +185,9 @@ const HomePage = ({ productSeller = [] }) => {
                         onClick={() => handleAddToCart(product)}
                         className="btn-primary w-full mt-5"
                       >
+
                         <span className="flex items-center justify-center gap-2">
-                          <svg
-                            className="w-4 h-4 transition-transform duration-300 hover:scale-110"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01"
-                            />
-                          </svg>
+                          <ShoppingCart className="h-3 w-3 sm:h-4 sm:w-4 lg:h-4 lg:w-4" />
                           Thêm vào giỏ
                         </span>
                       </button>
@@ -312,6 +217,93 @@ const HomePage = ({ productSeller = [] }) => {
           </div>
         </div>
       </section>
+      <section className="px-8 py-16 bg-base-100">
+        {/* Tiêu đề */}
+        <div className="text-center mb-12">
+          <div className="text-2xl text-accent mb-2 animate-pulse">~~~</div>
+          <div className="text-sm text-base-content uppercase tracking-[0.3em] mb-4 font-semibold">
+            SUSTAINABLE COLLECTION
+          </div>
+          <h2 className="text-4xl font-extrabold text-base-content">
+            DANH MỤC SẢN PHẨM
+          </h2>
+        </div>
+
+        {/* Auto Scroll Container */}
+        <div className="relative overflow-hidden">
+          <div className="flex justify-center gap-8 py-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              {(categories || []).slice(0, 4).map((cat) => (
+                <div
+                  key={cat._id}
+                  className="group relative w-full max-w-sm sm:max-w-md lg:max-w-xs 
+             aspect-[4/5] rounded-3xl overflow-hidden 
+             shadow-large hover:shadow-xl transition-all duration-700 
+             transform hover:-translate-y-3 hover:scale-105 bg-white"
+                >
+                  <figure className="h-full w-full">
+                    <img
+                      src={cat.thumbnail || "/images/placeholder.jpg"}
+                      alt={cat.name}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                  </figure>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                  <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 text-white transform translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                    <h3 className="text-xl sm:text-2xl font-display font-bold mb-2 sm:mb-3  text-white/90">
+                      {cat.title}
+                    </h3>
+                    <p className="text-sm sm:text-base text-white/90 leading-relaxed mb-3 sm:mb-4">
+                      {cat.description || "Không có mô tả cho danh mục này."}
+                    </p>
+                    <button className="bg-primary-500 hover:bg-primary-600 text-white px-4 sm:px-6 py-2 rounded-xl font-semibold transition-all duration-300 hover:scale-105">
+                      <Link
+                        to="/shop"
+                      >Khám phá</Link>
+                    </button>
+                  </div>
+                  <div className="absolute top-4 left-4 sm:top-6 sm:left-6">
+                    <span className="bg-white/90 backdrop-blur-sm text-primary-700 px-2 sm:px-3 py-1 rounded-full text-xs font-bold">
+                      {cat.slug?.toUpperCase() || "Danh mục"}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <section className="px-8 py-16 bg-base-100">
+        <div className="text-center mb-12">
+          <div className="text-2xl text-green-500 mb-2 animate-pulse">~~~</div>
+          <div className="text-sm text-base-content uppercase tracking-[0.3em] mb-4">
+            SUSTAINABLE COLLECTION
+          </div>
+          <h2 className="text-4xl font-extrabold text-base-content">
+            Nguồn gốc của sản phẩm
+          </h2>
+        </div>
+
+        <div className="flex justify-center">
+          <video
+            className="w-full max-w-3xl rounded-lg shadow-lg"
+            controls
+            autoPlay
+            loop
+            muted
+            poster="/images/header-background1.jpg"
+          >
+            <source
+              src="https://www.youtube.com/watch?v=EZc1TE0bml0"
+              type="video/mp4"
+            />
+            Trình duyệt của bạn không hỗ trợ video.
+          </video>
+        </div>
+      </section>
+
 
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div

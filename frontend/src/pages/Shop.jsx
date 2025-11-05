@@ -30,14 +30,14 @@ export default function Shop() {
 
         console.log("categories response", catRes);
         console.log("products response", prodRes);
-        
+
         // Xử lý response - kiểm tra nếu có data property thì lấy data, nếu không thì lấy toàn bộ response
         const categoriesData = Array.isArray(catRes) ? catRes : (catRes?.data || []);
         const productsData = Array.isArray(prodRes) ? prodRes : (prodRes?.data || []);
-        
+
         console.log("categories data", categoriesData);
         console.log("products data", productsData);
-        
+
         setCategories(categoriesData);
         setProducts(productsData);
         setFilteredProducts(productsData);
@@ -113,10 +113,10 @@ export default function Shop() {
   // Pagination logic
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = Array.isArray(filteredProducts) 
+  const currentProducts = Array.isArray(filteredProducts)
     ? filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct)
     : [];
-  const totalPages = Array.isArray(filteredProducts) 
+  const totalPages = Array.isArray(filteredProducts)
     ? Math.ceil(filteredProducts.length / productsPerPage)
     : 0;
 
@@ -162,9 +162,9 @@ export default function Shop() {
             {/* Breadcrumbs */}
             <div className="flex justify-center mt-8">
               <nav className="flex items-center space-x-2" style={{ color: '#a8a0a8' }}>
-                <Link to="/" className="hover:text-white transition-colors duration-300">Home</Link>
+                <Link to="/" className="hover:text-white transition-colors duration-300">Trang chủ</Link>
                 <ChevronRight className="w-4 h-4" />
-                <span className="text-white font-semibold">Shop</span>
+                <span className="text-white font-semibold">Sản Phẩm</span>
               </nav>
             </div>
           </div>
@@ -354,10 +354,7 @@ export default function Shop() {
               {/* Search Filter */}
               <div className="bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden">
                 <div className="p-8">
-                  <div className="flex items-center gap-3 mb-6">
-                    <Search className="w-5 h-5" style={{ color: '#20161F' }} />
-                    <h3 className="text-xl font-display font-bold text-neutral-800">Tìm Kiếm</h3>
-                  </div>
+
 
                   <div className="relative">
                     <input
@@ -416,6 +413,7 @@ export default function Shop() {
 
                   {/* View Mode Toggle */}
                   <div className="flex items-center gap-1 bg-neutral-100 rounded-lg p-1">
+                    Dạng hiển thị:
                     <button
                       onClick={() => setViewMode('grid')}
                       className={`p-2 rounded-md transition-all duration-300 ${viewMode === 'grid'
@@ -518,12 +516,7 @@ export default function Shop() {
                               loading="lazy"
                             />
                           </div>
-                          {/* Wishlist Button */}
-                          <div className="absolute top-3 right-3">
-                            <button className="p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-md hover:bg-white hover:scale-110 transition-all duration-300 group/wishlist">
-                              <Heart className="w-4 h-4 text-gray-500 group-hover/wishlist:text-red-500 transition-colors duration-300" />
-                            </button>
-                          </div>
+
                         </div>
 
                         {/* Content Section */}

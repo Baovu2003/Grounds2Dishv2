@@ -89,7 +89,7 @@ const AdminBlog = () => {
     const handleAdd = async (e) => {
         e.preventDefault();
         if (isSubmitting) return;
-        
+
         try {
             setIsSubmitting(true);
             const formData = new FormData();
@@ -97,13 +97,13 @@ const AdminBlog = () => {
             formData.append("description", editingBlog.description || "");
             formData.append("article", editingBlog.article || "");
             formData.append("publishedAt", editingBlog.publishedAt || new Date().toISOString());
-            
+
             // Nén ảnh banner trước khi gửi
             if (editingBlog.bannerImage instanceof File) {
                 const compressed = await compressImage(editingBlog.bannerImage, { quality: 0.85 });
                 formData.append("bannerImage", compressed);
             }
-            
+
             // Nén các ảnh content trước khi gửi
             if (Array.isArray(editingBlog.contentImages)) {
                 for (const img of editingBlog.contentImages) {
@@ -113,7 +113,7 @@ const AdminBlog = () => {
                     }
                 }
             }
-            
+
             if (Array.isArray(editingBlog.contentImageUrls) && editingBlog.contentImageUrls.length) {
                 formData.append("contentImageUrls", JSON.stringify(editingBlog.contentImageUrls));
             }
@@ -139,7 +139,7 @@ const AdminBlog = () => {
     const handleUpdate = async (e) => {
         e.preventDefault();
         if (isSubmitting) return;
-        
+
         try {
             setIsSubmitting(true);
             const formData = new FormData();
@@ -147,13 +147,13 @@ const AdminBlog = () => {
             formData.append("description", editingBlog.description || "");
             formData.append("article", editingBlog.article || "");
             formData.append("publishedAt", editingBlog.publishedAt || new Date().toISOString());
-            
+
             // Nén ảnh banner trước khi gửi
             if (editingBlog.bannerImage instanceof File) {
                 const compressed = await compressImage(editingBlog.bannerImage, { quality: 0.85 });
                 formData.append("bannerImage", compressed);
             }
-            
+
             // Nén các ảnh content trước khi gửi
             if (Array.isArray(editingBlog.contentImages)) {
                 for (const img of editingBlog.contentImages) {
@@ -163,7 +163,7 @@ const AdminBlog = () => {
                     }
                 }
             }
-            
+
             if (Array.isArray(editingBlog.contentImageUrls) && editingBlog.contentImageUrls.length) {
                 formData.append("contentImageUrls", JSON.stringify(editingBlog.contentImageUrls));
             }
@@ -263,7 +263,7 @@ const AdminBlog = () => {
                                     </td>
                                     {/* Optionally show number of content images */}
                                     {/* <td className="p-3 border">{Array.isArray(b.contentImages) ? b.contentImages.length : 0} ảnh</td> */}
-                                    <td className="p-3 border">{new Date(b.publishedAt).toLocaleDateString()}</td>
+                                    <td className="p-3 border">{(b.publishedAt)}</td>
                                     <td className="p-3 border text-center space-x-2">
                                         <button
                                             onClick={() => setEditingBlog(b)}
@@ -432,8 +432,8 @@ const AdminBlog = () => {
                                 >
                                     Upload Image
                                 </button>
-                                <button 
-                                    type="submit" 
+                                <button
+                                    type="submit"
                                     disabled={isSubmitting}
                                     className="ml-auto px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
                                 >

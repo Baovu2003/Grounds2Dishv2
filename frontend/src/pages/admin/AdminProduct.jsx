@@ -117,7 +117,7 @@ const AdminProduct = () => {
     const handleUpdate = async (e) => {
         e.preventDefault();
         if (isSubmitting) return;
-        
+
         try {
             setIsSubmitting(true);
             const formData = new FormData();
@@ -135,6 +135,8 @@ const AdminProduct = () => {
                 (f) => typeof f === "string"
             );
             formData.append("oldThumbnails", JSON.stringify(oldThumbnails));
+            formData.append("ingredients", JSON.stringify(editingProduct.ingredients || []));
+            formData.append("usage", JSON.stringify(editingProduct.usage || []));
 
             // Nén và upload file mới
             const newFiles = (editingProduct.thumbnail || []).filter((f) => f instanceof File);
@@ -163,13 +165,15 @@ const AdminProduct = () => {
     const handleAdd = async (e) => {
         e.preventDefault();
         if (isSubmitting) return;
-        
+
         try {
             setIsSubmitting(true);
             const formData = new FormData();
             formData.append("title", editingProduct.title);
             formData.append("product_category_id", editingProduct.product_category_id);
             formData.append("price", editingProduct.price);
+            formData.append("ingredients", JSON.stringify(editingProduct.ingredients || []));
+            formData.append("usage", JSON.stringify(editingProduct.usage || []));
             formData.append("description", editingProduct.description);
             formData.append("status", editingProduct.status || "active");
 
@@ -223,10 +227,10 @@ const AdminProduct = () => {
     }) : [];
     const indexOfLastProduct = currentPage * productsPerPage;
     const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-    const currentProducts = Array.isArray(filteredProducts) 
+    const currentProducts = Array.isArray(filteredProducts)
         ? filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct)
         : [];
-    const totalPages = Array.isArray(filteredProducts) 
+    const totalPages = Array.isArray(filteredProducts)
         ? Math.ceil(filteredProducts.length / productsPerPage)
         : 0;
 
@@ -486,7 +490,7 @@ const AdminProduct = () => {
             {/* Form Modal Add/Edit */}
             {(editingProduct && (showAddForm || editingProduct._id)) && (
                 <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center">
-                    <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-lg">
+                    <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-lg max-h-[90vh] overflow-y-auto">
                         <div className="flex justify-between items-center mb-4">
                             <h2 className="text-xl font-semibold">
                                 {showAddForm ? "Thêm sản phẩm" : "Chỉnh sửa sản phẩm"}
@@ -550,6 +554,107 @@ const AdminProduct = () => {
                                     </option>
                                 ))}
                             </select>
+                            {/* Thành phần (ingredients) */}
+                            <div>
+                                <label className="font-medium">Thành phần (Ingredients)</label>
+                                {(editingProduct.ingredients || []).map((item, index) => (
+                                    <div key={index} className="flex gap-2 mt-2">
+                                        <input
+                                            type="text"
+                                            value={item}
+                                            onChange={(e) => {
+                                                const updated = [...editingProduct.ingredients];
+                                                updated[index] = e.target.value;
+                                                setEditingProduct({
+                                                    ...editingProduct,
+                                                    ingredients: updated,
+                                                });
+                                            }}
+                                            className="flex-1 border rounded px-3 py-2"
+                                            placeholder={`Thành phần ${index + 1}`}
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                const updated = editingProduct.ingredients.filter(
+                                                    (_, i) => i !== index
+                                                );
+                                                setEditingProduct({
+                                                    ...editingProduct,
+                                                    ingredients: updated,
+                                                });
+                                            }}
+                                            className="p-2 text-red-500 hover:bg-red-100 rounded"
+                                        >
+                                            <Trash2 className="w-4 h-4" />
+                                        </button>
+                                    </div>
+                                ))}
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        setEditingProduct({
+                                            ...editingProduct,
+                                            ingredients: [
+                                                ...(editingProduct.ingredients || []),
+                                                "",
+                                            ],
+                                        })
+                                    }
+                                    className="mt-2 px-3 py-1 bg-green-100 text-green-700 rounded"
+                                >
+                                    + Thêm thành phần
+                                </button>
+                            </div>
+                            {/* Hướng dẫn sử dụng (usage) */}
+                            <div>
+                                <label className="font-medium">Hướng dẫn sử dụng (Usage)</label>
+                                {(editingProduct.usage || []).map((step, index) => (
+                                    <div key={index} className="flex gap-2 mt-2">
+                                        <input
+                                            type="text"
+                                            value={step}
+                                            onChange={(e) => {
+                                                const updated = [...editingProduct.usage];
+                                                updated[index] = e.target.value;
+                                                setEditingProduct({
+                                                    ...editingProduct,
+                                                    usage: updated,
+                                                });
+                                            }}
+                                            className="flex-1 border rounded px-3 py-2"
+                                            placeholder={`Bước ${index + 1}`}
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                const updated = editingProduct.usage.filter(
+                                                    (_, i) => i !== index
+                                                );
+                                                setEditingProduct({
+                                                    ...editingProduct,
+                                                    usage: updated,
+                                                });
+                                            }}
+                                            className="p-2 text-red-500 hover:bg-red-100 rounded"
+                                        >
+                                            <Trash2 className="w-4 h-4" />
+                                        </button>
+                                    </div>
+                                ))}
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        setEditingProduct({
+                                            ...editingProduct,
+                                            usage: [...(editingProduct.usage || []), ""],
+                                        })
+                                    }
+                                    className="mt-2 px-3 py-1 bg-green-100 text-green-700 rounded"
+                                >
+                                    + Thêm bước sử dụng
+                                </button>
+                            </div>
 
                             <input
                                 type="file"

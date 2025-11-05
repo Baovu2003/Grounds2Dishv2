@@ -36,6 +36,9 @@ module.exports.sendMail = (email, subject, order) => {
     confirmed: "Đã xác nhận",
     canceled: "Đã hủy",
   };
+  const paymentStatus = order.isPaid
+    ? `<span style="color:green;">Đã thanh toán</span>`
+    : `<span style="color:red;">Chưa thanh toán</span>`;
 
   const html = `
   <!DOCTYPE html>
@@ -69,6 +72,11 @@ module.exports.sendMail = (email, subject, order) => {
         <p><strong class="green-text">Trạng thái:</strong> <span class="black-text">${
           displayStatus[order.status] || order.status
         }</span></p>
+         <p>
+  <strong class="green-text">Trạng thái thanh toán:</strong>
+  <span class="black-text">${paymentStatus}</span>
+</p>
+
         <p><strong class="green-text">Mã đơn hàng:</strong> <span class="black-text">${
           order.id
         }</span></p>

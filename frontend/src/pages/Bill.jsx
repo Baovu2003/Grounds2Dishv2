@@ -120,6 +120,7 @@ const Bill = ({ billData, }) => {
                                         {formatPrice(totalAmount)}
                                     </p>
                                     <p className="text-sm text-neutral-600">Tổng thanh toán</p>
+                                    <div>Trạng thái thanh toán:{billData?.isPaid} </div>
                                 </div>
                             </div>
                         </div>

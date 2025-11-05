@@ -25,7 +25,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-white/98 backdrop-blur-xl border-b border-neutral-100 sticky top-0 z-50 shadow-soft">
+    <nav className="bg-white border-b border-neutral-100 sticky top-0 z-50 shadow-soft">
       <div className="container mx-auto px-1 sm:px-8 lg:px-16">
         <div className="flex items-center justify-between h-28">
           {/* LOGO SECTION */}
@@ -41,8 +41,7 @@ const Navbar = () => {
               </div>
               <div className="flex flex-col">
                 <span className="text-2xl sm:text-3xl lg:text-5xl font-display font-bold text-neutral-900 tracking-tight transition-colors duration-300 drop-shadow-sm"
-                  onMouseEnter={(e) => e.target.style.color = '#20161F'}
-                  onMouseLeave={(e) => e.target.style.color = '#1f2937'}>
+                >
                   Grounds2Dish
                 </span>
                 <span className="text-xs sm:text-sm lg:text-base  text-neutral-600 font-body font-semibold tracking-wider uppercase">
@@ -55,10 +54,10 @@ const Navbar = () => {
           <nav className="hidden lg:block">
             <ul className="flex items-center gap-2">
               {[
-                { to: "/", label: "Home" },
-                { to: "/shop", label: "Shop Online" },
+                { to: "/", label: "Trang chủ" },
+                { to: "/shop", label: "Sản Phẩm" },
                 { to: "/blog", label: "Blog" },
-                { to: "/about", label: "About Us" }
+                { to: "/about", label: "Về chúng tôi" }
               ].map((item) => (
                 <li key={item.to}>
                   <Link
@@ -69,19 +68,7 @@ const Navbar = () => {
                         ? { color: '#20161F', backgroundColor: 'rgba(32, 22, 31, 0.1)' }
                         : {}
                     }
-                    onMouseEnter={(e) => {
-                      e.target.style.color = '#20161F';
-                      e.target.style.backgroundColor = 'rgba(32, 22, 31, 0.1)';
-                    }}
-                    onMouseLeave={(e) => {
-                      if (isActive(item.to)) {
-                        e.target.style.color = '#20161F';
-                        e.target.style.backgroundColor = 'rgba(32, 22, 31, 0.1)';
-                      } else {
-                        e.target.style.color = '#374151';
-                        e.target.style.backgroundColor = 'transparent';
-                      }
-                    }}
+
                   >
                     <span className="relative z-10">{item.label}</span>
                     <div className="absolute inset-0 rounded-2xl scale-0 group-hover:scale-100 transition-transform duration-300"
@@ -96,23 +83,6 @@ const Navbar = () => {
 
           {/* ACTION BUTTONS */}
           <div className="flex items-center gap-4">
-            {/* <Link to={"/wishlist"}>
-              <button className="relative p-5 rounded-2xl text-neutral-600 transition-all duration-300 group"
-                onMouseEnter={(e) => {
-                  e.target.style.color = '#20161F';
-                  e.target.style.backgroundColor = 'rgba(32, 22, 31, 0.1)';
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.color = '#6b7280';
-                  e.target.style.backgroundColor = 'transparent';
-                }}>
-                <Heart className="h-8 w-8" />
-                <div className="absolute inset-0 rounded-2xl scale-0 group-hover:scale-100 transition-transform duration-300"
-                  style={{ backgroundColor: 'rgba(32, 22, 31, 0.1)' }}></div>
-              </button>
-            </Link> */}
-
-            {/* <ThemeSelector /> */}
 
             <Link to="/cart" className="relative group">
               <button className="relative p-5 rounded-2xl text-neutral-600 transition-all duration-300"

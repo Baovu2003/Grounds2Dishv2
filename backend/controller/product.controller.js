@@ -11,7 +11,9 @@ module.exports.getAllProducts = async (req, res) => {
       })
       .lean();
     // Lọc những sản phẩm mà category đã bị xóa (populate trả về null)
-    const filteredProducts = products.filter((p) => p.product_category_id !== null);
+    const filteredProducts = products.filter(
+      (p) => p.product_category_id !== null
+    );
 
     res.json(filteredProducts);
   } catch (err) {
@@ -55,12 +57,20 @@ module.exports.getProductById = async (req, res) => {
 // [POST] /api/products/create
 module.exports.createProduct = async (req, res) => {
   try {
-    // req.files là mảng các file upload - Cloudinary trả về URL ở file.path
+    // Cloudinary trả về mảng URL ở file.path
     const imageUrls = req.files?.map((file) => file.path) || [];
+
+    // Parse ingredients & usage từ FormData (string -> array)
+    const ingredients = req.body.ingredients
+      ? JSON.parse(req.body.ingredients)
+      : [];
+    const usage = req.body.usage ? JSON.parse(req.body.usage) : [];
 
     const newProduct = new Product({
       ...req.body,
-      thumbnail: imageUrls, // thumbnail giờ là mảng
+      thumbnail: imageUrls,
+      ingredients,
+      usage,
     });
 
     await newProduct.save();
@@ -68,14 +78,15 @@ module.exports.createProduct = async (req, res) => {
 
     res.json(newProduct);
   } catch (err) {
+    console.error(err);
     res.status(400).json({ error: err.message });
   }
 };
-
+// [PATCH] /api/products/edit/:id
 // [PATCH] /api/products/edit/:id
 module.exports.editProduct = async (req, res) => {
   try {
-    // Parse oldThumbnails từ req.body (string JSON hoặc mảng)
+    // Parse oldThumbnails từ req.body
     let oldThumbnails = [];
     if (req.body.oldThumbnails) {
       if (typeof req.body.oldThumbnails === "string") {
@@ -85,20 +96,28 @@ module.exports.editProduct = async (req, res) => {
       }
     }
 
-    // Tạo URL cho các file mới upload - Cloudinary trả về URL ở file.path
     const newThumbnails = req.files?.map((file) => file.path) || [];
-
-    // Gộp ảnh cũ + ảnh mới
     const thumbnails = [...oldThumbnails, ...newThumbnails];
+
+    // Parse ingredients & usage
+    const ingredients = req.body.ingredients
+      ? JSON.parse(req.body.ingredients)
+      : [];
+    const usage = req.body.usage ? JSON.parse(req.body.usage) : [];
 
     const product = await Product.findByIdAndUpdate(
       req.params.id,
       {
         ...req.body,
-        thumbnail: thumbnails, // lưu mảng thumbnail
+        thumbnail: thumbnails,
+        ingredients,
+        usage,
       },
       { new: true }
     ).populate("product_category_id", "title");
+
+    if (!product)
+      return res.status(404).json({ error: "Không tìm thấy sản phẩm" });
 
     res.json(product);
   } catch (err) {

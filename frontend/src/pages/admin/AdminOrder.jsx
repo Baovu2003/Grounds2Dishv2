@@ -46,6 +46,18 @@ const AdminOrder = () => {
             console.error("Error updating status:", err);
         }
     };
+    // ✅ Hàm cập nhật thanh toán
+    const updatePayment = async (id, isPaid) => {
+        try {
+            await apiAdminClient(`/orders/payments/${id}`, {
+                method: "PATCH",
+                body: JSON.stringify({ isPaid }), // ✅ gửi đúng field
+            });
+            fetchOrders();
+        } catch (err) {
+            console.error("Error updating payment:", err);
+        }
+    };
 
     useEffect(() => {
         fetchOrders();
@@ -114,6 +126,7 @@ const AdminOrder = () => {
             "SĐT": order.phone,
             "Địa chỉ": `${order.address}, ${order.ward}, ${order.district}, ${order.province}`,
             "Trạng thái": order.status,
+            "Thanh toán": order.isPaid ? "Thanh toán thành công" : "Chưa thanh toán",
             "Ngày tạo": new Date(order.createdAt).toLocaleString(),
             "Sản phẩm": order.products
                 .map((p) => `${p.product_id?.title} x${p.quantity} = ${p.price * p.quantity}đ`)
@@ -191,10 +204,10 @@ const AdminOrder = () => {
                         <th className="p-3 border">Khách hàng</th>
                         <th className="p-3 border">Sản phẩm</th>
                         <th className="p-2">Tổng tiền-Giảm giá-Thành Tiền</th>
-                        <th className="p-2">Thành tiền</th>
-                        <th className="p-3 border">Trạng thái</th>
                         <th className="p-3 border">Ngày tạo</th>
+                        <th className="p-3 border">Trạng thái</th>
                         <th className="p-3 border">Hành động</th>
+                        <th className="p-3 border">Thanh toán</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -237,7 +250,9 @@ const AdminOrder = () => {
                                         {order.finalPrice?.toLocaleString()}₫
                                     </span>
                                 </td>
-
+                                <td className="p-3 border">
+                                    {new Date(order.createdAt).toLocaleString()}
+                                </td>
                                 <td className="p-3 border">
                                     <span
                                         className={`px-3 py-1 rounded text-xs font-medium ${order.status === "pending"
@@ -250,15 +265,14 @@ const AdminOrder = () => {
                                         {order.status}
                                     </span>
                                 </td>
-                                <td className="p-3 border">
-                                    {new Date(order.createdAt).toLocaleString()}
-                                </td>
+
+
                                 <td className="p-3 border text-center space-x-2">
                                     {order.status === "pending" && (
                                         <>
                                             <button
                                                 onClick={() => updateStatus(order._id, "confirmed")}
-                                                className="px-3 py-1 bg-green-500 text-white rounded"
+                                                className="px-3 py-1 bg-green-500 text-white rounded mb-2"
                                             >
                                                 Xác nhận
                                             </button>
@@ -285,6 +299,30 @@ const AdminOrder = () => {
                                         </span>
                                     )}
                                 </td>
+                                <td className="p-3 border text-center">
+                                    {order.isPaid ? (
+                                        <span className="px-3 py-1 bg-green-100 text-green-700 rounded text-xs font-medium">
+                                            Đã thanh toán
+                                        </span>
+                                    ) : order.status === "confirmed" ? (
+                                        <button
+                                            onClick={() => updatePayment(order._id, true)}
+                                            className="px-3 py-1 bg-yellow-500 text-white rounded text-xs"
+                                        >
+                                            Xác nhận thanh toán
+                                        </button>
+                                    ) : order.status === "pending" ? (
+                                        <span className="px-3 py-1  text-red-500 font-bold rounded text-xs ">
+                                            Chưa xác nhận đơn
+                                        </span>
+                                    ) : (
+                                        <span className="px-3 py-1  text-gray-900 rounded text-xs font-bold">
+                                            Đơn hàng đã hủy.Không thể thanh toán
+                                        </span>
+                                    )}
+                                </td>
+
+
 
                             </tr>
                         ))

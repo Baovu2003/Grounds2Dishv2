@@ -19,8 +19,8 @@ module.exports.createOrder = async (req, res) => {
       totalPrice: req.body.totalPrice,
       cupDiscount: req.body.cupDiscount,
       finalPrice: req.body.finalPrice,
-
       status: "pending",
+      isPaid: false,
     });
 
     console.log("newOrder", newOrder);
@@ -130,6 +130,52 @@ module.exports.updateOrderStatus = async (req, res) => {
       }
     }
 
+    res.json(order);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+// [PATCH] /api/orders/payments/:id - Admin xác nhận thanh toán
+module.exports.updatePaymentStatus = async (req, res) => {
+  try {
+    const { isPaid } = req.body;
+    const order = await Order.findByIdAndUpdate(
+      req.params.id,
+      { isPaid },
+      { new: true }
+    ).populate("products.product_id");
+
+    if (!order) return res.status(404).json({ error: "Order not found" });
+
+    // Gửi mail xác nhận thanh toán thành công (tùy chọn)
+    if (isPaid && order.email) {
+      const subject = "Xác nhận thanh toán đơn hàng của bạn 💰";
+      const orderToSend = {
+        id: order._id,
+        status: order.status,
+        isPaid: order.isPaid,
+        fullname: order.fullname,
+        email: order.email,
+        phone: order.phone,
+        address: order.address,
+        province: order.province,
+        district: order.district,
+        ward: order.ward,
+        note: order.note,
+        products: order.products.map((p) => ({
+          name: p.product_id?.title || "Sản phẩm",
+          quantity: p.quantity,
+          price: p.price,
+        })),
+        totalPrice: order.totalPrice,
+        cupDiscount: order.cupDiscount,
+        finalPrice: order.finalPrice,
+      };
+      console.log("orderToSend", orderToSend);
+
+      sendMail(order.email, subject, orderToSend);
+    }
     res.json(order);
   } catch (err) {
     res.status(400).json({ error: err.message });

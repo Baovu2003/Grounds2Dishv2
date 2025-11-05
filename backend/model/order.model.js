@@ -30,6 +30,10 @@ const orderSchema = new mongoose.Schema({
     enum: ["pending", "confirmed", "canceled"],
     default: "pending",
   },
+  isPaid: {
+    type: Boolean,
+    default: false,
+  },
 
   createdAt: { type: Date, default: Date.now },
 });
