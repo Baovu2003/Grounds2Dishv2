@@ -70,7 +70,7 @@ module.exports.createOrder = async (req, res) => {
 // [GET] /api/orders - Admin xem tất cả đơn
 module.exports.getAllOrders = async (req, res) => {
   try {
-    const orders = await Order.find().populate("products.product_id");
+    const orders = await Order.find().populate("products.product_id").sort({ createdAt: -1 });;
     console.log(orders);
     res.json(orders);
   } catch (err) {

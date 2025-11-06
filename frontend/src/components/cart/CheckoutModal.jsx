@@ -42,8 +42,12 @@ const CheckoutModal = ({
       setLoading(true);
       try {
         // Lấy dữ liệu quận/huyện từ backup
-        const districtsData = getDistrictsFromBackup(selectedProvince);
-        setDistricts(districtsData);
+        // Đảm bảo selectedProvince là string để match với key trong data
+        const provinceCode = String(selectedProvince);
+        const districtsData = getDistrictsFromBackup(provinceCode);
+        console.log("Selected Province Code:", provinceCode);
+        console.log("Districts Data:", districtsData);
+        setDistricts(districtsData || []);
         setWards([]);
         setSelectedDistrict("");
         setSelectedWard("");
@@ -67,8 +71,12 @@ const CheckoutModal = ({
       setLoading(true);
       try {
         // Lấy dữ liệu phường/xã từ backup
-        const wardsData = getWardsFromBackup(selectedDistrict);
-        setWards(wardsData);
+        // Đảm bảo selectedDistrict là string để match với key trong data
+        const districtCode = String(selectedDistrict);
+        const wardsData = getWardsFromBackup(districtCode);
+        console.log("Selected District Code:", districtCode);
+        console.log("Wards Data:", wardsData);
+        setWards(wardsData || []);
         setSelectedWard("");
       } catch (error) {
         console.error("Error fetching wards:", error);
@@ -222,7 +230,7 @@ const CheckoutModal = ({
                   setOrderForm({ ...orderForm, email: e.target.value })
                 }
                 className="input input-bordered w-full border-neutral-200 focus:border-neutral-400 bg-white"
-                placeholder="Nhập email (bắt buộc)"
+                placeholder="Có thể nhập email để nhận được thông báo của chúng tôi"
                 onFocus={(e) => {
                   e.target.style.borderColor = '#20161F';
                   e.target.style.boxShadow = '0 0 0 3px rgba(32, 22, 31, 0.15)';

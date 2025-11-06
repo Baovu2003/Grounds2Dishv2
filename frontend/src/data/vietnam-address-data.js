@@ -2375,6 +2375,9 @@ const VIETNAM_ADDRESS_DATA = {
   }
   
   function getWardsFromBackup(districtCode) {
+    console.log("districtCode", districtCode);
+    console.log("VIETNAM_ADDRESS_DATA.wards[districtCode]", VIETNAM_ADDRESS_DATA.wards[districtCode]);
+    console.log("VIETNAM_ADDRESS_DATA.wards",VIETNAM_ADDRESS_DATA.wards)
     return VIETNAM_ADDRESS_DATA.wards[districtCode] || [];
   }
   

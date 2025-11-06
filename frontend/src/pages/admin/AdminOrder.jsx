@@ -16,6 +16,8 @@ const AdminOrder = () => {
     const [fromDate, setFromDate] = useState("");
     const [toDate, setToDate] = useState("");
     const [selectedOrder, setSelectedOrder] = useState(null);
+    const [confirmModal, setConfirmModal] = useState(null); // { orderId, action, message }
+    const [notification, setNotification] = useState(null); // { type: 'success' | 'error', message: string }
 
     console.log("selectedOrder", selectedOrder)
     // Lấy danh sách order
@@ -41,10 +43,48 @@ const AdminOrder = () => {
                 method: "PATCH",
                 body: JSON.stringify({ status }),
             });
+            setConfirmModal(null); // Đóng modal sau khi thành công
+            
+            // Hiển thị thông báo thành công
+            const successMessages = {
+                confirmed: "✅ Xác nhận đơn hàng thành công!",
+                canceled: "✅ Hủy đơn hàng thành công!"
+            };
+            setNotification({
+                type: 'success',
+                message: successMessages[status] || "✅ Cập nhật trạng thái thành công!"
+            });
+            
+            // Tự động ẩn thông báo sau 3 giây
+            setTimeout(() => setNotification(null), 3000);
+            
             fetchOrders();
         } catch (err) {
             console.error("Error updating status:", err);
+            setConfirmModal(null); // Đóng modal nếu có lỗi
+            
+            // Hiển thị thông báo lỗi
+            setNotification({
+                type: 'error',
+                message: "❌ Có lỗi xảy ra khi cập nhật trạng thái!"
+            });
+            setTimeout(() => setNotification(null), 3000);
         }
+    };
+
+    // Hàm xử lý khi click nút xác nhận hoặc hủy
+    const handleStatusAction = (orderId, status, orderName) => {
+        const actionMessages = {
+            confirmed: `Bạn có chắc chắn muốn xác nhận đơn hàng của "${orderName}"?`,
+            canceled: `Bạn có chắc chắn muốn hủy đơn hàng của "${orderName}"?`
+        };
+        
+        setConfirmModal({
+            orderId,
+            action: 'status',
+            status,
+            message: actionMessages[status] || 'Bạn có chắc chắn muốn thực hiện hành động này?'
+        });
     };
     // ✅ Hàm cập nhật thanh toán
     const updatePayment = async (id, isPaid) => {
@@ -53,9 +93,46 @@ const AdminOrder = () => {
                 method: "PATCH",
                 body: JSON.stringify({ isPaid }), // ✅ gửi đúng field
             });
+            setConfirmModal(null); // Đóng modal sau khi thành công
+            
+            // Hiển thị thông báo thành công
+            setNotification({
+                type: 'success',
+                message: "✅ Xác nhận thanh toán thành công!"
+            });
+            setTimeout(() => setNotification(null), 3000);
+            
             fetchOrders();
         } catch (err) {
             console.error("Error updating payment:", err);
+            setConfirmModal(null); // Đóng modal nếu có lỗi
+            
+            // Hiển thị thông báo lỗi
+            setNotification({
+                type: 'error',
+                message: "❌ Có lỗi xảy ra khi cập nhật thanh toán!"
+            });
+            setTimeout(() => setNotification(null), 3000);
+        }
+    };
+
+    // Hàm xử lý khi click nút xác nhận thanh toán
+    const handlePaymentAction = (orderId, orderName) => {
+        setConfirmModal({
+            orderId,
+            action: 'payment',
+            message: `Bạn có chắc chắn muốn xác nhận thanh toán cho đơn hàng của "${orderName}"?`
+        });
+    };
+
+    // Hàm xác nhận và thực hiện hành động
+    const handleConfirm = () => {
+        if (!confirmModal) return;
+        
+        if (confirmModal.action === 'status') {
+            updateStatus(confirmModal.orderId, confirmModal.status);
+        } else if (confirmModal.action === 'payment') {
+            updatePayment(confirmModal.orderId, true);
         }
     };
 
@@ -149,6 +226,41 @@ const AdminOrder = () => {
 
     return (
         <div className="p-5">
+            {/* Notification Toast */}
+            {notification && (
+                <div 
+                    className={`fixed top-4 right-4 z-[60] ${
+                        notification.type === 'success' 
+                            ? 'bg-green-500' 
+                            : 'bg-red-500'
+                    } text-white px-6 py-4 rounded-lg shadow-2xl flex items-center gap-3 min-w-[300px] max-w-md transition-all duration-300 transform translate-x-0 animate-[slideIn_0.3s_ease-out]`}
+                    style={{
+                        animation: 'slideIn 0.3s ease-out'
+                    }}
+                >
+                    <style>{`
+                        @keyframes slideIn {
+                            from {
+                                transform: translateX(100%);
+                                opacity: 0;
+                            }
+                            to {
+                                transform: translateX(0);
+                                opacity: 1;
+                            }
+                        }
+                    `}</style>
+                    <span className="text-xl">{notification.type === 'success' ? '✅' : '❌'}</span>
+                    <span className="font-medium flex-1">{notification.message}</span>
+                    <button
+                        onClick={() => setNotification(null)}
+                        className="ml-2 text-white hover:text-gray-200 font-bold text-lg transition-colors"
+                    >
+                        ✕
+                    </button>
+                </div>
+            )}
+
             <h1 className="text-xl font-bold mb-4">Quản lý đơn hàng</h1>
 
             {/* Search & Status Filter */}
@@ -271,14 +383,14 @@ const AdminOrder = () => {
                                     {order.status === "pending" && (
                                         <>
                                             <button
-                                                onClick={() => updateStatus(order._id, "confirmed")}
-                                                className="px-3 py-1 bg-green-500 text-white rounded mb-2"
+                                                onClick={() => handleStatusAction(order._id, "confirmed", order.fullname)}
+                                                className="px-3 py-1 bg-green-500 text-white rounded mb-2 hover:bg-green-600 transition-colors"
                                             >
                                                 Xác nhận
                                             </button>
                                             <button
-                                                onClick={() => updateStatus(order._id, "canceled")}
-                                                className="px-3 py-1 bg-red-500 text-white rounded"
+                                                onClick={() => handleStatusAction(order._id, "canceled", order.fullname)}
+                                                className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
                                             >
                                                 Hủy
                                             </button>
@@ -306,8 +418,8 @@ const AdminOrder = () => {
                                         </span>
                                     ) : order.status === "confirmed" ? (
                                         <button
-                                            onClick={() => updatePayment(order._id, true)}
-                                            className="px-3 py-1 bg-yellow-500 text-white rounded text-xs"
+                                            onClick={() => handlePaymentAction(order._id, order.fullname)}
+                                            className="px-3 py-1 bg-yellow-500 text-white rounded text-xs hover:bg-yellow-600 transition-colors"
                                         >
                                             Xác nhận thanh toán
                                         </button>
@@ -366,6 +478,49 @@ const AdminOrder = () => {
                 </button>
             </div>
 
+            {/* Confirmation Modal */}
+            {confirmModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-xl shadow-2xl w-[90%] max-w-md p-6 relative">
+                        <button
+                            onClick={() => setConfirmModal(null)}
+                            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl font-bold"
+                        >
+                            ✕
+                        </button>
+                        
+                        <div className="mt-4">
+                            <h3 className="text-xl font-bold text-gray-900 mb-4">
+                                Xác nhận hành động
+                            </h3>
+                            <p className="text-gray-700 mb-6">
+                                {confirmModal.message}
+                            </p>
+                            
+                            <div className="flex gap-3 justify-end">
+                                <button
+                                    onClick={() => setConfirmModal(null)}
+                                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium"
+                                >
+                                    Hủy
+                                </button>
+                                <button
+                                    onClick={handleConfirm}
+                                    className={`px-4 py-2 text-white rounded-lg font-medium transition-colors ${
+                                        confirmModal.status === 'canceled' || confirmModal.action === 'payment'
+                                            ? 'bg-red-500 hover:bg-red-600'
+                                            : 'bg-green-500 hover:bg-green-600'
+                                    }`}
+                                >
+                                    Xác nhận
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Bill Modal */}
             {selectedOrder && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div className="bg-white rounded-xl shadow-lg w-[700px] max-h-[90vh] relative overflow-y-auto">
