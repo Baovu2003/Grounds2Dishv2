@@ -83,7 +83,7 @@ const Footer = () => {
               <ul className="space-y-3">
                 {[
                   { name: "Về chúng tôi", href: "/about" },
-                  { name: "Sản phẩm", href: "#" },
+                  { name: "Sản phẩm", href: "/shop" },
                   { name: "Tin tức", href: "/blog" },
                   { name: "Liên hệ", email: "hoaihoai1442003@gmail.com" },
                   { name: "Chính sách", href: "/about" },

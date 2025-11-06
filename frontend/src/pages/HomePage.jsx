@@ -9,6 +9,7 @@ const HomePage = ({ productSeller = [] }) => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentSlide, setCurrentSlide] = useState(0);
 
   const fetchCategories = async () => {
     try {
@@ -45,6 +46,74 @@ const HomePage = ({ productSeller = [] }) => {
     fetchCategories();
   }, []);
 
+  // Slider data
+  const slides = [
+    {
+      bg: "/images/background.jpg",
+      title: "Grounds2Dish",
+      subtitle: "Biến bã cà phê thành giá trị mới!",
+      logos: ["/images/IMG_7628.JPG", "/images/IMG_7626.JPG", "/images/IMG_3309.JPG", "/images/IMG_3313.JPG"],
+      objectFit: "contain",
+      objectPosition: "center",
+      gradientFrom: "rgba(0,0,0,0.3)",
+      gradientVia: "rgba(0,0,0,0.4)",
+      gradientTo: "rgba(0,0,0,0.6)"
+    },
+    {
+      bg: "/images/571413455_122143453652895516_428131650592091175_n.jpg",
+      // title: "Sản Phẩm Xanh",
+      // subtitle: "Thân thiện với môi trường, bền vững cho tương lai",
+      logos: ["/images/IMG_7628.JPG", "/images/IMG_7626.JPG", "/images/IMG_3309.JPG", "/images/IMG_3313.JPG"],
+      objectFit: "contain",
+      objectPosition: "center",
+      gradientFrom: "rgba(0,0,0,0.15)",
+      gradientVia: "rgba(0,0,0,0.25)",
+      gradientTo: "rgba(0,0,0,0.4)"
+    },
+    {
+      bg: "/images/IMG_7654.JPG",
+      title: "Chất Lượng Cao",
+      subtitle: "Từ những hạt cà phê Việt Nam tươi ngon",
+      logos: ["/images/IMG_7628.JPG", "/images/IMG_7626.JPG", "/images/IMG_3309.JPG", "/images/IMG_3313.JPG"],
+      objectFit: "contain",
+      objectPosition: "center",
+      gradientFrom: "rgba(0,0,0,0.15)",
+      gradientVia: "rgba(0,0,0,0.25)",
+      gradientTo: "rgba(0,0,0,0.4)"
+    },
+    {
+      bg: "/images/576818654_122145409382895516_5835231204867649262_n.jpg",
+      title: "Tái Chế Sáng Tạo",
+      subtitle: "Mỗi sản phẩm là một câu chuyện về yêu thương môi trường",
+      logos: ["/images/IMG_7628.JPG", "/images/IMG_7626.JPG", "/images/IMG_3309.JPG", "/images/IMG_3313.JPG"],
+      objectFit: "contain",
+      objectPosition: "center",
+      gradientFrom: "rgba(0,0,0,0.15)",
+      gradientVia: "rgba(0,0,0,0.25)",
+      gradientTo: "rgba(0,0,0,0.4)"
+    }
+  ];
+
+  // Auto-play slider
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [slides.length]);
+
+  const goToSlide = (index) => {
+    setCurrentSlide(index);
+  };
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % slides.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+  };
+
   console.log("Products", products)
 
   if (loading) return <p className="p-5">Đang tải sản phẩm...</p>;
@@ -62,44 +131,164 @@ const HomePage = ({ productSeller = [] }) => {
   };
 
   return (
-    <div>
-      {/* Hero Section */}
+    <div className="">
+      {/* Hero Slider Section */}
+      <section className="relative h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px] overflow-hidden">
+        {/* Slider Container */}
+        <div className="relative h-full">
+          {slides.map((slide, index) => {
+            const isActive = currentSlide === index;
+            
+            return (
+              <div
+                key={index}
+                className={`absolute inset-0 overflow-hidden ${
+                  isActive ? 'z-10' : 'z-0'
+                }`}
+                style={{
+                  transform: isActive ? 'translateX(0)' : index < currentSlide ? 'translateX(-100%)' : 'translateX(100%)',
+                  transition: 'transform 1000ms cubic-bezier(0.4, 0, 0.2, 1)'
+                }}
+              >
+                {/* Background image */}
+                <div 
+                  className="absolute inset-0 w-full h-full"
+                  style={{
+                    background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%)'
+                  }}
+                >
+                  <img 
+                    className={`w-full h-full ${slide.objectFit === 'contain' ? 'object-contain' : 'object-cover'} ${slide.objectPosition || 'object-center'}`}
+                    src={slide.bg}
+                    alt={`Slide ${index + 1}`}
+                    loading="lazy"
+                    style={{ 
+                      width: '100%', 
+                      height: '100%', 
+                      objectFit: slide.objectFit || 'contain',
+                      objectPosition: slide.objectPosition || 'center'
+                    }}
+                  />
+                </div>
+                <div 
+                  className="absolute inset-0"
+                  style={{
+                    background: `linear-gradient(to bottom, ${slide.gradientFrom || 'rgba(0,0,0,0.3)'}, ${slide.gradientVia || 'rgba(0,0,0,0.4)'}, ${slide.gradientTo || 'rgba(0,0,0,0.6)'})`
+                  }}
+                ></div>
 
-      <section className="relative h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px] flex items-center justify-center overflow-hidden">
-        {/* Background image */}
-        <img className="absolute inset-0 w-full h-full object-contain" src="/images/background.jpg" alt="Hero Banner" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/40 to-black/60"></div>
+                {/* Content */}
+                <div 
+                  className={`relative z-10 h-full flex items-center justify-center text-center text-white transition-all duration-700 delay-300 ${
+                    isActive ? 'translate-x-0 opacity-100' : 'translate-x-8 opacity-0'
+                  }`}
+                >
+                  <div className="space-y-4 sm:space-y-6 md:space-y-8 max-w-4xl mx-auto px-4 sm:px-6">
+                    <div className="space-y-2 sm:space-y-3 md:space-y-4">
+                      <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold drop-shadow-2xl tracking-tight text-white">
+                        {slide.title}
+                      </h1>
+                      <div className="w-24 h-1 bg-gradient-to-r from-green-500 to-amber-600 mx-auto rounded-full"></div>
+                    </div>
+                    <p className="text-xl md:text-2xl drop-shadow-lg font-light leading-relaxed">
+                      {slide.subtitle}
+                    </p>
+                  </div>
+                </div>
 
-        {/* Content */}
-        <div className="relative z-10 text-center text-white space-y-4 sm:space-y-6 md:space-y-8 max-w-4xl mx-auto px-4 sm:px-6">
-          <div className="space-y-2 sm:space-y-3 md:space-y-4">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold drop-shadow-2xl tracking-tight text-white">
-              Grounds2Dish
-            </h1>
-            <div className="w-24 h-1 bg-gradient-to-r from-green-500 to-amber-600 mx-auto rounded-full"></div>
-          </div>
+                {/* Decorative elements with animation */}
+                <div className={`absolute bottom-0 left-0 w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-56 lg:h-56 xl:w-64 xl:h-64 transition-all duration-1000 delay-200 overflow-hidden flex items-center justify-center p-2 sm:p-3 md:p-4 lg:p-6 ${
+                  isActive ? 'translate-x-0 translate-y-0 opacity-30 scale-100' : '-translate-x-full translate-y-full opacity-0 scale-75'
+                }`}>
+                  <div className="relative w-full h-full rounded-2xl overflow-hidden backdrop-blur-sm bg-white/5 border border-white/10 shadow-2xl">
+                  <img 
+                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-110" 
+                    src={slide.logos[0]} 
+                    alt="Decorative"
+                      loading="lazy"
+                  />
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none"></div>
+                  </div>
+                </div>
+                <div className={`absolute bottom-0 right-0 w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-56 lg:h-56 xl:w-64 xl:h-64 transition-all duration-1000 delay-300 overflow-hidden flex items-center justify-center p-2 sm:p-3 md:p-4 lg:p-6 ${
+                  isActive ? 'translate-x-0 translate-y-0 opacity-30 scale-100' : 'translate-x-full translate-y-full opacity-0 scale-75'
+                }`}>
+                  <div className="relative w-full h-full rounded-2xl overflow-hidden backdrop-blur-sm bg-white/5 border border-white/10 shadow-2xl">
+                  <img 
+                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-110" 
+                    src={slide.logos[1]} 
+                    alt="Decorative"
+                      loading="lazy"
+                  />
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none"></div>
+                  </div>
+                </div>
+                <div className={`absolute top-0 left-0 w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-56 lg:h-56 xl:w-64 xl:h-64 transition-all duration-1000 delay-400 overflow-hidden flex items-center justify-center p-2 sm:p-3 md:p-4 lg:p-6 ${
+                  isActive ? 'translate-x-0 translate-y-0 opacity-30 scale-100' : '-translate-x-full -translate-y-full opacity-0 scale-75'
+                }`}>
+                  <div className="relative w-full h-full rounded-2xl overflow-hidden backdrop-blur-sm bg-white/5 border border-white/10 shadow-2xl">
+                  <img 
+                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-110" 
+                    src={slide.logos[2]} 
+                    alt="Decorative"
+                      loading="lazy"
+                  />
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none"></div>
+                  </div>
+                </div>
+                <div className={`absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-56 lg:h-56 xl:w-64 xl:h-64 transition-all duration-1000 delay-500 overflow-hidden flex items-center justify-center p-2 sm:p-3 md:p-4 lg:p-6 ${
+                  isActive ? 'translate-x-0 translate-y-0 opacity-30 scale-100' : 'translate-x-full -translate-y-full opacity-0 scale-75'
+                }`}>
+                  <div className="relative w-full h-full rounded-2xl overflow-hidden backdrop-blur-sm bg-white/5 border border-white/10 shadow-2xl">
+                  <img 
+                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-110" 
+                    src={slide.logos[3]} 
+                    alt="Decorative"
+                      loading="lazy"
+                  />
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none"></div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
 
-          <p className="text-xl md:text-2xl drop-shadow-lg font-light leading-relaxed">
-            Biến bã cà phê thành giá trị mới!
-          </p>
-        </div>
-        {/* Decorative element - Bottom Left */}
-        <div className="absolute bottom-0 left-0 w-20 h-20 lg:h-60 lg:w-60 opacity-20">
-          <img className="w-full object-contain" src="/images/logo2.jpg" alt="Decorative" />
-        </div>
-        {/* Decorative element - Bottom Right (original) */}
-        <div className="absolute bottom-0 right-0 w-20 h-20 lg:h-60 lg:w-60 opacity-20">
-          <img className="w-full object-contain" src="/images/logo1.jpg" alt="Decorative" />
-        </div>
-
-        {/* Decorative element - Top Left */}
-        <div className="absolute top-0 left-0 w-20 h-20 lg:h-60 lg:w-60 opacity-20">
-          <img className="w-full object-contain" src="/images/logo1.jpg" alt="Decorative" />
-        </div>
-        <div className="absolute top-0 right-0 w-20 h-20 lg:h-60 lg:w-60 opacity-20">
-          <img className="w-full object-contain" src="/images/logo.jpg" alt="Decorative" />
+        {/* Navigation Dots */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 flex gap-3">
+          {slides.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => goToSlide(index)}
+              className={`transition-all duration-500 rounded-full ${
+                currentSlide === index 
+                  ? 'w-12 h-3 bg-white shadow-lg' 
+                  : 'w-3 h-3 bg-white/50 hover:bg-white/75 hover:scale-110'
+              }`}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
         </div>
 
+        {/* Navigation Arrows */}
+        <button 
+          onClick={prevSlide}
+          className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white/40 backdrop-blur-sm rounded-full p-3 transition-all duration-300 group hover:scale-110"
+          aria-label="Previous slide"
+        >
+          <svg className="w-6 h-6 text-white transition-transform duration-300 group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <button 
+          onClick={nextSlide}
+          className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white/40 backdrop-blur-sm rounded-full p-3 transition-all duration-300 group hover:scale-110"
+          aria-label="Next slide"
+        >
+          <svg className="w-6 h-6 text-white transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
       </section>
       {/* SẢN PHẨM BÁN CHẠY */}
       <section className="section-padding bg-gradient-to-br from-neutral-50 to-primary-50/30">
@@ -275,7 +464,7 @@ const HomePage = ({ productSeller = [] }) => {
       </section>
 
 
-      <section className="px-8 py-16 bg-base-100">
+      {/* <section className="px-8 py-16 bg-base-100">
         <div className="text-center mb-12">
           <div className="text-2xl text-green-500 mb-2 animate-pulse">~~~</div>
           <div className="text-sm text-base-content uppercase tracking-[0.3em] mb-4">
@@ -302,40 +491,122 @@ const HomePage = ({ productSeller = [] }) => {
             Trình duyệt của bạn không hỗ trợ video.
           </video>
         </div>
-      </section>
+      </section> */}
 
 
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: `url('/images/header-background1.jpg')`,
-          }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-br from-black/50 via-black/40 to-black/70" />
-        </div>
-
+      <section className="relative py-20 bg-gradient-to-br from-neutral-50 via-green-50/30 to-emerald-50/20">
         {/* Content */}
-        <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
-          <div className="space-y-8">
-            <h1 className="text-4xl md:text-6xl font-black tracking-tight text-white mb-8 drop-shadow-2xl">
-              Về Grounds2Dish
-            </h1>
+        <div className="max-w-7xl mx-auto px-6 w-full">
+          <div className="space-y-12">
+            {/* Certifications Section */}
+            <div className="space-y-12">
+              <div className="text-center mb-8">
+                <h2 className="text-3xl md:text-4xl font-bold text-neutral-800 mb-4">
+                  Về Giấy Chứng Nhận & Kiểm Định
+                </h2>
+                <div className="w-24 h-1 bg-gradient-to-r from-green-500 to-emerald-600 mx-auto rounded-full"></div>
+              </div>
 
-            <div className="w-32 h-1.5 bg-gradient-to-r from-green-400 to-emerald-500 mx-auto rounded-full shadow-lg"></div>
+              {/* Category 1: Ống hút cỏ bàng */}
+              <div className="bg-white rounded-2xl p-6 md:p-8 border border-neutral-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <div className="mb-6">
+                  <h3 className="text-2xl md:text-3xl font-bold text-neutral-800 mb-2 flex items-center gap-3">
+                    <span className="text-2xl">🌾</span>
+                    Ống Hút Cỏ Bàng
+                  </h3>
+                  <p className="text-neutral-600 text-sm md:text-base">Các giấy kiểm định và chứng nhận chất lượng cho sản phẩm ống hút cỏ bàng</p>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                  {[
+                    { name: "Eurofins - Page 01", file: "/ONG_HUT/TEST-EROFINS-GRASS-STRAWS-OF-GREEN-FUTURE-VN-PAGE-01.jpg", type: "image" },
+                    { name: "Eurofins - Page 02", file: "/ONG_HUT/TEST-EROFINS-GRASS-STRAWS-OF-GREEN-FUTURE-VN-PAGE-02.jpg", type: "image" },
+                    { name: "QUATEST - Page 01", file: "/ONG_HUT/TEST-QUATEST-3-ONG-HUT-CO-PAGE-01.jpg", type: "image" },
+                    { name: "QUATEST - Page 02", file: "/ONG_HUT/TEST-QUATEST-3-ONG-HUT-CO-PAGE-02.jpg", type: "image" },
+                    { name: "QUATEST - Page 03", file: "/ONG_HUT/TEST-QUATEST-3-ONG-HUT-CO-PAGE-03.jpg", type: "image" },
+                    { name: "SGS UK Market - 01", file: "/ONG_HUT/TEST-SGS-FOR-UK-MARKET-01.jpg", type: "image" },
+                    { name: "SGS UK Market - 02", file: "/ONG_HUT/TEST-SGS-FOR-UK-MARKET-02.jpg", type: "image" },
+                    { name: "Certificate 01", file: "/ONG_HUT/z4215838562147_bd4caec121c87e2a4667acfe1579da32.jpg", type: "image" },
+                    { name: "Certificate 02", file: "/ONG_HUT/z4215838562713_5d43afba86eadc7a01ac228bb4f1a592.jpg", type: "image" },
+                    { name: "Certificate 03", file: "/ONG_HUT/z4215838564230_b5afab2a28254181e0b90e8088a41abe.jpg", type: "image" }
+                  ].map((cert, index) => (
+                    <a
+                      key={index}
+                      href={cert.file}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group relative aspect-[3/4] rounded-xl overflow-hidden bg-neutral-100 border-2 border-neutral-200 hover:border-green-500 transition-all duration-300 hover:scale-105 hover:shadow-lg"
+                    >
+                      <div className="absolute inset-0 w-full h-full flex items-center justify-center">
+                        {cert.type === "image" ? (
+                          <img
+                            src={cert.file}
+                            alt={cert.name}
+                            className="w-full h-full object-cover"
+                            loading="lazy"
+                          />
+                        ) : (
+                          <div className="text-center p-4">
+                            <svg className="w-12 h-12 mx-auto text-neutral-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                            </svg>
+                            <p className="text-xs text-neutral-600 line-clamp-2">{cert.name}</p>
+                          </div>
+                        )}
+                      </div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <div className="absolute bottom-0 left-0 right-0 p-3">
+                          <p className="text-xs text-white font-medium line-clamp-2">{cert.name}</p>
+                        </div>
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </div>
 
-            <div className="max-w-3xl mx-auto space-y-6">
-              <p className="text-xl md:text-2xl text-white/95 leading-relaxed font-light">
-                Grounds2Dish là thương hiệu Việt trong hành trình biến bã cà phê – thứ tưởng chừng bỏ đi – thành những sản phẩm xanh đầy giá trị như cốc, muỗng, dao, dĩa và ống hút sinh học. Với thông điệp “Giá trị mới từ dư vị cũ”, chúng tôi mong muốn khơi dậy một lối sống bền vững, nơi mỗi lựa chọn nhỏ trong hôm nay đều góp phần bảo vệ Trái Đất ngày mai.
-
-              </p>
-
-              <p className="text-lg md:text-xl text-white/90 leading-relaxed">
-
-                Mỗi sản phẩm Grounds2Dish là sự hòa quyện giữa sáng tạo, tâm huyết và tinh thần trách nhiệm với môi trường – mang đến cho bạn không chỉ vật dụng thân thiện mà còn là câu chuyện đẹp về hành trình tái sinh của hạt cà phê.
-
-                Hãy cùng Grounds2Dish sống xanh hơn, tinh tế hơn – bắt đầu từ những điều giản dị trên bàn ăn mỗi ngày. 🌿
-              </p>
+              {/* Category 2: Cốc, dao dĩa muỗng */}
+              <div className="bg-white rounded-2xl p-6 md:p-8 border border-neutral-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <div className="mb-6">
+                  <h3 className="text-2xl md:text-3xl font-bold text-neutral-800 mb-2 flex items-center gap-3">
+                    <span className="text-2xl">☕</span>
+                    Cốc, Dao Dĩa Muỗng
+                  </h3>
+                  <p className="text-neutral-600 text-sm md:text-base">Các giấy chứng nhận và kiểm định chất lượng cho sản phẩm cốc, dao, dĩa, muỗng từ bã cà phê</p>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4">
+                  {[
+                    { name: "SGS Certification 2020", file: "/COC/1.SGS_Certification Products_2020_Full.pdf", type: "pdf" },
+                    { name: "TUV Certification Report", file: "/COC/2.TUV_Certification_R-248137090_report.pdf", type: "pdf" },
+                    { name: "BPA Testing Certification", file: "/COC/3.BPA Testing Cerfitication.pdf", type: "pdf" },
+                    { name: "Europins Certification", file: "/COC/4.Europins.pdf", type: "pdf" },
+                    // { name: "Quality Assurance & Testing", file: "/COC/6.QUALITY_ASSURANCE_&_TESTING_CENTER_3.pdf", type: "pdf" }
+                  ].map((cert, index) => {
+                    // Encode file path to handle spaces and special characters properly
+                    // Split path and encode each segment, then join
+                    const pathParts = cert.file.split('/');
+                    const encodedFile = pathParts.map((part, i) => 
+                      i === 0 ? part : encodeURIComponent(part)
+                    ).join('/');
+                    return (
+                    <a
+                      key={index}
+                      href={encodedFile}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group relative aspect-[3/4] rounded-xl overflow-hidden bg-gradient-to-br from-neutral-50 to-neutral-100 border-2 border-neutral-200 hover:border-green-500 transition-all duration-300 hover:scale-105 hover:shadow-lg"
+                    >
+                      <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
+                        <svg className="w-16 h-16 text-neutral-400 mb-3 group-hover:text-green-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                        </svg>
+                        <p className="text-xs text-neutral-700 font-medium text-center line-clamp-3 group-hover:text-neutral-900 transition-colors">{cert.name}</p>
+                        <span className="mt-2 px-2 py-1 bg-red-500 text-white text-xs rounded-full font-semibold">PDF</span>
+                      </div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-green-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    </a>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           </div>
         </div>

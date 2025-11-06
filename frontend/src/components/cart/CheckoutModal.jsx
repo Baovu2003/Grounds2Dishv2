@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { apiClient } from "../../constants/apiUrl";
+import { getProvincesFromBackup, getDistrictsFromBackup, getWardsFromBackup } from "../../data/vietnam-address-data";
 
 const CheckoutModal = ({
   isOpen,
@@ -27,74 +28,60 @@ const CheckoutModal = ({
     }).format(price);
   };
 
-  // Fetch provinces
   useEffect(() => {
-    const fetchProvinces = async () => {
-      try {
-        const response = await fetch('https://provinces.open-api.vn/api/');
-        const data = await response.json();
-        setProvinces(data);
-      } catch (error) {
-        console.error('Error fetching provinces:', error);
-      }
-    };
-
     if (isOpen) {
-      fetchProvinces();
+      // Lấy dữ liệu tỉnh/thành phố từ backup
+      const provincesData = getProvincesFromBackup();
+      setProvinces(provincesData);
     }
   }, [isOpen]);
 
   // Fetch districts when province changes
   useEffect(() => {
-    const fetchDistricts = async () => {
-      if (selectedProvince) {
-        setLoading(true);
-        try {
-          const response = await fetch(`https://provinces.open-api.vn/api/p/${selectedProvince}?depth=2`);
-          const data = await response.json();
-          setDistricts(data.districts || []);
-          setWards([]);
-          setSelectedDistrict("");
-          setSelectedWard("");
-        } catch (error) {
-          console.error('Error fetching districts:', error);
-        } finally {
-          setLoading(false);
-        }
-      } else {
-        setDistricts([]);
+    if (selectedProvince) {
+      setLoading(true);
+      try {
+        // Lấy dữ liệu quận/huyện từ backup
+        const districtsData = getDistrictsFromBackup(selectedProvince);
+        setDistricts(districtsData);
         setWards([]);
         setSelectedDistrict("");
         setSelectedWard("");
+      } catch (error) {
+        console.error("Error fetching districts:", error);
+        setDistricts([]);
+      } finally {
+        setLoading(false);
       }
-    };
-
-    fetchDistricts();
+    } else {
+      setDistricts([]);
+      setWards([]);
+      setSelectedDistrict("");
+      setSelectedWard("");
+    }
   }, [selectedProvince]);
 
   // Fetch wards when district changes
   useEffect(() => {
-    const fetchWards = async () => {
-      if (selectedDistrict) {
-        setLoading(true);
-        try {
-          const response = await fetch(`https://provinces.open-api.vn/api/d/${selectedDistrict}?depth=2`);
-          const data = await response.json();
-          setWards(data.wards || []);
-          setSelectedWard("");
-        } catch (error) {
-          console.error('Error fetching wards:', error);
-        } finally {
-          setLoading(false);
-        }
-      } else {
-        setWards([]);
+    if (selectedDistrict) {
+      setLoading(true);
+      try {
+        // Lấy dữ liệu phường/xã từ backup
+        const wardsData = getWardsFromBackup(selectedDistrict);
+        setWards(wardsData);
         setSelectedWard("");
+      } catch (error) {
+        console.error("Error fetching wards:", error);
+        setWards([]);
+      } finally {
+        setLoading(false);
       }
-    };
-
-    fetchWards();
+    } else {
+      setWards([]);
+      setSelectedWard("");
+    }
   }, [selectedDistrict]);
+
 
   // Update order form when address components change
   useEffect(() => {
