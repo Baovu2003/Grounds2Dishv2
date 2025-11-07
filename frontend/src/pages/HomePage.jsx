@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router";
 import useCartStore from "../store/useCartStore";
 import { apiClient } from "../constants/apiUrl";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, X } from "lucide-react";
 
 const HomePage = ({ productSeller = [] }) => {
   const { addItem } = useCartStore();
@@ -10,6 +10,7 @@ const HomePage = ({ productSeller = [] }) => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [selectedImageModal, setSelectedImageModal] = useState(null); // { images: [], currentIndex: 0, name: string }
 
   const fetchCategories = async () => {
     try {
@@ -26,14 +27,13 @@ const HomePage = ({ productSeller = [] }) => {
       setLoading(false);
     }
   };
-  console.log("categories", categories)
+  console.log("categories", categories);
   // Gọi API lấy danh sách sản phẩm
   const fetchProducts = async () => {
     try {
       const result = await apiClient("/products");
-      console.log("result", result)
+      console.log("result", result);
       setProducts(result || []);
-
     } catch (err) {
       console.error("Error fetching products:", err);
     } finally {
@@ -52,46 +52,66 @@ const HomePage = ({ productSeller = [] }) => {
       bg: "/images/background.jpg",
       title: "Grounds2Dish",
       subtitle: "Biến bã cà phê thành giá trị mới!",
-      logos: ["/images/IMG_7628.JPG", "/images/IMG_7626.JPG", "/images/IMG_3309.JPG", "/images/IMG_3313.JPG"],
+      logos: [
+        "/images/IMG_7628.JPG",
+        "/images/IMG_7626.JPG",
+        "/images/IMG_3309.JPG",
+        "/images/IMG_3313.JPG",
+      ],
       objectFit: "contain",
       objectPosition: "center",
       gradientFrom: "rgba(0,0,0,0.3)",
       gradientVia: "rgba(0,0,0,0.4)",
-      gradientTo: "rgba(0,0,0,0.6)"
+      gradientTo: "rgba(0,0,0,0.6)",
     },
     {
       bg: "/images/571413455_122143453652895516_428131650592091175_n.jpg",
       // title: "Sản Phẩm Xanh",
       // subtitle: "Thân thiện với môi trường, bền vững cho tương lai",
-      logos: ["/images/IMG_7628.JPG", "/images/IMG_7626.JPG", "/images/IMG_3309.JPG", "/images/IMG_3313.JPG"],
+      logos: [
+        "/images/IMG_7628.JPG",
+        "/images/IMG_7626.JPG",
+        "/images/IMG_3309.JPG",
+        "/images/IMG_3313.JPG",
+      ],
       objectFit: "contain",
       objectPosition: "center",
       gradientFrom: "rgba(0,0,0,0.15)",
       gradientVia: "rgba(0,0,0,0.25)",
-      gradientTo: "rgba(0,0,0,0.4)"
+      gradientTo: "rgba(0,0,0,0.4)",
     },
     {
       bg: "/images/IMG_7654.JPG",
       title: "Chất Lượng Cao",
       subtitle: "Từ những hạt cà phê Việt Nam tươi ngon",
-      logos: ["/images/IMG_7628.JPG", "/images/IMG_7626.JPG", "/images/IMG_3309.JPG", "/images/IMG_3313.JPG"],
+      logos: [
+        "/images/IMG_7628.JPG",
+        "/images/IMG_7626.JPG",
+        "/images/IMG_3309.JPG",
+        "/images/IMG_3313.JPG",
+      ],
       objectFit: "contain",
       objectPosition: "center",
       gradientFrom: "rgba(0,0,0,0.15)",
       gradientVia: "rgba(0,0,0,0.25)",
-      gradientTo: "rgba(0,0,0,0.4)"
+      gradientTo: "rgba(0,0,0,0.4)",
     },
     {
       bg: "/images/576818654_122145409382895516_5835231204867649262_n.jpg",
       title: "Tái Chế Sáng Tạo",
       subtitle: "Mỗi sản phẩm là một câu chuyện về yêu thương môi trường",
-      logos: ["/images/IMG_7628.JPG", "/images/IMG_7626.JPG", "/images/IMG_3309.JPG", "/images/IMG_3313.JPG"],
+      logos: [
+        "/images/IMG_7628.JPG",
+        "/images/IMG_7626.JPG",
+        "/images/IMG_3309.JPG",
+        "/images/IMG_3313.JPG",
+      ],
       objectFit: "contain",
       objectPosition: "center",
       gradientFrom: "rgba(0,0,0,0.15)",
       gradientVia: "rgba(0,0,0,0.25)",
-      gradientTo: "rgba(0,0,0,0.4)"
-    }
+      gradientTo: "rgba(0,0,0,0.4)",
+    },
   ];
 
   // Auto-play slider
@@ -114,7 +134,7 @@ const HomePage = ({ productSeller = [] }) => {
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
   };
 
-  console.log("Products", products)
+  console.log("Products", products);
 
   if (loading) return <p className="p-5">Đang tải sản phẩm...</p>;
   // Use sample data if no products provided
@@ -125,63 +145,74 @@ const HomePage = ({ productSeller = [] }) => {
       _id: product._id,
       name: product.title,
       price: product.price,
-      thumbnail: product.thumbnail?.length > 0 ? product.thumbnail : "/placeholder.svg",
-      description: product.description || "Sản phẩm bền vững từ bã cà phê"
+      thumbnail:
+        product.thumbnail?.length > 0 ? product.thumbnail : "/placeholder.svg",
+      description: product.description || "Sản phẩm bền vững từ bã cà phê",
     });
   };
 
   return (
-    <div className="">
+    <div >
       {/* Hero Slider Section */}
       <section className="relative h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px] overflow-hidden">
         {/* Slider Container */}
         <div className="relative h-full">
           {slides.map((slide, index) => {
             const isActive = currentSlide === index;
-            
+
             return (
               <div
                 key={index}
-                className={`absolute inset-0 overflow-hidden ${
-                  isActive ? 'z-10' : 'z-0'
-                }`}
+                className={`absolute inset-0 overflow-hidden ${isActive ? "z-10" : "z-0"
+                  }`}
                 style={{
-                  transform: isActive ? 'translateX(0)' : index < currentSlide ? 'translateX(-100%)' : 'translateX(100%)',
-                  transition: 'transform 1000ms cubic-bezier(0.4, 0, 0.2, 1)'
+                  transform: isActive
+                    ? "translateX(0)"
+                    : index < currentSlide
+                      ? "translateX(-100%)"
+                      : "translateX(100%)",
+                  transition: "transform 1000ms cubic-bezier(0.4, 0, 0.2, 1)",
                 }}
               >
                 {/* Background image */}
-                <div 
+                <div
                   className="absolute inset-0 w-full h-full"
                   style={{
-                    background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%)'
+                    background:
+                      "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%)",
                   }}
                 >
-                  <img 
-                    className={`w-full h-full ${slide.objectFit === 'contain' ? 'object-contain' : 'object-cover'} ${slide.objectPosition || 'object-center'}`}
+                  <img
+                    className={`w-full h-full ${slide.objectFit === "contain"
+                        ? "object-contain"
+                        : "object-cover"
+                      } ${slide.objectPosition || "object-center"}`}
                     src={slide.bg}
                     alt={`Slide ${index + 1}`}
                     loading="lazy"
-                    style={{ 
-                      width: '100%', 
-                      height: '100%', 
-                      objectFit: slide.objectFit || 'contain',
-                      objectPosition: slide.objectPosition || 'center'
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: slide.objectFit || "contain",
+                      objectPosition: slide.objectPosition || "center",
                     }}
                   />
                 </div>
-                <div 
+                <div
                   className="absolute inset-0"
                   style={{
-                    background: `linear-gradient(to bottom, ${slide.gradientFrom || 'rgba(0,0,0,0.3)'}, ${slide.gradientVia || 'rgba(0,0,0,0.4)'}, ${slide.gradientTo || 'rgba(0,0,0,0.6)'})`
+                    background: `linear-gradient(to bottom, ${slide.gradientFrom || "rgba(0,0,0,0.3)"
+                      }, ${slide.gradientVia || "rgba(0,0,0,0.4)"}, ${slide.gradientTo || "rgba(0,0,0,0.6)"
+                      })`,
                   }}
                 ></div>
 
                 {/* Content */}
-                <div 
-                  className={`relative z-10 h-full flex items-center justify-center text-center text-white transition-all duration-700 delay-300 ${
-                    isActive ? 'translate-x-0 opacity-100' : 'translate-x-8 opacity-0'
-                  }`}
+                <div
+                  className={`relative z-10 h-full flex items-center justify-center text-center text-white transition-all duration-700 delay-300 ${isActive
+                      ? "translate-x-0 opacity-100"
+                      : "translate-x-8 opacity-0"
+                    }`}
                 >
                   <div className="space-y-4 sm:space-y-6 md:space-y-8 max-w-4xl mx-auto px-4 sm:px-6">
                     <div className="space-y-2 sm:space-y-3 md:space-y-4">
@@ -197,55 +228,67 @@ const HomePage = ({ productSeller = [] }) => {
                 </div>
 
                 {/* Decorative elements with animation */}
-                <div className={`absolute bottom-0 left-0 w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-56 lg:h-56 xl:w-64 xl:h-64 transition-all duration-1000 delay-200 overflow-hidden flex items-center justify-center p-2 sm:p-3 md:p-4 lg:p-6 ${
-                  isActive ? 'translate-x-0 translate-y-0 opacity-30 scale-100' : '-translate-x-full translate-y-full opacity-0 scale-75'
-                }`}>
+                <div
+                  className={`absolute bottom-0 left-0 w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-56 lg:h-56 xl:w-64 xl:h-64 transition-all duration-1000 delay-200 overflow-hidden flex items-center justify-center p-2 sm:p-3 md:p-4 lg:p-6 ${isActive
+                      ? "translate-x-0 translate-y-0 opacity-30 scale-100"
+                      : "-translate-x-full translate-y-full opacity-0 scale-75"
+                    }`}
+                >
                   <div className="relative w-full h-full rounded-2xl overflow-hidden backdrop-blur-sm bg-white/5 border border-white/10 shadow-2xl">
-                  <img 
-                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-110" 
-                    src={slide.logos[0]} 
-                    alt="Decorative"
+                    <img
+                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
+                      src={slide.logos[0]}
+                      alt="Decorative"
                       loading="lazy"
-                  />
+                    />
                     <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none"></div>
                   </div>
                 </div>
-                <div className={`absolute bottom-0 right-0 w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-56 lg:h-56 xl:w-64 xl:h-64 transition-all duration-1000 delay-300 overflow-hidden flex items-center justify-center p-2 sm:p-3 md:p-4 lg:p-6 ${
-                  isActive ? 'translate-x-0 translate-y-0 opacity-30 scale-100' : 'translate-x-full translate-y-full opacity-0 scale-75'
-                }`}>
+                <div
+                  className={`absolute bottom-0 right-0 w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-56 lg:h-56 xl:w-64 xl:h-64 transition-all duration-1000 delay-300 overflow-hidden flex items-center justify-center p-2 sm:p-3 md:p-4 lg:p-6 ${isActive
+                      ? "translate-x-0 translate-y-0 opacity-30 scale-100"
+                      : "translate-x-full translate-y-full opacity-0 scale-75"
+                    }`}
+                >
                   <div className="relative w-full h-full rounded-2xl overflow-hidden backdrop-blur-sm bg-white/5 border border-white/10 shadow-2xl">
-                  <img 
-                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-110" 
-                    src={slide.logos[1]} 
-                    alt="Decorative"
+                    <img
+                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
+                      src={slide.logos[1]}
+                      alt="Decorative"
                       loading="lazy"
-                  />
+                    />
                     <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none"></div>
                   </div>
                 </div>
-                <div className={`absolute top-0 left-0 w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-56 lg:h-56 xl:w-64 xl:h-64 transition-all duration-1000 delay-400 overflow-hidden flex items-center justify-center p-2 sm:p-3 md:p-4 lg:p-6 ${
-                  isActive ? 'translate-x-0 translate-y-0 opacity-30 scale-100' : '-translate-x-full -translate-y-full opacity-0 scale-75'
-                }`}>
+                <div
+                  className={`absolute top-0 left-0 w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-56 lg:h-56 xl:w-64 xl:h-64 transition-all duration-1000 delay-400 overflow-hidden flex items-center justify-center p-2 sm:p-3 md:p-4 lg:p-6 ${isActive
+                      ? "translate-x-0 translate-y-0 opacity-30 scale-100"
+                      : "-translate-x-full -translate-y-full opacity-0 scale-75"
+                    }`}
+                >
                   <div className="relative w-full h-full rounded-2xl overflow-hidden backdrop-blur-sm bg-white/5 border border-white/10 shadow-2xl">
-                  <img 
-                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-110" 
-                    src={slide.logos[2]} 
-                    alt="Decorative"
+                    <img
+                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
+                      src={slide.logos[2]}
+                      alt="Decorative"
                       loading="lazy"
-                  />
+                    />
                     <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none"></div>
                   </div>
                 </div>
-                <div className={`absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-56 lg:h-56 xl:w-64 xl:h-64 transition-all duration-1000 delay-500 overflow-hidden flex items-center justify-center p-2 sm:p-3 md:p-4 lg:p-6 ${
-                  isActive ? 'translate-x-0 translate-y-0 opacity-30 scale-100' : 'translate-x-full -translate-y-full opacity-0 scale-75'
-                }`}>
+                <div
+                  className={`absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-56 lg:h-56 xl:w-64 xl:h-64 transition-all duration-1000 delay-500 overflow-hidden flex items-center justify-center p-2 sm:p-3 md:p-4 lg:p-6 ${isActive
+                      ? "translate-x-0 translate-y-0 opacity-30 scale-100"
+                      : "translate-x-full -translate-y-full opacity-0 scale-75"
+                    }`}
+                >
                   <div className="relative w-full h-full rounded-2xl overflow-hidden backdrop-blur-sm bg-white/5 border border-white/10 shadow-2xl">
-                  <img 
-                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-110" 
-                    src={slide.logos[3]} 
-                    alt="Decorative"
+                    <img
+                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
+                      src={slide.logos[3]}
+                      alt="Decorative"
                       loading="lazy"
-                  />
+                    />
                     <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none"></div>
                   </div>
                 </div>
@@ -260,33 +303,52 @@ const HomePage = ({ productSeller = [] }) => {
             <button
               key={index}
               onClick={() => goToSlide(index)}
-              className={`transition-all duration-500 rounded-full ${
-                currentSlide === index 
-                  ? 'w-12 h-3 bg-white shadow-lg' 
-                  : 'w-3 h-3 bg-white/50 hover:bg-white/75 hover:scale-110'
-              }`}
+              className={`transition-all duration-500 rounded-full ${currentSlide === index
+                  ? "w-12 h-3 bg-white shadow-lg"
+                  : "w-3 h-3 bg-white/50 hover:bg-white/75 hover:scale-110"
+                }`}
               aria-label={`Go to slide ${index + 1}`}
             />
           ))}
         </div>
 
         {/* Navigation Arrows */}
-        <button 
+        <button
           onClick={prevSlide}
           className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white/40 backdrop-blur-sm rounded-full p-3 transition-all duration-300 group hover:scale-110"
           aria-label="Previous slide"
         >
-          <svg className="w-6 h-6 text-white transition-transform duration-300 group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          <svg
+            className="w-6 h-6 text-white transition-transform duration-300 group-hover:-translate-x-1"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 19l-7-7 7-7"
+            />
           </svg>
         </button>
-        <button 
+        <button
           onClick={nextSlide}
           className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white/20 hover:bg-white/40 backdrop-blur-sm rounded-full p-3 transition-all duration-300 group hover:scale-110"
           aria-label="Next slide"
         >
-          <svg className="w-6 h-6 text-white transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          <svg
+            className="w-6 h-6 text-white transition-transform duration-300 group-hover:translate-x-1"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 5l7 7-7 7"
+            />
           </svg>
         </button>
       </section>
@@ -296,8 +358,14 @@ const HomePage = ({ productSeller = [] }) => {
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 text-primary-500 mb-4">
               <div className="w-2 h-2 bg-primary-500 rounded-full animate-pulse"></div>
-              <div className="w-2 h-2 bg-primary-400 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-              <div className="w-2 h-2 bg-primary-300 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+              <div
+                className="w-2 h-2 bg-primary-400 rounded-full animate-pulse"
+                style={{ animationDelay: "0.2s" }}
+              ></div>
+              <div
+                className="w-2 h-2 bg-primary-300 rounded-full animate-pulse"
+                style={{ animationDelay: "0.4s" }}
+              ></div>
             </div>
             <div className="text-sm text-primary-600 uppercase tracking-[0.3em] mb-4 font-semibold">
               SUSTAINABLE COLLECTION
@@ -306,7 +374,8 @@ const HomePage = ({ productSeller = [] }) => {
               Sản Phẩm Bán Chạy
             </h2>
             <p className="text-lg text-neutral-600 max-w-2xl mx-auto leading-relaxed">
-              Khám phá những sản phẩm được yêu thích nhất, được làm từ bã cà phê tái chế với chất lượng cao
+              Khám phá những sản phẩm được yêu thích nhất, được làm từ bã cà phê
+              tái chế với chất lượng cao
             </p>
           </div>
 
@@ -332,8 +401,8 @@ const HomePage = ({ productSeller = [] }) => {
                     <div className="absolute top-4 right-4">
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-semibold text-white shadow-medium ${product.status === "active"
-                          ? "bg-gradient-to-r from-green-500 to-green-600"
-                          : "bg-gradient-to-r from-gray-400 to-gray-600"
+                            ? "bg-gradient-to-r from-green-500 to-green-600"
+                            : "bg-gradient-to-r from-gray-400 to-gray-600"
                           }`}
                       >
                         {product.status === "active" ? "Đang bán" : "Ngừng bán"}
@@ -362,7 +431,10 @@ const HomePage = ({ productSeller = [] }) => {
 
                     {/* Price */}
                     <div className="flex items-center justify-center">
-                      <div className="text-2xl font-bold" style={{ color: "#20161F" }}>
+                      <div
+                        className="text-2xl font-bold"
+                        style={{ color: "#20161F" }}
+                      >
                         {typeof product.price === "number"
                           ? product.price.toLocaleString("vi-VN") + "₫"
                           : "Liên hệ"}
@@ -374,7 +446,6 @@ const HomePage = ({ productSeller = [] }) => {
                         onClick={() => handleAddToCart(product)}
                         className="btn-primary w-full mt-5"
                       >
-
                         <span className="flex items-center justify-center gap-2">
                           <ShoppingCart className="h-3 w-3 sm:h-4 sm:w-4 lg:h-4 lg:w-4" />
                           Thêm vào giỏ
@@ -386,11 +457,11 @@ const HomePage = ({ productSeller = [] }) => {
               ))
             ) : (
               <div className="col-span-4 text-xl text-center py-10 font-bold">
-                Rất xin lõi quý khách vì hiện tại bên tôi chưa có sản phẩm nào để hiển thị
+                Rất xin lõi quý khách vì hiện tại bên tôi chưa có sản phẩm nào
+                để hiển thị
               </div>
             )}
           </div>
-
 
           {/* View All Button */}
           <div className="text-center mt-12">
@@ -399,8 +470,18 @@ const HomePage = ({ productSeller = [] }) => {
               className="btn-secondary inline-flex items-center gap-2 group"
             >
               <span>Xem tất cả sản phẩm</span>
-              <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              <svg
+                className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             </Link>
           </div>
@@ -446,9 +527,7 @@ const HomePage = ({ productSeller = [] }) => {
                       {cat.description || "Không có mô tả cho danh mục này."}
                     </p>
                     <button className="bg-primary-500 hover:bg-primary-600 text-white px-4 sm:px-6 py-2 rounded-xl font-semibold transition-all duration-300 hover:scale-105">
-                      <Link
-                        to="/shop"
-                      >Khám phá</Link>
+                      <Link to="/shop">Khám phá</Link>
                     </button>
                   </div>
                   <div className="absolute top-4 left-4 sm:top-6 sm:left-6">
@@ -462,7 +541,6 @@ const HomePage = ({ productSeller = [] }) => {
           </div>
         </div>
       </section>
-
 
       {/* <section className="px-8 py-16 bg-base-100">
         <div className="text-center mb-12">
@@ -493,7 +571,6 @@ const HomePage = ({ productSeller = [] }) => {
         </div>
       </section> */}
 
-
       <section className="relative py-20 bg-gradient-to-br from-neutral-50 via-green-50/30 to-emerald-50/20">
         {/* Content */}
         <div className="max-w-7xl mx-auto px-6 w-full">
@@ -514,52 +591,97 @@ const HomePage = ({ productSeller = [] }) => {
                     <span className="text-2xl">🌾</span>
                     Ống Hút Cỏ Bàng
                   </h3>
-                  <p className="text-neutral-600 text-sm md:text-base">Các giấy kiểm định và chứng nhận chất lượng cho sản phẩm ống hút cỏ bàng</p>
+                  <p className="text-neutral-600 text-sm md:text-base">
+                    Các giấy kiểm định và chứng nhận chất lượng cho sản phẩm ống
+                    hút cỏ bàng
+                  </p>
                 </div>
+
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                   {[
-                    { name: "Eurofins - Page 01", file: "/ONG_HUT/TEST-EROFINS-GRASS-STRAWS-OF-GREEN-FUTURE-VN-PAGE-01.jpg", type: "image" },
-                    { name: "Eurofins - Page 02", file: "/ONG_HUT/TEST-EROFINS-GRASS-STRAWS-OF-GREEN-FUTURE-VN-PAGE-02.jpg", type: "image" },
-                    { name: "QUATEST - Page 01", file: "/ONG_HUT/TEST-QUATEST-3-ONG-HUT-CO-PAGE-01.jpg", type: "image" },
-                    { name: "QUATEST - Page 02", file: "/ONG_HUT/TEST-QUATEST-3-ONG-HUT-CO-PAGE-02.jpg", type: "image" },
-                    { name: "QUATEST - Page 03", file: "/ONG_HUT/TEST-QUATEST-3-ONG-HUT-CO-PAGE-03.jpg", type: "image" },
-                    { name: "SGS UK Market - 01", file: "/ONG_HUT/TEST-SGS-FOR-UK-MARKET-01.jpg", type: "image" },
-                    { name: "SGS UK Market - 02", file: "/ONG_HUT/TEST-SGS-FOR-UK-MARKET-02.jpg", type: "image" },
-                    { name: "Certificate 01", file: "/ONG_HUT/z4215838562147_bd4caec121c87e2a4667acfe1579da32.jpg", type: "image" },
-                    { name: "Certificate 02", file: "/ONG_HUT/z4215838562713_5d43afba86eadc7a01ac228bb4f1a592.jpg", type: "image" },
-                    { name: "Certificate 03", file: "/ONG_HUT/z4215838564230_b5afab2a28254181e0b90e8088a41abe.jpg", type: "image" }
-                  ].map((cert, index) => (
-                    <a
-                      key={index}
-                      href={cert.file}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group relative aspect-[3/4] rounded-xl overflow-hidden bg-neutral-100 border-2 border-neutral-200 hover:border-green-500 transition-all duration-300 hover:scale-105 hover:shadow-lg"
-                    >
-                      <div className="absolute inset-0 w-full h-full flex items-center justify-center">
-                        {cert.type === "image" ? (
+                    {
+                      name: "Eurofins Certification",
+                      images: [
+                        "/ONG_HUT/TEST-EROFINS-GRASS-STRAWS-OF-GREEN-FUTURE-VN-PAGE-01.jpg",
+                        "/ONG_HUT/TEST-EROFINS-GRASS-STRAWS-OF-GREEN-FUTURE-VN-PAGE-02.jpg",
+                      ],
+                    },
+                    {
+                      name: "QUATEST Certification",
+                      images: [
+                        "/ONG_HUT/TEST-QUATEST-3-ONG-HUT-CO-PAGE-01.jpg",
+                        "/ONG_HUT/TEST-QUATEST-3-ONG-HUT-CO-PAGE-02.jpg",
+                        "/ONG_HUT/TEST-QUATEST-3-ONG-HUT-CO-PAGE-03.jpg",
+                      ],
+                    },
+                    {
+                      name: "SGS UK Market Certification",
+                      images: [
+                        "/ONG_HUT/TEST-SGS-FOR-UK-MARKET-01.jpg",
+                        "/ONG_HUT/TEST-SGS-FOR-UK-MARKET-02.jpg",
+                      ],
+                    },
+                    {
+                      name: "General Certificates",
+                      images: [
+                        "/ONG_HUT/z4215838562147_bd4caec121c87e2a4667acfe1579da32.jpg",
+                        "/ONG_HUT/z4215838562713_5d43afba86eadc7a01ac228bb4f1a592.jpg",
+                        "/ONG_HUT/z4215838564230_b5afab2a28254181e0b90e8088a41abe.jpg",
+                      ],
+                    },
+                  ].map((cert, index) => {
+                    // ✅ Mã hóa URL an toàn (tránh lỗi khi có dấu cách / ký tự đặc biệt)
+                    const encodedImages = cert.images.map((img) => {
+                      const pathParts = img.split("/");
+                      return pathParts
+                        .map((part, i) =>
+                          i === 0 ? part : encodeURIComponent(part)
+                        )
+                        .join("/");
+                    });
+
+                    return (
+                      <div
+                        key={index}
+                        onClick={() =>
+                          setSelectedImageModal({
+                            images: encodedImages,
+                            currentIndex: 0,
+                            name: cert.name,
+                          })
+                        }
+                        className="group relative aspect-[3/4] rounded-xl overflow-hidden bg-neutral-100 border-2 border-neutral-200 hover:border-green-500 transition-all duration-300 hover:scale-105 hover:shadow-lg cursor-pointer"
+                      >
+                        <div className="absolute inset-0 w-full h-full">
                           <img
-                            src={cert.file}
+                            src={encodedImages[0]}
                             alt={cert.name}
                             className="w-full h-full object-cover"
                             loading="lazy"
                           />
-                        ) : (
-                          <div className="text-center p-4">
-                            <svg className="w-12 h-12 mx-auto text-neutral-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                            </svg>
-                            <p className="text-xs text-neutral-600 line-clamp-2">{cert.name}</p>
+                        </div>
+
+                        {/* Hiệu ứng overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                          <div className="absolute bottom-0 left-0 right-0 p-3">
+                            <p className="text-xs text-white font-medium line-clamp-2 mb-1">
+                              {cert.name}
+                            </p>
+                            <p className="text-xs text-white/80">
+                              {cert.images.length} trang
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Badge hiển thị số lượng ảnh */}
+                        {cert.images.length > 1 && (
+                          <div className="absolute top-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded-full font-semibold">
+                            {cert.images.length} ảnh
                           </div>
                         )}
                       </div>
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <div className="absolute bottom-0 left-0 right-0 p-3">
-                          <p className="text-xs text-white font-medium line-clamp-2">{cert.name}</p>
-                        </div>
-                      </div>
-                    </a>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 
@@ -570,39 +692,94 @@ const HomePage = ({ productSeller = [] }) => {
                     <span className="text-2xl">☕</span>
                     Cốc, Dao Dĩa Muỗng
                   </h3>
-                  <p className="text-neutral-600 text-sm md:text-base">Các giấy chứng nhận và kiểm định chất lượng cho sản phẩm cốc, dao, dĩa, muỗng từ bã cà phê</p>
+                  <p className="text-neutral-600 text-sm md:text-base">
+                    Các giấy chứng nhận và kiểm định chất lượng cho sản phẩm
+                    cốc, dao, dĩa, muỗng từ bã cà phê
+                  </p>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4">
                   {[
-                    { name: "SGS Certification 2020", file: "/COC/1.SGS_Certification Products_2020_Full.pdf", type: "pdf" },
-                    { name: "TUV Certification Report", file: "/COC/2.TUV_Certification_R-248137090_report.pdf", type: "pdf" },
-                    { name: "BPA Testing Certification", file: "/COC/3.BPA Testing Cerfitication.pdf", type: "pdf" },
-                    { name: "Europins Certification", file: "/COC/4.Europins.pdf", type: "pdf" },
-                    // { name: "Quality Assurance & Testing", file: "/COC/6.QUALITY_ASSURANCE_&_TESTING_CENTER_3.pdf", type: "pdf" }
+                    {
+                      name: "SGS Certification 2020",
+                      images: [
+                        "/COC/1. SGS_Certification Products_2020_Full-images-0.jpg",
+                        "/COC/1. SGS_Certification Products_2020_Full-images-1.jpg",
+                        "/COC/1. SGS_Certification Products_2020_Full-images-2.jpg",
+                        "/COC/1. SGS_Certification Products_2020_Full-images-3.jpg",
+                      ],
+                    },
+                    {
+                      name: "TUV Certification Report",
+                      images: [
+                        "/COC/2. TUV_Certification_R-248137090_report-images-1.jpg",
+                      ],
+                    },
+                    {
+                      name: "BPA Testing Certification",
+                      images: [
+                        "/COC/3. BPA Testing Cerfitication-images-0.jpg",
+                        "/COC/3. BPA Testing Cerfitication-images-1.jpg",
+                      ],
+                    },
+                    {
+                      name: "Europins Certification",
+                      images: [
+                        "/COC/4. Europins-images-0.jpg",
+                        "/COC/4. Europins-images-1.jpg",
+                        "/COC/4. Europins-images-2.jpg",
+                        "/COC/4. Europins-images-3.jpg",
+                      ],
+                    },
+                    {
+                      name: "Quality Assurance & Testing",
+                      images: ["/COC/6-1.jpg", "/COC/6-2.jpg", "/COC/6-3.jpg"],
+                    },
                   ].map((cert, index) => {
-                    // Encode file path to handle spaces and special characters properly
-                    // Split path and encode each segment, then join
-                    const pathParts = cert.file.split('/');
-                    const encodedFile = pathParts.map((part, i) => 
-                      i === 0 ? part : encodeURIComponent(part)
-                    ).join('/');
+                    const encodedImages = cert.images.map((img) => {
+                      const pathParts = img.split("/");
+                      return pathParts
+                        .map((part, i) =>
+                          i === 0 ? part : encodeURIComponent(part)
+                        )
+                        .join("/");
+                    });
+
                     return (
-                    <a
-                      key={index}
-                      href={encodedFile}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group relative aspect-[3/4] rounded-xl overflow-hidden bg-gradient-to-br from-neutral-50 to-neutral-100 border-2 border-neutral-200 hover:border-green-500 transition-all duration-300 hover:scale-105 hover:shadow-lg"
-                    >
-                      <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
-                        <svg className="w-16 h-16 text-neutral-400 mb-3 group-hover:text-green-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                        </svg>
-                        <p className="text-xs text-neutral-700 font-medium text-center line-clamp-3 group-hover:text-neutral-900 transition-colors">{cert.name}</p>
-                        <span className="mt-2 px-2 py-1 bg-red-500 text-white text-xs rounded-full font-semibold">PDF</span>
+                      <div
+                        key={index}
+                        onClick={() =>
+                          setSelectedImageModal({
+                            images: encodedImages,
+                            currentIndex: 0,
+                            name: cert.name,
+                          })
+                        }
+                        className="group relative aspect-[3/4] rounded-xl overflow-hidden bg-neutral-100 border-2 border-neutral-200 hover:border-green-500 transition-all duration-300 hover:scale-105 hover:shadow-lg cursor-pointer"
+                      >
+                        <div className="absolute inset-0 w-full h-full">
+                          <img
+                            src={encodedImages[0]}
+                            alt={cert.name}
+                            className="w-full h-full object-cover"
+                            loading="lazy"
+                          />
+                        </div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                          <div className="absolute bottom-0 left-0 right-0 p-3">
+                            <p className="text-xs text-white font-medium line-clamp-2 mb-1">
+                              {cert.name}
+                            </p>
+                            <p className="text-xs text-white/80">
+                              {cert.images.length} trang
+                            </p>
+                          </div>
+                        </div>
+                        {cert.images.length > 1 && (
+                          <div className="absolute top-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded-full font-semibold">
+                            {cert.images.length} ảnh
+                          </div>
+                        )}
                       </div>
-                      <div className="absolute inset-0 bg-gradient-to-t from-green-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    </a>
                     );
                   })}
                 </div>
@@ -610,9 +787,139 @@ const HomePage = ({ productSeller = [] }) => {
             </div>
           </div>
         </div>
+        {selectedImageModal && (
+         <div
+        className="absolute inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
+          onClick={() => setSelectedImageModal(null)}
+        >
+          <div
+            className="relative max-w-6xl w-full max-h-[100vh] flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between mb-4 text-white">
+              <h3 className="text-xl font-bold">{selectedImageModal.name}</h3>
+              <button
+                onClick={() => setSelectedImageModal(null)}
+                className="p-2 hover:bg-white/20 rounded-full transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Image Container */}
+            <div className="relative bg-white rounded-lg overflow-hidden flex-1 flex items-center justify-center">
+              <img
+                src={selectedImageModal.images[selectedImageModal.currentIndex]}
+                alt={`${selectedImageModal.name} - Page ${selectedImageModal.currentIndex + 1
+                  }`}
+                className="max-w-full max-h-[80vh] object-contain"
+              />
+
+              {/* Navigation Arrows */}
+              {selectedImageModal.images.length > 1 && (
+                <>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedImageModal({
+                        ...selectedImageModal,
+                        currentIndex:
+                          selectedImageModal.currentIndex > 0
+                            ? selectedImageModal.currentIndex - 1
+                            : selectedImageModal.images.length - 1,
+                      });
+                    }}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-all hover:scale-110"
+                  >
+                    <svg
+                      className="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 19l-7-7 7-7"
+                      />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedImageModal({
+                        ...selectedImageModal,
+                        currentIndex:
+                          (selectedImageModal.currentIndex + 1) %
+                          selectedImageModal.images.length,
+                      });
+                    }}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-all hover:scale-110"
+                  >
+                    <svg
+                      className="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </button>
+                </>
+              )}
+
+              {/* Page Indicator */}
+              {selectedImageModal.images.length > 1 && (
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/50 text-white px-4 py-2 rounded-full text-sm font-medium">
+                  {selectedImageModal.currentIndex + 1} /{" "}
+                  {selectedImageModal.images.length}
+                </div>
+              )}
+            </div>
+
+            {/* Thumbnail Navigation */}
+            {selectedImageModal.images.length > 1 && (
+              <div className="mt-4 flex gap-2 justify-center overflow-x-auto pb-2">
+                {selectedImageModal.images.map((img, idx) => (
+                  <button
+                    key={idx}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedImageModal({
+                        ...selectedImageModal,
+                        currentIndex: idx,
+                      });
+                    }}
+                    className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${idx === selectedImageModal.currentIndex
+                        ? "border-green-500 scale-110"
+                        : "border-transparent opacity-60 hover:opacity-100"
+                      }`}
+                  >
+                    <img
+                      src={img}
+                      alt={`Thumbnail ${idx + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
       </section>
+
+      {/* Image Modal */}
+    
     </div>
   );
 };
 
-export default HomePage; 
+export default HomePage;

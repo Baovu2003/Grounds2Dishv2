@@ -316,6 +316,7 @@ const AdminOrder = () => {
                         <th className="p-3 border">Khách hàng</th>
                         <th className="p-3 border">Sản phẩm</th>
                         <th className="p-2">Tổng tiền-Giảm giá-Thành Tiền</th>
+                        <th className="p-2">Ghi chú</th>
                         <th className="p-3 border">Ngày tạo</th>
                         <th className="p-3 border">Trạng thái</th>
                         <th className="p-3 border">Hành động</th>
@@ -363,8 +364,12 @@ const AdminOrder = () => {
                                     </span>
                                 </td>
                                 <td className="p-3 border">
+                                    {order.note}
+                                </td>
+                                <td className="p-3 border">
                                     {new Date(order.createdAt).toLocaleString()}
                                 </td>
+                                
                                 <td className="p-3 border">
                                     <span
                                         className={`px-3 py-1 rounded text-xs font-medium ${order.status === "pending"

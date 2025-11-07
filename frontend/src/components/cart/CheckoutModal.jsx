@@ -246,7 +246,7 @@ const CheckoutModal = ({
 
             <div>
               <label className="label">
-                <span className="label-text text-neutral-700">Địa chỉ chi tiết *</span>
+                <span className="label-text text-neutral-700">Địa chỉ chi tiết(Vui lòng điền địa chỉ chi tiết nếu xã của bạn chưa thể chon được) *</span>
               </label>
               <input
                 type="text"
