@@ -1,8 +1,73 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { Link } from "react-router";
 import useCartStore from "../store/useCartStore";
 import { apiClient } from "../constants/apiUrl";
 import { ShoppingCart, X } from "lucide-react";
+
+const HERO_SLIDES = [
+  {
+    bg: "/images/background.jpg",
+    title: "Grounds2Dish",
+    subtitle: "Biến bã cà phê thành giá trị mới!",
+    logos: [
+      "/images/IMG_7628.JPG",
+      "/images/IMG_7626.JPG",
+      "/images/IMG_3309.JPG",
+      "/images/IMG_3313.JPG",
+    ],
+    objectFit: "contain",
+    objectPosition: "center",
+    gradientFrom: "rgba(0,0,0,0.3)",
+    gradientVia: "rgba(0,0,0,0.4)",
+    gradientTo: "rgba(0,0,0,0.6)",
+  },
+  {
+    bg: "/images/571413455_122143453652895516_428131650592091175_n.jpg",
+    logos: [
+      "/images/IMG_7628.JPG",
+      "/images/IMG_7626.JPG",
+      "/images/IMG_3309.JPG",
+      "/images/IMG_3313.JPG",
+    ],
+    objectFit: "contain",
+    objectPosition: "center",
+    gradientFrom: "rgba(0,0,0,0.15)",
+    gradientVia: "rgba(0,0,0,0.25)",
+    gradientTo: "rgba(0,0,0,0.4)",
+  },
+  {
+    bg: "/images/IMG_7654.JPG",
+    title: "Chất Lượng Cao",
+    subtitle: "Từ những hạt cà phê Việt Nam tươi ngon",
+    logos: [
+      "/images/IMG_7628.JPG",
+      "/images/IMG_7626.JPG",
+      "/images/IMG_3309.JPG",
+      "/images/IMG_3313.JPG",
+    ],
+    objectFit: "contain",
+    objectPosition: "center",
+    gradientFrom: "rgba(0,0,0,0.15)",
+    gradientVia: "rgba(0,0,0,0.25)",
+    gradientTo: "rgba(0,0,0,0.4)",
+  },
+  {
+    bg: "/images/576818654_122145409382895516_5835231204867649262_n.jpg",
+    title: "Tái Chế Sáng Tạo",
+    subtitle: "Mỗi sản phẩm là một câu chuyện về yêu thương môi trường",
+    logos: [
+      "/images/IMG_7628.JPG",
+      "/images/IMG_7626.JPG",
+      "/images/IMG_3309.JPG",
+      "/images/IMG_3313.JPG",
+    ],
+    objectFit: "contain",
+    objectPosition: "center",
+    gradientFrom: "rgba(0,0,0,0.15)",
+    gradientVia: "rgba(0,0,0,0.25)",
+    gradientTo: "rgba(0,0,0,0.4)",
+  },
+];
 
 const HomePage = ({ productSeller = [] }) => {
   const { addItem } = useCartStore();
@@ -11,6 +76,40 @@ const HomePage = ({ productSeller = [] }) => {
   const [loading, setLoading] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [selectedImageModal, setSelectedImageModal] = useState(null); // { images: [], currentIndex: 0, name: string }
+  const autoplayRef = useRef(null);
+  const [categorySlide, setCategorySlide] = useState(0);
+
+  const CATEGORIES_PER_SLIDE = 4;
+
+  const groupedCategories = useMemo(() => {
+    const list = Array.isArray(categories) ? categories : [];
+    if (list.length === 0) return [[]];
+
+    const chunks = [];
+    for (let i = 0; i < list.length; i += CATEGORIES_PER_SLIDE) {
+      chunks.push(list.slice(i, i + CATEGORIES_PER_SLIDE));
+    }
+    return chunks;
+  }, [categories]);
+
+  useEffect(() => {
+    // Reset về slide đầu khi số nhóm thay đổi (thêm/bớt category)
+    setCategorySlide(0);
+  }, [groupedCategories.length]);
+
+  const handleCategoryPrev = useCallback(() => {
+    setCategorySlide((prev) =>
+      prev === 0 ? Math.max(groupedCategories.length - 1, 0) : prev - 1
+    );
+  }, [groupedCategories.length]);
+
+  const handleCategoryNext = useCallback(() => {
+    setCategorySlide((prev) =>
+      groupedCategories.length === 0
+        ? 0
+        : (prev + 1) % groupedCategories.length
+    );
+  }, [groupedCategories.length]);
 
   const fetchCategories = async () => {
     try {
@@ -46,93 +145,48 @@ const HomePage = ({ productSeller = [] }) => {
     fetchCategories();
   }, []);
 
-  // Slider data
-  const slides = [
-    {
-      bg: "/images/background.jpg",
-      title: "Grounds2Dish",
-      subtitle: "Biến bã cà phê thành giá trị mới!",
-      logos: [
-        "/images/IMG_7628.JPG",
-        "/images/IMG_7626.JPG",
-        "/images/IMG_3309.JPG",
-        "/images/IMG_3313.JPG",
-      ],
-      objectFit: "contain",
-      objectPosition: "center",
-      gradientFrom: "rgba(0,0,0,0.3)",
-      gradientVia: "rgba(0,0,0,0.4)",
-      gradientTo: "rgba(0,0,0,0.6)",
-    },
-    {
-      bg: "/images/571413455_122143453652895516_428131650592091175_n.jpg",
-      // title: "Sản Phẩm Xanh",
-      // subtitle: "Thân thiện với môi trường, bền vững cho tương lai",
-      logos: [
-        "/images/IMG_7628.JPG",
-        "/images/IMG_7626.JPG",
-        "/images/IMG_3309.JPG",
-        "/images/IMG_3313.JPG",
-      ],
-      objectFit: "contain",
-      objectPosition: "center",
-      gradientFrom: "rgba(0,0,0,0.15)",
-      gradientVia: "rgba(0,0,0,0.25)",
-      gradientTo: "rgba(0,0,0,0.4)",
-    },
-    {
-      bg: "/images/IMG_7654.JPG",
-      title: "Chất Lượng Cao",
-      subtitle: "Từ những hạt cà phê Việt Nam tươi ngon",
-      logos: [
-        "/images/IMG_7628.JPG",
-        "/images/IMG_7626.JPG",
-        "/images/IMG_3309.JPG",
-        "/images/IMG_3313.JPG",
-      ],
-      objectFit: "contain",
-      objectPosition: "center",
-      gradientFrom: "rgba(0,0,0,0.15)",
-      gradientVia: "rgba(0,0,0,0.25)",
-      gradientTo: "rgba(0,0,0,0.4)",
-    },
-    {
-      bg: "/images/576818654_122145409382895516_5835231204867649262_n.jpg",
-      title: "Tái Chế Sáng Tạo",
-      subtitle: "Mỗi sản phẩm là một câu chuyện về yêu thương môi trường",
-      logos: [
-        "/images/IMG_7628.JPG",
-        "/images/IMG_7626.JPG",
-        "/images/IMG_3309.JPG",
-        "/images/IMG_3313.JPG",
-      ],
-      objectFit: "contain",
-      objectPosition: "center",
-      gradientFrom: "rgba(0,0,0,0.15)",
-      gradientVia: "rgba(0,0,0,0.25)",
-      gradientTo: "rgba(0,0,0,0.4)",
-    },
-  ];
+  const slides = HERO_SLIDES;
+  const slideCount = slides.length;
 
   // Auto-play slider
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    if (autoplayRef.current) {
+      clearTimeout(autoplayRef.current);
+    }
+
+    autoplayRef.current = setTimeout(() => {
+      setCurrentSlide((prev) => (prev + 1) % slideCount);
     }, 5000);
-    return () => clearInterval(timer);
-  }, [slides.length]);
 
-  const goToSlide = (index) => {
-    setCurrentSlide(index);
-  };
+    return () => {
+      if (autoplayRef.current) {
+        clearTimeout(autoplayRef.current);
+      }
+    };
+  }, [currentSlide, slideCount]);
 
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
-  };
+  useEffect(() => {
+    return () => {
+      if (autoplayRef.current) {
+        clearTimeout(autoplayRef.current);
+      }
+    };
+  }, []);
 
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-  };
+  const goToSlide = useCallback(
+    (index) => {
+      setCurrentSlide((index + slideCount) % slideCount);
+    },
+    [slideCount]
+  );
+
+  const nextSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev + 1) % slideCount);
+  }, [slideCount]);
+
+  const prevSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev - 1 + slideCount) % slideCount);
+  }, [slideCount]);
 
   console.log("Products", products);
 
@@ -154,7 +208,7 @@ const HomePage = ({ productSeller = [] }) => {
   return (
     <div >
       {/* Hero Slider Section */}
-      <section className="relative h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px] overflow-hidden">
+      <section className="relative max-w-7xl mx-auto h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px] overflow-hidden">
         {/* Slider Container */}
         <div className="relative h-full">
           {slides.map((slide, index) => {
@@ -225,73 +279,7 @@ const HomePage = ({ productSeller = [] }) => {
                       {slide.subtitle}
                     </p>
                   </div>
-                </div>
-
-                {/* Decorative elements with animation */}
-                <div
-                  className={`absolute bottom-0 left-0 w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-56 lg:h-56 xl:w-64 xl:h-64 transition-all duration-1000 delay-200 overflow-hidden flex items-center justify-center p-2 sm:p-3 md:p-4 lg:p-6 ${isActive
-                      ? "translate-x-0 translate-y-0 opacity-30 scale-100"
-                      : "-translate-x-full translate-y-full opacity-0 scale-75"
-                    }`}
-                >
-                  <div className="relative w-full h-full rounded-2xl overflow-hidden backdrop-blur-sm bg-white/5 border border-white/10 shadow-2xl">
-                    <img
-                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
-                      src={slide.logos[0]}
-                      alt="Decorative"
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none"></div>
-                  </div>
-                </div>
-                <div
-                  className={`absolute bottom-0 right-0 w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-56 lg:h-56 xl:w-64 xl:h-64 transition-all duration-1000 delay-300 overflow-hidden flex items-center justify-center p-2 sm:p-3 md:p-4 lg:p-6 ${isActive
-                      ? "translate-x-0 translate-y-0 opacity-30 scale-100"
-                      : "translate-x-full translate-y-full opacity-0 scale-75"
-                    }`}
-                >
-                  <div className="relative w-full h-full rounded-2xl overflow-hidden backdrop-blur-sm bg-white/5 border border-white/10 shadow-2xl">
-                    <img
-                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
-                      src={slide.logos[1]}
-                      alt="Decorative"
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none"></div>
-                  </div>
-                </div>
-                <div
-                  className={`absolute top-0 left-0 w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-56 lg:h-56 xl:w-64 xl:h-64 transition-all duration-1000 delay-400 overflow-hidden flex items-center justify-center p-2 sm:p-3 md:p-4 lg:p-6 ${isActive
-                      ? "translate-x-0 translate-y-0 opacity-30 scale-100"
-                      : "-translate-x-full -translate-y-full opacity-0 scale-75"
-                    }`}
-                >
-                  <div className="relative w-full h-full rounded-2xl overflow-hidden backdrop-blur-sm bg-white/5 border border-white/10 shadow-2xl">
-                    <img
-                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
-                      src={slide.logos[2]}
-                      alt="Decorative"
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none"></div>
-                  </div>
-                </div>
-                <div
-                  className={`absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-56 lg:h-56 xl:w-64 xl:h-64 transition-all duration-1000 delay-500 overflow-hidden flex items-center justify-center p-2 sm:p-3 md:p-4 lg:p-6 ${isActive
-                      ? "translate-x-0 translate-y-0 opacity-30 scale-100"
-                      : "translate-x-full -translate-y-full opacity-0 scale-75"
-                    }`}
-                >
-                  <div className="relative w-full h-full rounded-2xl overflow-hidden backdrop-blur-sm bg-white/5 border border-white/10 shadow-2xl">
-                    <img
-                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
-                      src={slide.logos[3]}
-                      alt="Decorative"
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none"></div>
-                  </div>
-                </div>
+                </div>              
               </div>
             );
           })}
@@ -487,6 +475,7 @@ const HomePage = ({ productSeller = [] }) => {
           </div>
         </div>
       </section>
+      <div className="container-custom">
       <section className="px-8 py-16 bg-base-100">
         {/* Tiêu đề */}
         <div className="text-center mb-12">
@@ -501,46 +490,106 @@ const HomePage = ({ productSeller = [] }) => {
 
         {/* Auto Scroll Container */}
         <div className="relative overflow-hidden">
-          <div className="flex justify-center gap-8 py-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {(categories || []).slice(0, 4).map((cat) => (
-                <div
-                  key={cat._id}
-                  className="group relative w-full max-w-sm sm:max-w-md lg:max-w-xs 
-             aspect-[4/5] rounded-3xl overflow-hidden 
-             shadow-large hover:shadow-xl transition-all duration-700 
-             transform hover:-translate-y-3 hover:scale-105 bg-white"
-                >
-                  <figure className="h-full w-full">
-                    <img
-                      src={cat.thumbnail || "/images/placeholder.jpg"}
-                      alt={cat.name}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
-                  </figure>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
-                  <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 text-white transform translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
-                    <h3 className="text-xl sm:text-2xl font-display font-bold mb-2 sm:mb-3  text-white/90">
-                      {cat.title}
-                    </h3>
-                    <p className="text-sm sm:text-base text-white/90 leading-relaxed mb-3 sm:mb-4">
-                      {cat.description || "Không có mô tả cho danh mục này."}
-                    </p>
-                    <button className="bg-primary-500 hover:bg-primary-600 text-white px-4 sm:px-6 py-2 rounded-xl font-semibold transition-all duration-300 hover:scale-105">
-                      <Link to="/shop">Khám phá</Link>
-                    </button>
-                  </div>
-                  <div className="absolute top-4 left-4 sm:top-6 sm:left-6">
-                    <span className="bg-white/90 backdrop-blur-sm text-primary-700 px-2 sm:px-3 py-1 rounded-full text-xs font-bold">
-                      {cat.slug?.toUpperCase() || "Danh mục"}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+           <div
+             className="flex transition-transform duration-500 ease-out py-4"
+             style={{ transform: `translateX(-${categorySlide * 100}%)` }}
+           >
+             {groupedCategories.map((group, slideIdx) => (
+               <div
+                 key={`category-slide-${slideIdx}`}
+                 className="w-full flex-shrink-0 px-2 sm:px-4"
+               >
+                 {group.length > 0 ? (
+                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                     {group.map((cat) => (
+                       <div
+                         key={cat._id}
+                         className="group relative w-full max-w-sm sm:max-w-md lg:max-w-xs 
+              aspect-[4/5] rounded-3xl overflow-hidden 
+              shadow-large hover:shadow-xl transition-all duration-700 
+              transform hover:-translate-y-3 hover:scale-105 bg-white"
+                       >
+                         <figure className="h-full w-full">
+                           <img
+                             src={cat.thumbnail || "/images/placeholder.jpg"}
+                             alt={cat.name}
+                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                           />
+                         </figure>
+                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                         <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 text-white transform translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                           <h3 className="text-xl sm:text-2xl font-display font-bold mb-2 sm:mb-3  text-white/90">
+                             {cat.title}
+                           </h3>
+                           <p className="text-sm sm:text-base text-white/90 leading-relaxed mb-3 sm:mb-4">
+                             {cat.description || "Không có mô tả cho danh mục này."}
+                           </p>
+                           <button className="bg-primary-500 hover:bg-primary-600 text-white px-4 sm:px-6 py-2 rounded-xl font-semibold transition-all duration-300 hover:scale-105">
+                             <Link to="/shop">Khám phá</Link>
+                           </button>
+                         </div>
+                         <div className="absolute top-4 left-4 sm:top-6 sm:left-6">
+                           <span className="bg-white/90 backdrop-blur-sm text-primary-700 px-2 sm:px-3 py-1 rounded-full text-xs font-bold">
+                             {cat.slug?.toUpperCase() || "Danh mục"}
+                           </span>
+                         </div>
+                       </div>
+                     ))}
+                   </div>
+                 ) : (
+                   <div className="text-center py-10 text-lg font-semibold text-neutral-500">
+                     Chưa có danh mục để hiển thị.
+                   </div>
+                 )}
+               </div>
+             ))}
+           </div>
+           {groupedCategories.length > 1 && (
+             <>
+               <button
+                 onClick={handleCategoryPrev}
+                 className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 text-primary-600 p-3 rounded-full shadow-md hover:bg-white transition-colors"
+                 aria-label="Previous categories"
+               >
+                 <svg
+                   className="w-5 h-5"
+                   fill="none"
+                   stroke="currentColor"
+                   viewBox="0 0 24 24"
+                 >
+                   <path
+                     strokeLinecap="round"
+                     strokeLinejoin="round"
+                     strokeWidth={2}
+                     d="M15 19l-7-7 7-7"
+                   />
+                 </svg>
+               </button>
+               <button
+                 onClick={handleCategoryNext}
+                 className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 text-primary-600 p-3 rounded-full shadow-md hover:bg-white transition-colors"
+                 aria-label="Next categories"
+               >
+                 <svg
+                   className="w-5 h-5"
+                   fill="none"
+                   stroke="currentColor"
+                   viewBox="0 0 24 24"
+                 >
+                   <path
+                     strokeLinecap="round"
+                     strokeLinejoin="round"
+                     strokeWidth={2}
+                     d="M9 5l7 7-7 7"
+                   />
+                 </svg>
+               </button>
+             </>
+           )}
         </div>
       </section>
+      </div>
+     
 
       {/* <section className="px-8 py-16 bg-base-100">
         <div className="text-center mb-12">
@@ -629,8 +678,14 @@ const HomePage = ({ productSeller = [] }) => {
                         "/ONG_HUT/z4215838564230_b5afab2a28254181e0b90e8088a41abe.jpg",
                       ],
                     },
+                    {
+                      name: "Ống hút tre",
+                      images: [
+                        "/ONG_HUT/IMG_8432.JPG",
+                      ],
+                    }
                   ].map((cert, index) => {
-                    // ✅ Mã hóa URL an toàn (tránh lỗi khi có dấu cách / ký tự đặc biệt)
+                 
                     const encodedImages = cert.images.map((img) => {
                       const pathParts = img.split("/");
                       return pathParts

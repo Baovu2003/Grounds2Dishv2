@@ -11,13 +11,13 @@ const AdminOrder = () => {
 
     // Filter & pagination state
     const [searchTerm, setSearchTerm] = useState("");
-    const [statusFilter, setStatusFilter] = useState(""); // "" = tất cả trạng thái
+    const [statusFilter, setStatusFilter] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const [fromDate, setFromDate] = useState("");
     const [toDate, setToDate] = useState("");
     const [selectedOrder, setSelectedOrder] = useState(null);
-    const [confirmModal, setConfirmModal] = useState(null); // { orderId, action, message }
-    const [notification, setNotification] = useState(null); // { type: 'success' | 'error', message: string }
+    const [confirmModal, setConfirmModal] = useState(null);
+    const [notification, setNotification] = useState(null);
 
     console.log("selectedOrder", selectedOrder)
     // Lấy danh sách order
@@ -44,7 +44,7 @@ const AdminOrder = () => {
                 body: JSON.stringify({ status }),
             });
             setConfirmModal(null); // Đóng modal sau khi thành công
-            
+
             // Hiển thị thông báo thành công
             const successMessages = {
                 confirmed: "✅ Xác nhận đơn hàng thành công!",
@@ -54,15 +54,15 @@ const AdminOrder = () => {
                 type: 'success',
                 message: successMessages[status] || "✅ Cập nhật trạng thái thành công!"
             });
-            
+
             // Tự động ẩn thông báo sau 3 giây
             setTimeout(() => setNotification(null), 3000);
-            
+
             fetchOrders();
         } catch (err) {
             console.error("Error updating status:", err);
             setConfirmModal(null); // Đóng modal nếu có lỗi
-            
+
             // Hiển thị thông báo lỗi
             setNotification({
                 type: 'error',
@@ -78,7 +78,7 @@ const AdminOrder = () => {
             confirmed: `Bạn có chắc chắn muốn xác nhận đơn hàng của "${orderName}"?`,
             canceled: `Bạn có chắc chắn muốn hủy đơn hàng của "${orderName}"?`
         };
-        
+
         setConfirmModal({
             orderId,
             action: 'status',
@@ -86,38 +86,11 @@ const AdminOrder = () => {
             message: actionMessages[status] || 'Bạn có chắc chắn muốn thực hiện hành động này?'
         });
     };
-    // ✅ Hàm cập nhật thanh toán
-    const updatePayment = async (id, isPaid) => {
-        try {
-            await apiAdminClient(`/orders/payments/${id}`, {
-                method: "PATCH",
-                body: JSON.stringify({ isPaid }), // ✅ gửi đúng field
-            });
-            setConfirmModal(null); // Đóng modal sau khi thành công
-            
-            // Hiển thị thông báo thành công
-            setNotification({
-                type: 'success',
-                message: "✅ Xác nhận thanh toán thành công!"
-            });
-            setTimeout(() => setNotification(null), 3000);
-            
-            fetchOrders();
-        } catch (err) {
-            console.error("Error updating payment:", err);
-            setConfirmModal(null); // Đóng modal nếu có lỗi
-            
-            // Hiển thị thông báo lỗi
-            setNotification({
-                type: 'error',
-                message: "❌ Có lỗi xảy ra khi cập nhật thanh toán!"
-            });
-            setTimeout(() => setNotification(null), 3000);
-        }
-    };
+
 
     // Hàm xử lý khi click nút xác nhận thanh toán
     const handlePaymentAction = (orderId, orderName) => {
+        console.log("orderId, orderName", orderId, orderName)
         setConfirmModal({
             orderId,
             action: 'payment',
@@ -128,11 +101,12 @@ const AdminOrder = () => {
     // Hàm xác nhận và thực hiện hành động
     const handleConfirm = () => {
         if (!confirmModal) return;
-        
+
         if (confirmModal.action === 'status') {
             updateStatus(confirmModal.orderId, confirmModal.status);
         } else if (confirmModal.action === 'payment') {
-            updatePayment(confirmModal.orderId, true);
+            console.log("vô đây")
+            // updatePayment(confirmModal.orderId, true);
         }
     };
 
@@ -228,12 +202,11 @@ const AdminOrder = () => {
         <div className="p-5">
             {/* Notification Toast */}
             {notification && (
-                <div 
-                    className={`fixed top-4 right-4 z-[60] ${
-                        notification.type === 'success' 
-                            ? 'bg-green-500' 
-                            : 'bg-red-500'
-                    } text-white px-6 py-4 rounded-lg shadow-2xl flex items-center gap-3 min-w-[300px] max-w-md transition-all duration-300 transform translate-x-0 animate-[slideIn_0.3s_ease-out]`}
+                <div
+                    className={`fixed top-4 right-4 z-[60] ${notification.type === 'success'
+                        ? 'bg-green-500'
+                        : 'bg-red-500'
+                        } text-white px-6 py-4 rounded-lg shadow-2xl flex items-center gap-3 min-w-[300px] max-w-md transition-all duration-300 transform translate-x-0 animate-[slideIn_0.3s_ease-out]`}
                     style={{
                         animation: 'slideIn 0.3s ease-out'
                     }}
@@ -369,7 +342,7 @@ const AdminOrder = () => {
                                 <td className="p-3 border">
                                     {new Date(order.createdAt).toLocaleString()}
                                 </td>
-                                
+
                                 <td className="p-3 border">
                                     <span
                                         className={`px-3 py-1 rounded text-xs font-medium ${order.status === "pending"
@@ -493,7 +466,7 @@ const AdminOrder = () => {
                         >
                             ✕
                         </button>
-                        
+
                         <div className="mt-4">
                             <h3 className="text-xl font-bold text-gray-900 mb-4">
                                 Xác nhận hành động
@@ -501,7 +474,7 @@ const AdminOrder = () => {
                             <p className="text-gray-700 mb-6">
                                 {confirmModal.message}
                             </p>
-                            
+
                             <div className="flex gap-3 justify-end">
                                 <button
                                     onClick={() => setConfirmModal(null)}
@@ -511,11 +484,10 @@ const AdminOrder = () => {
                                 </button>
                                 <button
                                     onClick={handleConfirm}
-                                    className={`px-4 py-2 text-white rounded-lg font-medium transition-colors ${
-                                        confirmModal.status === 'canceled' || confirmModal.action === 'payment'
-                                            ? 'bg-red-500 hover:bg-red-600'
-                                            : 'bg-green-500 hover:bg-green-600'
-                                    }`}
+                                    className={`px-4 py-2 text-white rounded-lg font-medium transition-colors ${confirmModal.status === 'canceled' || confirmModal.action === 'payment'
+                                        ? 'bg-red-500 hover:bg-red-600'
+                                        : 'bg-green-500 hover:bg-green-600'
+                                        }`}
                                 >
                                     Xác nhận
                                 </button>

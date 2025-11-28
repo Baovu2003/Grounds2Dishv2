@@ -9,8 +9,6 @@ const CheckoutModal = ({
   setOrderForm,
   selectedItems,
   totalPrice,
-  cupDiscount = 0,
-  finalPrice,
   clearSelected,
   setSuccessMessage,
 }) => {
@@ -124,8 +122,6 @@ const CheckoutModal = ({
           price: item.price,
         })),
         totalPrice,
-        cupDiscount,
-        finalPrice,
       };
       console.log("Body", body)
 
@@ -402,17 +398,10 @@ const CheckoutModal = ({
                   </div>
                 ))}
 
-                {cupDiscount > 0 && (
-                  <div className="flex justify-between items-center py-1 text-green-600">
-                    <span>🎉 Giảm giá cốc (2 cốc -10%)</span>
-                    <span className="font-semibold">-{formatPrice(cupDiscount)}</span>
-                  </div>
-                )}
-
                 <div className="border-t border-neutral-300 pt-3 mt-3">
                   <div className="flex justify-between items-center">
                     <span className="font-bold text-neutral-900 text-base">Tổng cộng:</span>
-                    <span className="font-bold text-lg" style={{ color: '#20161F' }}>{formatPrice(finalPrice || totalPrice)}</span>
+                    <span className="font-bold text-lg" style={{ color: '#20161F' }}>{formatPrice(totalPrice)}</span>
                   </div>
                 </div>
               </div>
